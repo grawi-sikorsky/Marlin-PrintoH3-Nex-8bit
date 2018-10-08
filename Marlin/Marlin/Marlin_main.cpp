@@ -347,8 +347,7 @@
 #endif
 
 #if ENABLED (NEXTION_DISPLAY)
-  #include "Nextion_LCD.h"
-  #include "PrinterClass.h"
+  #include "nextion/Nextion_lcd.h"
 #endif
 
 bool Running = true;
@@ -13416,7 +13415,7 @@ void setup() {
 
   setup_powerhold();
 
-  Printer.init(); // printer class nextion
+  //Printer.init(); // printer class nextion old
 
   #if HAS_STEPPER_RESET
     disableStepperDrivers();

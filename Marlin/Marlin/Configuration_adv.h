@@ -373,7 +373,7 @@
 
 // @section lcd
 
-#if ENABLED(ULTIPANEL)
+#if ENABLED(ULTIPANEL) || ENABLED(NEXTION_DISPLAY)
   #define MANUAL_FEEDRATE {70*60, 70*60, 30*60, 70} // Feedrates for manual moves along X, Y, Z, E from panel
   #define ULTIPANEL_FEEDMULTIPLY  // Comment to disable setting feedrate multiplier via encoder
 #endif

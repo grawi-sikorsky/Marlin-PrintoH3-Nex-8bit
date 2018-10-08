@@ -191,6 +191,15 @@
 	void lcd_status_printf_P(const uint8_t level, const char * const fmt, ...);
 	bool lcd_detected();
 
+    #define LCD_MESSAGEPGM(x)      lcd_setstatusPGM(PSTR(x))
+	#define LCD_ALERTMESSAGEPGM(x) lcd_setalertstatusPGM(PSTR(x))
+
+	constexpr bool lcd_wait_for_move = false;
+	inline void lcd_refresh() {}
+	inline bool lcd_hasstatus() { return false; }
+	inline void lcd_eeprom_allert() {}
+	inline void lcd_buttons_update() {}
+
 	//VLCS
 	#if ENABLED(PLOSS_SUPPORT)
 	void lcd_ploss_recovery_menu(const PlossMenuMessage message);

@@ -1,25 +1,3 @@
-/**
- * MK4duo Firmware for 3D Printer, Laser and CNC
- *
- * Based on Marlin, Sprinter and grbl
- * Copyright (C) 2011 Camiel Gubbels / Erik van der Zalm
- * Copyright (C) 2013 Alberto Cotronei @MagoKimbra
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
- */
-
  /**
  * Nextion_lcd.h
  *
@@ -44,11 +22,14 @@
 
 // For debug Connect
 //#define NEXTION_CONNECT_DEBUG
+#include "../Marlin.h"
+#include "../MarlinConfig.h"
 
 #if ENABLED(NEXTION)
 
   #if ENABLED(ADVANCED_PAUSE_FEATURE)
-    #include "../../feature/advanced_pause/advanced_pause.h"
+    //#include "../../feature/advanced_pause/advanced_pause.h"
+	#include "../enum.h"
   #endif
 
   void sethotPopCallback(void *ptr);
@@ -102,8 +83,7 @@
 
   #if ENABLED(ADVANCED_PAUSE_FEATURE)
     void lcd_advanced_pause_show_message(const AdvancedPauseMessage message,
-                                         const AdvancedPauseMode mode=ADVANCED_PAUSE_MODE_PAUSE_PRINT,
-                                         const uint8_t extruder=tools.active_extruder);
+                                         const AdvancedPauseMenuResponse mode= ADVANCED_PAUSE_RESPONSE_WAIT_FOR);
   #endif
 
   #if ENABLED(RFID_MODULE)

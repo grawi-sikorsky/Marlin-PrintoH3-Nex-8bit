@@ -15,7 +15,7 @@
  *
  */
 
-#include "../../../MK4duo.h"
+#include "../nextion/Nextion_lcd.h"
 
 #if ENABLED(NEXTION_GFX)
 

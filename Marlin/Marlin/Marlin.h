@@ -51,6 +51,8 @@
   #include "stopwatch.h"
 #endif
 
+#include "nextion/Nextion_lcd.h"
+
 void idle(
   #if ENABLED(ADVANCED_PAUSE_FEATURE)
     bool no_stepper_sleep = false  // pass true to keep steppers from disabling on timeout
