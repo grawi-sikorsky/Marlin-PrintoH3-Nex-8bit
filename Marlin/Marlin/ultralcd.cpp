@@ -4650,7 +4650,7 @@ void lcd_update() {
       max_display_update_time--;
       lcdDrawUpdate = LCDVIEW_REDRAW_NOW;
     }
-
+	
     // then we want to use 1/2 of the time only.
     uint16_t bbr2 = planner.block_buffer_runtime() >> 1;
 

@@ -23,7 +23,7 @@
 // For debug Connect
 //#define NEXTION_CONNECT_DEBUG
 #include "../Marlin.h"
-#include "../MarlinConfig.h"
+#include "../ultralcd.h"
 
 #if ENABLED(NEXTION)
 
