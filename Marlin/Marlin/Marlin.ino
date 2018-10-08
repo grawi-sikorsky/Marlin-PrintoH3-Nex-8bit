@@ -73,6 +73,6 @@
 #endif
 
 #if ENABLED(NEXTION_DISPLAY)
-	#include "nextion/Nextion_lcd.h"
+	//#include "nextion/Nextion_lcd.h"
 	#include "TimeLib.h"
 #endif

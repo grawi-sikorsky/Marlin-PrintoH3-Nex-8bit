@@ -18,6 +18,7 @@
  */
 #include "../Marlin.h"
 #include "../temperature.h"
+#include "../cardreader.h"
 //#include "../MarlinConfig.h"
 
 #if ENABLED(NEXTION)
@@ -72,7 +73,7 @@
   NexObject Poptions      = NexObject(16, 0,  "options");
   NexObject Ptime         = NexObject(17, 0,  "time");
   NexObject Pusertemp     = NexObject(18, 0,  "usertemp");
-
+  
   /**
    *******************************************************************
    * Nextion component for page:start
@@ -1282,7 +1283,8 @@
 
     PageID = Nextion_PageID();
 
-    switch (PageID) {
+    switch(PageID)
+	{
       case 2:
         if (PreviousPage != 2) {
           lcd_setstatus(lcd_status_message);
@@ -1293,24 +1295,20 @@
               gfx_clear(X_MAX_POS, Y_MAX_POS, Z_MAX_POS);
             #endif
           #endif
-        }
-
+		}
         #if FAN_COUNT > 0
-          //if (PreviousfanSpeed != fans[0].Speed) {
-           // Fanspeed.setValue(((float)(fans[0].Speed) / 255) * 100);
-            //PreviousfanSpeed = fans[0].Speed;
+          if (PreviousfanSpeed != fanSpeeds[0]) {
+          Fanspeed.setValue(((float)(fanSpeeds[0]) / 255) * 100);
+          PreviousfanSpeed = fanSpeeds[0];
           }
         #endif
-
         #if HAS_CASE_LIGHT
           LightStatus.setValue(caselight.status ? 2 : 1);
         #endif
-
-        /*if (Previousfeedrate != mechanics.feedrate_percentage) {
-          VSpeed.setValue(mechanics.feedrate_percentage);
-          Previousfeedrate = mechanics.feedrate_percentage;
-        }*/
-
+        if (Previousfeedrate != feedrate_percentage) {
+          VSpeed.setValue(feedrate_percentage);
+          Previousfeedrate = feedrate_percentage;
+        }
         #if HAS_TEMP_0
           if (PreviousdegHeater[0] != thermalManager.current_temperature[0]) {
             PreviousdegHeater[0] = thermalManager.current_temperature[0];
@@ -1330,7 +1328,7 @@
             PrevioustargetdegHeater[1] = thermalManager.current_temperature[1];
             targetdegtoLCD(1, PrevioustargetdegHeater[1]);
           }
-		  /*
+		  
         #elif HAS_TEMP_CHAMBER
           if (PreviousdegHeater[1] != heaters[CHAMBER_INDEX].current_temperature) {
             PreviousdegHeater[1] = heaters[CHAMBER_INDEX].current_temperature;
@@ -1344,7 +1342,7 @@
           if (PreviousdegHeater[1] != dhtsensor.Humidity) {
             PreviousdegHeater[1] = dhtsensor.Humidity;
             degtoLCD(4, PreviousdegHeater[1]);
-          }*/
+          }
         #endif
         #if HAS_TEMP_BED
           if (PreviousdegHeater[2] != thermalManager.current_temperature_bed) {
@@ -1356,67 +1354,20 @@
             targetdegtoLCD(2, PrevioustargetdegHeater[2]);
           }
         #endif
-
         coordtoLCD();
-		/*
-        if (PreviouspercentDone != printer.progress) {
-          // Progress bar solid part
-          progressbar.setValue(printer.progress);
-          // Estimate End Time
-          ZERO(buffer);
-          char buffer1[10];
-          uint8_t digit;
-          duration_t Time = print_job_timer.duration();
-          digit = Time.toDigital(buffer1, true);
-          strcat(buffer, "S");
-          strcat(buffer, buffer1);
-          Time = (print_job_timer.duration() * (100 - printer.progress)) / (printer.progress + 0.1);
-          digit += Time.toDigital(buffer1, true);
-          if (digit > 14)
-            strcat(buffer, "E");
-          else
-            strcat(buffer, " E");
-          strcat(buffer, buffer1);
-          LcdTime.setText(buffer);
-          PreviouspercentDone = printer.progress;
-        } */
 
-        #if HAS_SD_SUPPORT
-
-          if (card.isFileOpen()) {
-            if (IS_SD_PRINTING && SDstatus != SD_PRINTING) {
-              SDstatus = SD_PRINTING;
-              SD.setValue(SDstatus);
-            }
-            else if (!IS_SD_PRINTING && SDstatus != SD_PAUSE) {
-              SDstatus = SD_PAUSE;
-              SD.setValue(SDstatus);
-            }
-          }
-          else if (card.isOK() && SDstatus != SD_INSERT) {
-            SDstatus = SD_INSERT;
-            SD.setValue(SDstatus);
-          }
-          else if (!card.isOK() && SDstatus != SD_NO_INSERT) {
-            SDstatus = SD_NO_INSERT;
-            SD.setValue(SDstatus);
-          }
-
-        #endif // HAS_SD_SUPPORT
-
-        #if HAS_SD_RESTART
+		#if HAS_SD_RESTART
           if (restart.count && restart.job_phase == RESTART_IDLE) {
             restart.job_phase = RESTART_MAYBE; // Waiting for a response
             lcd_yesno(3, MSG_RESTART_PRINT, "", MSG_USERWAIT);
           }
-        #endif
-
+        #endif 
         break;
-      #if HAS_SD_SUPPORT
-        case 3:
+	#if ENABLED(SDSUPPORT)
+      case 3:
           if (PreviousPage != 3) setpageSD();
           break;
-      #endif
+	#endif
       case 5:
         coordtoLCD();
         break;
