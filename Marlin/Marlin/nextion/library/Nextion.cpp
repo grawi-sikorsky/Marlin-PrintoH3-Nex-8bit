@@ -589,36 +589,36 @@
   #endif  // SDSUPPORT
 
   bool getConnect(char* buffer) {
-    delayMicroseconds(100);
+    delay(100);
     sendCommand("");
-    delayMicroseconds(100);
+    delay(100);
     sendCommand("connect");
-    delayMicroseconds(100);
+    delay(100);
 
-    uint8_t   c = 0;
+    uint8_t c = 0;
     String temp = String("");
 
     #if ENABLED(NEXTION_CONNECT_DEBUG)
-      SERIAL_MSG(" NEXTION Debug Connect receveid:");
+      SERIAL_ECHOLN(" NEXTION Debug Connect receveid:");
     #endif
 
     while (nexSerial.available()) {
       c = nexSerial.read();
       #if ENABLED(NEXTION_CONNECT_DEBUG)
-        SERIAL_CHR((char)c);
+	  SERIAL_ECHO((char)c);
       #endif
       temp += (char)c;
     }
 
-    #if ENABLED(NEXTION_CONNECT_DEBUG)
-      SERIAL_EOL();
-    #endif
+	#if ENABLED(NEXTION_CONNECT_DEBUG)
+		SERIAL_EOL();
+	#endif
 
-    strncpy(buffer, temp.c_str(), 70);
+	strncpy(buffer, temp.c_str(), 70);
 
-    if (strstr(buffer, "comok")) return true;
+	if (strstr(buffer, "comok")) return true;
 
-    return false;
+	return false;
   }
 
   //
@@ -637,13 +637,13 @@
     if (connect) {
       sendCommand("baud=115200");
       nexSerial.end();
-      delayMicroseconds(1000);
+      delay(1000);
       nexSerial.begin(115200);
       return true;
     }
     else { // Else try to 115200 baudrate
       nexSerial.end();
-	  delayMicroseconds(1000);
+	  delay(1000);
       nexSerial.begin(115200);
       connect = getConnect(buffer);
       if (connect) return true;
@@ -657,7 +657,7 @@
     uint8_t c;  
 
     while (nexSerial.available() > 0) {   
-      delayMicroseconds(5);
+      delay(5); // sprawdzic czy nie delay czasem?
       c = nexSerial.read();
 
       if (c == NEX_RET_EVENT_TOUCH_HEAD) {

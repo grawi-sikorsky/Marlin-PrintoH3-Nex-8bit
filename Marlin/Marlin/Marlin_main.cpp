@@ -13552,7 +13552,7 @@ void setup() {
   lcd_init();
 
   #ifndef CUSTOM_BOOTSCREEN_TIMEOUT
-    #define CUSTOM_BOOTSCREEN_TIMEOUT 2500
+    #define CUSTOM_BOOTSCREEN_TIMEOUT 100 // 2500
   #endif
 
   #if ENABLED(SHOW_BOOTSCREEN)
@@ -13609,8 +13609,8 @@ void setup() {
 
 
 
-// PLOSS_SUPPORT
-#ifdef PLOSS_SUPPORT
+	// PLOSS_SUPPORT
+	#ifdef PLOSS_SUPPORT
 	if (eeprom_read_byte((uint8_t*)EEPROM_PANIC_POWER_FAIL) == 1) { //Sprawdz czy poprzedni wydruk zakonczyl sie porazka
 
 	#if ENABLED(PLOSS_MANUAL_RECOVERY) && ENABLED(ULTRA_LCD) //do zmiany jak ma dzialac vlcs pod tft
@@ -13634,7 +13634,7 @@ void setup() {
 
 	#endif
 	}
-#endif // PLOSS_SUPPORT
+	#endif // PLOSS_SUPPORT
 
 
 

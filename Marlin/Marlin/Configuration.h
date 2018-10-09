@@ -1680,7 +1680,7 @@
   //
   #define NEXTION
   // Define Serial it use
-  #define NEXTION_SERIAL 3
+  #define NEXTION_SERIAL 2
   // For GFX preview visualization enable NEXTION GFX
   //#define NEXTION_GFX
   // Define name firmware file for Nextion on SD

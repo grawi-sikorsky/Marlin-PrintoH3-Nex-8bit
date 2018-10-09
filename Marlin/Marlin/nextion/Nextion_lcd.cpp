@@ -1099,7 +1099,7 @@
       ZERO(buffer);
       NextionON = nexInit(buffer);
       if (NextionON) break;
-      delayMicroseconds(1000);
+      delay(1000);
     }
 
     if (!NextionON) {
@@ -1107,6 +1107,7 @@
       return;
     }
     else {
+		SERIAL_ECHO_START();
 	  SERIAL_ECHOPGM("Nextion");
       // Get Model
 
@@ -1280,7 +1281,7 @@
                     PrevioustargetdegHeater[3] = { 0.0 };
 
     if (!NextionON) return;
-
+	/*
     PageID = Nextion_PageID();
 
     switch(PageID)
@@ -1379,7 +1380,7 @@
         break;
     }
 
-    PreviousPage = PageID;
+    PreviousPage = PageID; */
   }
 
   void lcd_setstatus(const char* message, bool persist) {
