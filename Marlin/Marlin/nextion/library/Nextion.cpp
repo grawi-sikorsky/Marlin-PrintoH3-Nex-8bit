@@ -20,7 +20,7 @@
  *
  */
 
-#include "../../../../MK4duo.h"
+#include "../../Marlin.h"
 
 #if ENABLED(NEXTION)
 
@@ -589,11 +589,11 @@
   #endif  // SDSUPPORT
 
   bool getConnect(char* buffer) {
-    HAL::delayMilliseconds(100);
+    delayMicroseconds(100);
     sendCommand("");
-    HAL::delayMilliseconds(100);
+    delayMicroseconds(100);
     sendCommand("connect");
-    HAL::delayMilliseconds(100);
+    delayMicroseconds(100);
 
     uint8_t   c = 0;
     String temp = String("");
@@ -637,13 +637,13 @@
     if (connect) {
       sendCommand("baud=115200");
       nexSerial.end();
-      HAL::delayMilliseconds(1000);
+      delayMicroseconds(1000);
       nexSerial.begin(115200);
       return true;
     }
     else { // Else try to 115200 baudrate
       nexSerial.end();
-      HAL::delayMilliseconds(1000);
+	  delayMicroseconds(1000);
       nexSerial.begin(115200);
       connect = getConnect(buffer);
       if (connect) return true;
@@ -657,7 +657,7 @@
     uint8_t c;  
 
     while (nexSerial.available() > 0) {   
-      HAL::delayMilliseconds(5);
+      delayMicroseconds(5);
       c = nexSerial.read();
 
       if (c == NEX_RET_EVENT_TOUCH_HEAD) {
@@ -758,7 +758,7 @@
     cmd += "dim=";
     cmd += buf;
     sendCommand(cmd.c_str());
-    HAL::delayMilliseconds(10);
+	delayMicroseconds(10);
     recvRetCommandFinished();
   }
 

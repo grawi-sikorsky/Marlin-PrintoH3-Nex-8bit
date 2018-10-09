@@ -19,6 +19,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  */
+#include "HardwareSerial.h"
 
 #ifndef __NEXTION_H__
 #define __NEXTION_H__
