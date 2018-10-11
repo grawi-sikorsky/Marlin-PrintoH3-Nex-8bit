@@ -1670,14 +1670,17 @@
 //1 Bazowanie przed zmiana filamentu - done
 
 //2 Obama Blob Care - Pauza/Stop->Z move
-#define PAUSE_STOP_ZLIFT_FEATURE 
-#define PAUSE_STOP_ZLIFT_SCRIPT "M150 B0 R255 U0\nG92 Z0\nG1 Z10 F2000\nG28 X0 F6000\nM84"
+//#define PAUSE_STOP_ZLIFT_FEATURE 
+//#define PAUSE_STOP_ZLIFT_SCRIPT "M150 B0 R255 U0\nG92 Z0\nG1 Z10 F2000\nG28 X0 F6000\nM84"
 
 //3 Obama SD Care - reakcja po wyjęciu karty SD
 
   //
   // Nextion
   //
+
+//#define NEX_UPLOAD
+
   #define NEXTION
   // Define Serial it use
   #define NEXTION_SERIAL 2

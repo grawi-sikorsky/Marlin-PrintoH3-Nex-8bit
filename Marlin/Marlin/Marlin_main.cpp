@@ -348,6 +348,8 @@
 
 #if ENABLED (NEXTION_DISPLAY)
   #include "nextion/Nextion_lcd.h"
+  //extern uint8_t progress;
+  uint8_t progress_printing; // dodane nex
 #endif
 
 bool Running = true;
@@ -1277,6 +1279,8 @@ inline void get_serial_commands() {
         if (!sd_comment_mode) command_queue[cmd_queue_index_w][sd_count++] = sd_char;
       }
     }
+
+	progress_printing = card.percentDone();
   }
 
 #endif // SDSUPPORT
@@ -13013,26 +13017,6 @@ void EEPROM_read_FR(int pos, int* value)
 	data.b[1] = eeprom_read_byte((unsigned char*)pos + 1);
 	*value = data.value;
 }
-void panic_Print_CurretnPosition() {
-	MYSERIAL.print("X: ");
-	MYSERIAL.println(current_position[X_AXIS]);
-	MYSERIAL.print("Y: ");
-	MYSERIAL.println(current_position[Y_AXIS]);
-	MYSERIAL.print("Z: ");
-	MYSERIAL.println(current_position[Z_AXIS]);
-	MYSERIAL.print("E: ");
-	MYSERIAL.println(current_position[E_AXIS]);
-}
-void panic_Print_a(){
-	MYSERIAL.print("aX: "); 
-	MYSERIAL.println(stepper.get_axis_position_mm(X_AXIS));
-	MYSERIAL.print("aY: ");
-	MYSERIAL.println(stepper.get_axis_position_mm(Y_AXIS));
-	MYSERIAL.print("aZ: ");
-	MYSERIAL.println(stepper.get_axis_position_mm(Z_AXIS));
-	MYSERIAL.print("aE: ");
-	MYSERIAL.println(stepper.get_axis_position_mm(E_AXIS));
-}
 
 void planner_abort_hard()
 {
@@ -13091,7 +13075,9 @@ void ploss() {
 	// Czysc bufor komend
 	clear_command_queue();
 	
-	card.sdprinting = false;
+	#if ENABLED(SDSUPPORT)
+		card.sdprinting = false;
+	#endif
 
 	// Zapisz pozycje i parametry druku
 	eeprom_update_float((float*)(EEPROM_PANIC_CURRENT_XPOS), current_position[X_AXIS]);		// zapisz X
@@ -13102,7 +13088,7 @@ void ploss() {
 	eeprom_update_word((uint16_t*)EEPROM_PANIC_TARGET_HOTEND, backup_temp_hotend);			// zapisz temp glowicy
 	eeprom_update_word((uint16_t*)EEPROM_PANIC_TARGET_BED, backup_temp_bed);				// zapisz temp bed
 	eeprom_update_word((uint16_t*)EEPROM_PANIC_FAN_SPEED, fanSpeeds[0]);					// zapisz wentylator
-
+	
 	// Oznacz flage zaniku na true
 	//if (card.sdprinting) eeprom_update_byte((uint8_t*)EEPROM_PANIC_POWER_FAIL, 1); // debug
 	eeprom_update_byte((uint8_t*)EEPROM_PANIC_POWER_FAIL, 1); //debug
@@ -13234,7 +13220,7 @@ void recover_machine_state_after_power_panic()
 }
 
 void restore_print_from_eeprom() {
-	MYSERIAL.println("Restore Print from EEPROM: wejscie");
+	//MYSERIAL.println("Restore Print from EEPROM: wejscie");
 	uint8_t _axis_rel_modes;
 	uint32_t _sdpos;
 	float _e;
@@ -13268,8 +13254,8 @@ void restore_print_from_eeprom() {
 	char dir_name[9];
 	
 	depth = eeprom_read_byte((uint8_t*)EEPROM_SD_FILE_DIR_DEPTH);
-	MYSERIAL.print("DIR DEPTH: ");
-	MYSERIAL.println(int(depth));
+	//MYSERIAL.print("DIR DEPTH: ");
+	//MYSERIAL.println(int(depth));
 	for (int i = 0; i < depth; i++) {
 		for (int j = 0; j < 8; j++) {
 			dir_name[j] = eeprom_read_byte((uint8_t*)EEPROM_SD_DIRS + j + 8 * i);
@@ -13277,7 +13263,9 @@ void restore_print_from_eeprom() {
 		}
 		dir_name[8] = '\0';
 		MYSERIAL.println(dir_name);
+		#if ENABLED(SDSUPPORT)
 		card.chdir(dir_name);
+		#endif	
 	}
 
 	for (int i = 0; i < 8; i++) {
@@ -13286,16 +13274,16 @@ void restore_print_from_eeprom() {
 	}
 	filename[8] = '\0';
 	
-	MYSERIAL.print("PLIK: ");
-	MYSERIAL.println(filename);
+	//MYSERIAL.print("PLIK: ");
+	//MYSERIAL.println(filename);
 	strcat_P(filename, PSTR(".gco"));
 	sprintf_P(cmd_buff, PSTR("M23 %s"), filename);
 	for (c = &cmd_buff[4]; *c; c++)
 		*c = tolower(*c);
 	enqueue_and_echo_command(cmd_buff); //6
 
-	MYSERIAL.print("Pozycja pliku SD: ");
-	MYSERIAL.println(_sdpos);
+	//MYSERIAL.print("Pozycja pliku SD: ");
+	//MYSERIAL.println(_sdpos);
 
 	// Ekstruder tryb relative
 	enqueue_and_echo_commands_P(PSTR("M83")); //7
@@ -13473,7 +13461,7 @@ void setup() {
   #if ENABLED(USE_WATCHDOG)
     watchdog_init();
   #endif
-
+	SERIAL_ECHOPGM("after watchdog init");
   stepper.init();    // Initialize stepper, this enables interrupts!
   servo_init();
 
@@ -13548,9 +13536,9 @@ void setup() {
     SET_OUTPUT(E_MUX1_PIN);
     SET_OUTPUT(E_MUX2_PIN);
   #endif
-
+	SERIAL_ECHOPGM("przed lcd init");
   lcd_init();
-
+  SERIAL_ECHOPGM("za lcd init");
   #ifndef CUSTOM_BOOTSCREEN_TIMEOUT
     #define CUSTOM_BOOTSCREEN_TIMEOUT 100 // 2500
   #endif

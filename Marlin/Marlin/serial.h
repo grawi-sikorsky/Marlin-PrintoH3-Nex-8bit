@@ -33,9 +33,8 @@
     #define MYSERIAL Serial
   #endif // BLUETOOTH
 #else
-  //#include "MarlinSerial.h"
-	#include "HardwareSerial.h"
-	#define MYSERIAL Serial
+	#include "MarlinSerial.h"
+	#define MYSERIAL MarlSerial
 #endif
 
 extern const char echomagic[] PROGMEM;

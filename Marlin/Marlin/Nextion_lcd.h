@@ -21,10 +21,11 @@
 #define _NEXTION_LCD_H_
 
 // For debug Connect
-//#define NEXTION_CONNECT_DEBUG
+#define NEXTION_CONNECT_DEBUG
 #include "../Marlin.h"
 #include "../ultralcd.h"
 #include "library/Nextion.h"
+#include "Arduino.h""
 #include "HardwareSerial.h"
 
 #if ENABLED(NEXTION)

@@ -88,6 +88,7 @@ public:
   FORCE_INLINE char* getWorkDirName() { workDir.getFilename(filename); return filename; }
   FORCE_INLINE uint32_t get_sdpos() { if (!isFileOpen()) return 0; else return(sdpos); }; // dodane printo h3 przekazuje sdpos dalej
 
+
 public:
   bool saving, logging, sdprinting, cardOK, filenameIsDir;
   char filename[FILENAME_LENGTH], longFilename[LONG_FILENAME_LENGTH];

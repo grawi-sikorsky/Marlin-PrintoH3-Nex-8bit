@@ -29,8 +29,9 @@
  * Modified 14 February 2016 by Andreas Hardtung (added tx buffer)
  */
 
-#include "MarlinSerial.h"
+
 #include "Marlin.h"
+#include "MarlinSerial.h"
 
 // Disable HardwareSerial.cpp to support chips without a UART (Attiny, etc.)
 

@@ -27,6 +27,7 @@
 #include "language.h"
 #include "stopwatch.h"
 #include <avr/eeprom.h>
+#include "duration_t.h"
 
 
 // Print debug messages with M111 S2

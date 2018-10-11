@@ -19,7 +19,7 @@
 #include "../Marlin.h"
 #include "../temperature.h"
 #include "../cardreader.h"
-//#include "Arduino.h"
+#include "Arduino.h"
 //#include "../MarlinConfig.h"
 
 #if ENABLED(NEXTION)
@@ -39,19 +39,17 @@
   char        lcd_status_message[30]    = WELCOME_MSG;
   const float manual_feedrate_mm_m[]    = MANUAL_FEEDRATE;
 
-  extern uint8_t progress_printing; // dodane nex
-
-  #if ENABLED(SDSUPPORT)
+  #if HAS_SD_SUPPORT
     // 0 card not present, 1 SD not insert, 2 SD insert, 3 SD printing
     enum SDstatus_enum {NO_SD = 0, SD_NO_INSERT = 1, SD_INSERT = 2, SD_PRINTING = 3, SD_PAUSE = 4 };
     SDstatus_enum SDstatus    = NO_SD;
-    //NexUpload Firmware(NEXTION_FIRMWARE_FILE, 57600);
+    NexUpload Firmware(NEXTION_FIRMWARE_FILE, 57600);
   #endif
 
   #if ENABLED(NEXTION_GFX)
     GFX gfx = GFX(1, 1, 1, 1);
   #endif
-	
+
   /**
    *******************************************************************
    * Nextion component all page
@@ -96,7 +94,6 @@
    * Nextion component for page:printer
    *******************************************************************
    */
-  
   NexObject LcdX        = NexObject(2,  4,  "vx");
   NexObject LcdY        = NexObject(2,  5,  "vy");
   NexObject LcdZ        = NexObject(2,  6,  "vz");
@@ -129,7 +126,7 @@
   NexObject Hot1Touch   = NexObject(2, 97,  "m1");
   NexObject Hot2Touch   = NexObject(2, 98,  "m2");
   NexObject FanTouch    = NexObject(2, 99,  "m3");
-  
+
   /**
    *******************************************************************
    * Nextion component for page:SDCard
@@ -154,7 +151,7 @@
   NexObject ScrollDown  = NexObject(3,  19, "p8");
   NexObject sd_mount    = NexObject(3,  21, "p12");
   NexObject sd_dismount = NexObject(3,  22, "p13");
-  
+
   /**
    *******************************************************************
    * Nextion component for page:Setup
@@ -184,7 +181,7 @@
   NexObject SpeedY      = NexObject(5,  23, "vafry");
   NexObject SpeedZ      = NexObject(5,  24, "vafrz");
   NexObject SpeedE      = NexObject(5,  25, "vafre");
-  
+
   /**
    *******************************************************************
    * Nextion component for page:Speed
@@ -429,12 +426,12 @@
       speed_list[i]->setText(temp, "move");
     }
 
-    #if ENABLED(SDSUPPORT)
-      if (!card.cardOK) card.initsd();
-      delay(50);
-      if (card.cardOK) {
+    #if HAS_SD_SUPPORT
+      if (!card.isOK()) card.mount();
+      HAL::delayMilliseconds(500);
+      if (card.isOK()) {
         SDstatus = SD_INSERT;
-        card.setroot();  // Initial boot
+        card.beginautostart();  // Initial boot
       }
       else
         SDstatus = SD_NO_INSERT;
@@ -521,18 +518,16 @@
       lcdDrawUpdate = false; \
     } while(0)
 
-  #if ENABLED(SDSUPPORT)
+  #if HAS_SD_SUPPORT
 
-	#if ENABLED(NEX_UPLOAD)
     void UploadNewFirmware() {
-      if (IS_SD_INSERTED || card.cardOK()) {
+      if (IS_SD_INSERTED || card.isOK()) {
         Firmware.startUpload();
         nexSerial.end();
         lcd_init();
       }
     }
 
-	#endif
     void printrowsd(uint8_t row, const bool folder, const char* filename) {
       if (folder) {
         folder_list[row]->SetVisibility(true);
@@ -548,14 +543,14 @@
     }
 
     static void setrowsdcard(uint32_t number = 0) {
-      uint16_t fileCnt = card.getnrfilenames(); // nalezaloby przeniesc funkcje get_num_files z mk4duo / jakis tweak
+      uint16_t fileCnt = card.get_num_Files();
       uint32_t i = 0;
       card.getWorkDirName();
 
-      if (card.filename[0] != '/') {
+      if (card.fileName[0] != '/') {
         Folderup.SetVisibility(true);
         Folderup.attachPop(sdfolderUpPopCallback);
-        sdfolder.setText(card.filename);
+        sdfolder.setText(card.fileName);
       } else {
         Folderup.detachPop();
         Folderup.SetVisibility(false);
@@ -571,7 +566,7 @@
             #else
               card.getfilename(i);
             #endif
-            printrowsd(row, true, card.filename); //card.isFilenameIsDir()
+            printrowsd(row, card.isFilenameIsDir(), card.fileName);
           } else {
             printrowsd(row, false, "");
           }
@@ -591,7 +586,7 @@
     }
 
     void setpageSD() {
-      uint16_t fileCnt = card.getnrfilenames();
+      uint16_t fileCnt = card.get_num_Files();
 
       if (fileCnt <= 6)
         slidermaxval = 0;
@@ -611,15 +606,15 @@
 
     void sdmountdismountPopCallback(void *ptr) {
       if (ptr == &sd_mount) {
-        card.initsd();
-        if (card.cardOK)
+        card.mount();
+        if (card.isOK())
           SDstatus = SD_INSERT;
         else
           SDstatus = SD_NO_INSERT;
         SD.setValue(SDstatus, "printer");
       }
       else {
-        card.release();
+        card.unmount();
         SDstatus = SD_NO_INSERT;
         SD.setValue(SDstatus, "printer");
       }
@@ -679,17 +674,17 @@
     void PlayPausePopCallback(void *ptr) {
       UNUSED(ptr);
 
-      if (card.cardOK && card.isFileOpen()) {
+      if (card.isOK() && card.isFileOpen()) {
         if (IS_SD_PRINTING) {
           card.pauseSDPrint();
-          print_job_timer.pause();
+          print_job_counter.pause();
           #if ENABLED(PARK_HEAD_ON_PAUSE)
             commands.enqueue_and_echo_P(PSTR("M125"));
           #endif
         }
         else {
           card.startFileprint();
-          print_job_timer.start();
+          print_job_counter.start();
         }
       }
     }
@@ -1059,17 +1054,14 @@
 
     if (ptr == &Yes) {
       switch(Vyes.getValue()) {
-        #if ENABLED(SDSUPPORT)
+        #if HAS_SD_SUPPORT
           case 1: // Stop Print
-            card.stopSDPrint();
+            printer.setAbortSDprinting(true);
             lcd_setstatusPGM(PSTR(MSG_PRINT_ABORTED), -1);
             Pprinter.show();
             break;
           case 2: // Upload Firmware
-			#if ENABLED(NEX_UPLOAD)
-            UploadNewFirmware(); 
-			#endif
-			break;
+            UploadNewFirmware(); break;
         #endif
         #if HAS_SD_RESTART
           case 3: // Restart file
@@ -1086,7 +1078,7 @@
     }
     else {
       switch(Vyes.getValue()) {
-        #if ENABLED(SDSUPPORT)
+        #if HAS_SD_SUPPORT
           case 2:
             Psetup.show(); break;
         #endif
@@ -1110,7 +1102,7 @@
       if (NextionON) break;
       delay(20);
     }
-	//SERIAL_ECHOPGM("lcd_init za petla for");
+	SERIAL_ECHOPGM("lcd_init za petla for");
 
     if (!NextionON) {
 	  SERIAL_ECHOPGM("Nextion not connected!");
@@ -1157,7 +1149,7 @@
         gfx.color_set(NX_HIGH, 63488);
       #endif
 
-      #if ENABLED(SDSUPPORT)
+      #if HAS_SD_SUPPORT
         sd_mount.attachPop(sdmountdismountPopCallback, &sd_mount);
         sd_dismount.attachPop(sdmountdismountPopCallback, &sd_dismount);
         sdlist.attachPop(sdlistPopCallback);
@@ -1218,7 +1210,7 @@
 
   static void degtoLCD(const uint8_t h, float temp) {
 
-    NOMORE(temp, 300);//999
+    NOMORE(temp, 999);
 
     heater_list0[h]->setValue(temp);
 
@@ -1291,7 +1283,7 @@
                     PrevioustargetdegHeater[3] = { 0.0 };
 
     if (!NextionON) return;
-	
+	/*
     PageID = Nextion_PageID();
 
     switch(PageID)
@@ -1320,7 +1312,7 @@
           VSpeed.setValue(feedrate_percentage);
           Previousfeedrate = feedrate_percentage;
         }
-        #if defined(HAS_TEMP_0)
+        #if HAS_TEMP_0
           if (PreviousdegHeater[0] != thermalManager.current_temperature[0]) {
             PreviousdegHeater[0] = thermalManager.current_temperature[0];
             degtoLCD(0, PreviousdegHeater[0]);
@@ -1355,7 +1347,7 @@
             degtoLCD(4, PreviousdegHeater[1]);
           }
         #endif
-        #if defined(HAS_TEMP_BED)
+        #if HAS_TEMP_BED
           if (PreviousdegHeater[2] != thermalManager.current_temperature_bed) {
             PreviousdegHeater[2] = thermalManager.current_temperature_bed;
             degtoLCD(2, PreviousdegHeater[2]);
@@ -1366,49 +1358,6 @@
           }
         #endif
         coordtoLCD();
-
-		if (PreviouspercentDone != progress_printing) {
-			// Progress bar solid part
-			progressbar.setValue(progress_printing);
-			// Estimate End Time
-			ZERO(buffer);
-			char buffer1[10];
-			uint8_t digit;
-			duration_t Time = print_job_timer.duration();
-			digit = Time.toDigital(buffer1, true);
-			strcat(buffer, "S");
-			strcat(buffer, buffer1);
-			Time = (print_job_timer.duration() * (100 - progress_printing)) / (progress_printing + 0.1);
-			digit += Time.toDigital(buffer1, true);
-			if (digit > 14)
-				strcat(buffer, "E");
-			else
-				strcat(buffer, " E");
-			strcat(buffer, buffer1);
-			LcdTime.setText(buffer);
-			PreviouspercentDone = progress_printing;
-	}
-
-		#if ENABLED(SDSUPPORT)
-		if (card.isFileOpen()) {
-			if (IS_SD_PRINTING && SDstatus != SD_PRINTING) {
-				SDstatus = SD_PRINTING;
-				SD.setValue(SDstatus);
-			}
-			else if (!IS_SD_PRINTING && SDstatus != SD_PAUSE) {
-				SDstatus = SD_PAUSE;
-				SD.setValue(SDstatus);
-			}
-		}
-		else if (card.cardOK && SDstatus != SD_INSERT) {
-			SDstatus = SD_INSERT;
-			SD.setValue(SDstatus);
-		}
-		else if (card.cardOK && SDstatus != SD_NO_INSERT) {
-			SDstatus = SD_NO_INSERT;
-			SD.setValue(SDstatus);
-		}
-		#endif // HAS_SD_SUPPORT
 
 		#if HAS_SD_RESTART
           if (restart.count && restart.job_phase == RESTART_IDLE) {
@@ -1433,7 +1382,7 @@
         break;
     }
 
-    PreviousPage = PageID; 
+    PreviousPage = PageID; */
   }
 
   void lcd_setstatus(const char* message, bool persist) {

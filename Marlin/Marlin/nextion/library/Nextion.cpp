@@ -21,6 +21,8 @@
  */
 
 #include "../../Marlin.h"
+#include "Arduino.h"
+#include "HardwareSerial.h"
 
 #if ENABLED(NEXTION)
 
@@ -434,7 +436,7 @@
   /**
    * Class NexUpload
    */
-  #if HAS_SD_SUPPORT
+  #if ENABLED(NEX_UPLOAD)
 
     SdFile nextion_file;
 
@@ -589,27 +591,28 @@
   #endif  // SDSUPPORT
 
   bool getConnect(char* buffer) {
-    delay(100);
+    delayMicroseconds(100);
     sendCommand("");
     delay(100);
     sendCommand("connect");
-    delay(100);
+    delay(20);
+	//SERIAL_ECHOLN(" getConnect: za delayami ");
 
-    uint8_t c = 0;
-    String temp = String("");
+	  uint8_t   c = 0;
+	  String temp = String("");
 
-    #if ENABLED(NEXTION_CONNECT_DEBUG)
-      SERIAL_ECHOLN(" NEXTION Debug Connect receveid:");
-    #endif
+	#if ENABLED(NEXTION_CONNECT_DEBUG)
+	  SERIAL_MSG(" NEXTION Debug Connect receveid:");
+	#endif
 
-    while (nexSerial.available()) {
-      c = nexSerial.read();
-      #if ENABLED(NEXTION_CONNECT_DEBUG)
-	  SERIAL_ECHO((char)c);
-      #endif
-      temp += (char)c;
-    }
-
+	  while (nexSerial.available()) {
+		  c = nexSerial.read();
+			#if ENABLED(NEXTION_CONNECT_DEBUG)
+			SERIAL_CHR((char)c);
+			#endif
+		  temp += (char)c;
+	  }
+	//SERIAL_ECHOLN(" getConnect: za while ");
 	#if ENABLED(NEXTION_CONNECT_DEBUG)
 		SERIAL_EOL();
 	#endif
@@ -626,24 +629,25 @@
   //
 
   bool nexInit(char *buffer) {
-
+	  //SERIAL_ECHOLN(" Wejscie w nex_init ");
     // Try default baudrate
     nexSerial.begin(9600);
 
     ZERO(buffer);
+	//SERIAL_ECHOLN(" przed getConnect ");
     bool connect = getConnect(buffer);
-
+	//SERIAL_ECHOLN(" za get connect ");
     // If baudrate is 9600 set to 115200 and reconnect
     if (connect) {
       sendCommand("baud=115200");
       nexSerial.end();
-      delay(1000);
+      delay(10);
       nexSerial.begin(115200);
       return true;
     }
     else { // Else try to 115200 baudrate
       nexSerial.end();
-	  delay(1000);
+	  delay(10);
       nexSerial.begin(115200);
       connect = getConnect(buffer);
       if (connect) return true;

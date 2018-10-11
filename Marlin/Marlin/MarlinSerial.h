@@ -29,8 +29,8 @@
 
 */
 
-#ifndef MARLINSERIAL_H
-#define MARLINSERIAL_H
+#ifndef _MARLINSERIAL_H_ //mk4duo ma tutaj hardwareserial
+#define _MARLINSERIAL_H_
 
 #include "MarlinConfig.h"
 
