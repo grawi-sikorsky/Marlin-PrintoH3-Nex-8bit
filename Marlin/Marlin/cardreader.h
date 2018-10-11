@@ -88,6 +88,13 @@ public:
   FORCE_INLINE char* getWorkDirName() { workDir.getFilename(filename); return filename; }
   FORCE_INLINE uint32_t get_sdpos() { if (!isFileOpen()) return 0; else return(sdpos); }; // dodane printo h3 przekazuje sdpos dalej
 
+  FORCE_INLINE static bool isFilenameIsDir() { return TEST(card_flag, flag_SD_filenameIsDir); } // dodane nextion 
+  FORCE_INLINE static void setFilenameIsDir(const bool onoff) {
+	  SET_BIT(card_flag, flag_SD_filenameIsDir, onoff);
+  }
+  enum FlagCardReader : char {
+	  flag_SD_filenameIsDir
+  };
 
 public:
   bool saving, logging, sdprinting, cardOK, filenameIsDir;
@@ -97,7 +104,7 @@ public:
 private:
   SdFile root, *curDir, workDir, workDirParents[MAX_DIR_DEPTH];
   uint16_t workDirDepth; // zmiana z uint8_t na uint16_t
-
+  static uint8_t card_flag;
 
   // Sort files and folders alphabetically.
   #if ENABLED(SDCARD_SORT_ALPHA)

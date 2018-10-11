@@ -200,6 +200,8 @@
 	inline void lcd_eeprom_allert() {}
 	inline void lcd_buttons_update() {}
 
+	void lcd_sdcard_stop();
+
 	//VLCS
 	#if ENABLED(PLOSS_SUPPORT)
 	void lcd_ploss_recovery_menu(const PlossMenuMessage message);

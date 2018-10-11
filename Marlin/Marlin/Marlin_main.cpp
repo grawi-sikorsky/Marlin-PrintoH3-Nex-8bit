@@ -1093,7 +1093,12 @@ inline void get_serial_commands() {
 
       serial_comment_mode = false; // end of line == end of comment
 
-      if (!serial_count) continue; // skip empty lines
+      if (!serial_count) { 
+		  #if ENABLED(NEXTION_DISPLAY)
+			nextion_draw_update();//dodane dla nextiona
+		  #endif
+		  continue; 
+	  } // skip empty lines 
 
       serial_line_buffer[serial_count] = 0; // terminate string
       serial_count = 0; //reset buffer
@@ -12914,6 +12919,9 @@ void idle(
   #if ENABLED(PRINTCOUNTER)
     print_job_timer.tick();
   #endif
+  #if ENABLED(NEXTION)
+	//nextion_draw_update();
+  #endif
 
   #if HAS_BUZZER && DISABLED(LCD_USE_I2C_BUZZER)
     buzzer.tick();
@@ -13461,7 +13469,7 @@ void setup() {
   #if ENABLED(USE_WATCHDOG)
     watchdog_init();
   #endif
-	SERIAL_ECHOPGM("after watchdog init");
+
   stepper.init();    // Initialize stepper, this enables interrupts!
   servo_init();
 
@@ -13536,7 +13544,7 @@ void setup() {
     SET_OUTPUT(E_MUX1_PIN);
     SET_OUTPUT(E_MUX2_PIN);
   #endif
-	SERIAL_ECHOPGM("przed lcd init");
+
   lcd_init();
   SERIAL_ECHOPGM("za lcd init");
   #ifndef CUSTOM_BOOTSCREEN_TIMEOUT

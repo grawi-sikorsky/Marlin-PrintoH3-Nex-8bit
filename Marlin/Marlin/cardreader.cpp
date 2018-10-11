@@ -32,6 +32,8 @@
 
 #define LONGEST_FILENAME (longFilename[0] ? longFilename : filename)
 
+uint8_t CardReader::card_flag = 0;
+
 CardReader::CardReader() {
   #if ENABLED(SDCARD_SORT_ALPHA)
     sort_count = 0;

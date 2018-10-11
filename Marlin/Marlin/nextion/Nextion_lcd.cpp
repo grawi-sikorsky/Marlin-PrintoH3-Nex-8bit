@@ -398,6 +398,24 @@
    * Menu actions
    *
    */
+
+  void lcd_sdcard_stop() {
+	  card.stopSDPrint();
+	  clear_command_queue();
+	  quickstop_stepper();
+	  print_job_timer.stop();
+	  thermalManager.disable_all_heaters();
+		#if ENABLED(PLOSS_SUPPORT)
+	  //_babystep_z_shift = 0; // dodane - zeruje babystep po zatrzymaniu wydruku
+	  //eeprom_update_dword((uint32_t*)(EEPROM_PANIC_BABYSTEP_Z), _babystep_z_shift);	// zeruj babystepping w eeprom
+		#endif
+		#if FAN_COUNT > 0
+	  for (uint8_t i = 0; i < FAN_COUNT; i++) fanSpeeds[i] = 0;
+		#endif
+	  wait_for_heatup = false;
+	  lcd_setstatusPGM(PSTR(MSG_PRINT_ABORTED), -1);
+}
+
   void menu_action_back() { Pprinter.show(); }
   void menu_action_function(screenFunc_t func) { (*func)(); }
 
@@ -571,7 +589,7 @@
             #else
               card.getfilename(i);
             #endif
-            printrowsd(row, true, card.filename); //card.isFilenameIsDir()
+            printrowsd(row, card.isFilenameIsDir(), card.filename); //card.isFilenameIsDir()
           } else {
             printrowsd(row, false, "");
           }
@@ -1035,6 +1053,7 @@
   void motoroffPopCallback(void *ptr) {
     UNUSED(ptr);
 	enqueue_and_echo_commands_P(PSTR("M84"));
+	//enqueue_and_echo_commands_P(buffer);
   }
 
   void sendPopCallback(void *ptr) {
@@ -1061,7 +1080,7 @@
       switch(Vyes.getValue()) {
         #if ENABLED(SDSUPPORT)
           case 1: // Stop Print
-            card.stopSDPrint();
+			//lcd_sdcard_stop();
             lcd_setstatusPGM(PSTR(MSG_PRINT_ABORTED), -1);
             Pprinter.show();
             break;
@@ -1103,7 +1122,6 @@
   }
 
   void lcd_init() {
-	  SERIAL_ECHOPGM("Wejscie w lcd_init");
     for (uint8_t i = 0; i < 10; i++) {
       ZERO(buffer);
       NextionON = nexInit(buffer);
@@ -1227,7 +1245,6 @@
         Wavetemp.SetVisibility(true);
       }
     #endif
-
   }
 
   static void targetdegtoLCD(const uint8_t h, const float temp) {
@@ -1320,13 +1337,15 @@
           VSpeed.setValue(feedrate_percentage);
           Previousfeedrate = feedrate_percentage;
         }
-        #if defined(HAS_TEMP_0)
-          if (PreviousdegHeater[0] != thermalManager.current_temperature[0]) {
-            PreviousdegHeater[0] = thermalManager.current_temperature[0];
+        #if HAS_TEMP_0
+          if (PreviousdegHeater[0] != thermalManager.current_temperature[0]) 
+		  {
+			  PreviousdegHeater[0] = thermalManager.current_temperature[0];
             degtoLCD(0, PreviousdegHeater[0]);
           }
-          if (PrevioustargetdegHeater[0] != thermalManager.current_temperature[0]) {
-            PrevioustargetdegHeater[0] = thermalManager.current_temperature[0];
+          if (PrevioustargetdegHeater[0] != thermalManager.target_temperature[0]) 
+		  {
+			  PrevioustargetdegHeater[0] = thermalManager.target_temperature[0];
             targetdegtoLCD(0, PrevioustargetdegHeater[0]);
           }
         #endif
@@ -1355,13 +1374,13 @@
             degtoLCD(4, PreviousdegHeater[1]);
           }
         #endif
-        #if defined(HAS_TEMP_BED)
+        #if HAS_TEMP_BED
           if (PreviousdegHeater[2] != thermalManager.current_temperature_bed) {
             PreviousdegHeater[2] = thermalManager.current_temperature_bed;
             degtoLCD(2, PreviousdegHeater[2]);
           }
-          if (PrevioustargetdegHeater[2] != thermalManager.current_temperature_bed) {
-            PrevioustargetdegHeater[2] = thermalManager.current_temperature_bed;
+          if (PrevioustargetdegHeater[2] != thermalManager.target_temperature_bed) {
+            PrevioustargetdegHeater[2] = thermalManager.target_temperature_bed;
             targetdegtoLCD(2, PrevioustargetdegHeater[2]);
           }
         #endif
@@ -1433,7 +1452,7 @@
         break;
     }
 
-    PreviousPage = PageID; 
+    PreviousPage = PageID;
   }
 
   void lcd_setstatus(const char* message, bool persist) {
