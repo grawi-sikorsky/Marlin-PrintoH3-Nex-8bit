@@ -12891,6 +12891,20 @@ void manage_inactivity(bool ignore_stepper_queue/*=false*/) {
   planner.check_axes_activity();
 }
 
+void check_periodical_actions()
+{
+	static millis_t cycle_1s = 0;
+	const millis_t now = millis();
+	
+	if (ELAPSED(now, cycle_1s)) {
+		cycle_1s = now + 1000UL;
+
+		#if ENABLED(NEXTION)
+			nextion_draw_update();
+		#endif
+	}
+}
+
 /**
  * Standard idle routine keeps the machine alive
  */
@@ -12902,6 +12916,8 @@ void idle(
 
   lcd_update();
   
+  check_periodical_actions(); //dodane dla nextion
+
   host_keepalive();
 
   #if ENABLED(AUTO_REPORT_TEMPERATURES) && (HAS_TEMP_HOTEND || HAS_TEMP_BED)
@@ -12918,9 +12934,6 @@ void idle(
 
   #if ENABLED(PRINTCOUNTER)
     print_job_timer.tick();
-  #endif
-  #if ENABLED(NEXTION)
-	//nextion_draw_update();
   #endif
 
   #if HAS_BUZZER && DISABLED(LCD_USE_I2C_BUZZER)
