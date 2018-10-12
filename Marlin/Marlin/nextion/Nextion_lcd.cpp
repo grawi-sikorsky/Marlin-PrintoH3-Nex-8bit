@@ -35,7 +35,7 @@
   uint8_t     PageID                    = 0,
               lcd_status_message_level  = 0;
   uint16_t    slidermaxval              = 20;
-  char        buffer[70]                = { 0 };
+  char        bufferson[70]             = { 0 };
   char        lcd_status_message[30]    = WELCOME_MSG;
   const float manual_feedrate_mm_m[]    = MANUAL_FEEDRATE;
 
@@ -651,41 +651,41 @@
     }
 
     void sdfilePopCallback(void *ptr) {
-      ZERO(buffer);
+      ZERO(bufferson);
 
       if (ptr == &sdrow0)
-        sdrow0.getText(buffer, sizeof(buffer));
+        sdrow0.getText(bufferson, sizeof(bufferson));
       else if (ptr == &sdrow1)
-        sdrow1.getText(buffer, sizeof(buffer));
+        sdrow1.getText(bufferson, sizeof(bufferson));
       else if (ptr == &sdrow2)
-        sdrow2.getText(buffer, sizeof(buffer));
+        sdrow2.getText(bufferson, sizeof(bufferson));
       else if (ptr == &sdrow3)
-        sdrow3.getText(buffer, sizeof(buffer));
+        sdrow3.getText(bufferson, sizeof(bufferson));
       else if (ptr == &sdrow4)
-        sdrow4.getText(buffer, sizeof(buffer));
+        sdrow4.getText(bufferson, sizeof(bufferson));
       else if (ptr == &sdrow5)
-        sdrow5.getText(buffer, sizeof(buffer));
+        sdrow5.getText(bufferson, sizeof(bufferson));
 
-      menu_action_sdfile(buffer);
+      menu_action_sdfile(bufferson);
     }
 
     void sdfolderPopCallback(void *ptr) {
-      ZERO(buffer);
+      ZERO(bufferson);
 
       if (ptr == &sdrow0)
-        sdrow0.getText(buffer, sizeof(buffer));
+        sdrow0.getText(bufferson, sizeof(bufferson));
       else if (ptr == &sdrow1)
-        sdrow1.getText(buffer, sizeof(buffer));
+        sdrow1.getText(bufferson, sizeof(bufferson));
       else if (ptr == &sdrow2)
-        sdrow2.getText(buffer, sizeof(buffer));
+        sdrow2.getText(bufferson, sizeof(bufferson));
       else if (ptr == &sdrow3)
-        sdrow3.getText(buffer, sizeof(buffer));
+        sdrow3.getText(bufferson, sizeof(bufferson));
       else if (ptr == &sdrow4)
-        sdrow4.getText(buffer, sizeof(buffer));
+        sdrow4.getText(bufferson, sizeof(bufferson));
       else if (ptr == &sdrow5)
-        sdrow5.getText(buffer, sizeof(buffer));
+        sdrow5.getText(bufferson, sizeof(bufferson));
 
-      menu_action_sddirectory(buffer);
+      menu_action_sddirectory(bufferson);
     }
 
     void sdfolderUpPopCallback(void *ptr) {
@@ -880,7 +880,7 @@
 
   #if ENABLED(RFID_MODULE)
     void rfidPopCallback(void *ptr) {
-      ZERO(buffer);
+      ZERO(bufferson);
 
       String temp = "M522 ";
       uint16_t Rfid_read = RfidR.getValue();
@@ -903,8 +903,8 @@
       else
         temp += "W";
 
-      temp.toCharArray(buffer, sizeof(buffer));
-      commands.enqueue_and_echo(buffer);
+      temp.toCharArray(bufferson, sizeof(bufferson));
+      commands.enqueue_and_echo(bufferson);
     }
 
     void rfid_setText(const char* message, uint32_t color /* = 65535 */) {
@@ -998,10 +998,10 @@
 
   void setgcodePopCallback(void *ptr) {
     UNUSED(ptr);
-    ZERO(buffer);
-    Tgcode.getText(buffer, sizeof(buffer), "gcode");
+    ZERO(bufferson);
+    Tgcode.getText(bufferson, sizeof(bufferson), "gcode");
     Tgcode.setText("", "gcode");
-	enqueue_and_echo_command(buffer);
+	enqueue_and_echo_command(bufferson);
   }
 
   #if FAN_COUNT > 0
@@ -1023,37 +1023,40 @@
 
   void setmovePopCallback(void *ptr) {
     UNUSED(ptr);
-
+	SERIAL_ECHOLN(" Wejscie w setmovePOP ");
     #if EXTRUDERS > 1
       const uint8_t temp_extruder = tools.active_extruder;
       char temp[5] = { 0 };
 
-      ZERO(buffer);
+      ZERO(bufferson);
       itoa(ext.getValue(), temp, 2);
-      strcat(buffer, "T");
-      strcat(buffer, temp);
-      commands.enqueue_and_echo(buffer);
+      strcat(bufferson, "T");
+      strcat(bufferson, temp);
+      commands.enqueue_and_echo(bufferson);
     #endif
 
-    ZERO(buffer);
-    movecmd.getText(buffer, sizeof(buffer));
+		SERIAL_ECHO(bufferson);
+    ZERO(bufferson);
+		SERIAL_ECHO(bufferson);
+    movecmd.getText(bufferson, sizeof(bufferson));
+		SERIAL_ECHOLN(bufferson);
 	enqueue_and_echo_commands_P(PSTR("G91"));
-	enqueue_and_echo_commands_P(buffer);
+	enqueue_and_echo_command(bufferson);
 	enqueue_and_echo_commands_P(PSTR("G90"));
 
     #if EXTRUDERS > 1
-      ZERO(buffer);
+      ZERO(bufferson);
       itoa(temp_extruder, temp, 2);
-      strcat(buffer, "T");
-      strcat(buffer, temp);
-      commands.enqueue_and_echo(buffer);
+      strcat(bufferson, "T");
+      strcat(bufferson, temp);
+      commands.enqueue_and_echo(bufferson);
     #endif
   }
 
   void motoroffPopCallback(void *ptr) {
     UNUSED(ptr);
 	enqueue_and_echo_commands_P(PSTR("M84"));
-	//enqueue_and_echo_commands_P(buffer);
+	//enqueue_and_echo_commands_P(bufferson);
   }
 
   void sendPopCallback(void *ptr) {
@@ -1063,13 +1066,13 @@
   }
 
   void filamentPopCallback(void *ptr) {
-    ZERO(buffer);
-    Filgcode.getText(buffer, sizeof(buffer));
+    ZERO(bufferson);
+    Filgcode.getText(bufferson, sizeof(bufferson));
     if (ptr == &FilExtr)
-	  enqueue_and_echo_command(buffer);
+	  enqueue_and_echo_command(bufferson);
     else {
 	  enqueue_and_echo_commands_P(PSTR("G91"));
-	  enqueue_and_echo_command(buffer);
+	  enqueue_and_echo_command(bufferson);
 	  enqueue_and_echo_commands_P(PSTR("G90"));
     }
   }
@@ -1080,8 +1083,7 @@
       switch(Vyes.getValue()) {
         #if ENABLED(SDSUPPORT)
           case 1: // Stop Print
-			//lcd_sdcard_stop();
-            lcd_setstatusPGM(PSTR(MSG_PRINT_ABORTED), -1);
+						lcd_sdcard_stop();
             Pprinter.show();
             break;
           case 2: // Upload Firmware
@@ -1123,8 +1125,8 @@
 
   void lcd_init() {
     for (uint8_t i = 0; i < 10; i++) {
-      ZERO(buffer);
-      NextionON = nexInit(buffer);
+      ZERO(bufferson);
+      NextionON = nexInit(bufferson);
       if (NextionON) break;
       delay(20);
     }
@@ -1139,25 +1141,25 @@
 	  SERIAL_ECHOPGM("Nextion");
       // Get Model
 
-      if (strstr(buffer, "3224")) {       // Model 2.4" or 2.8" Normal or Enhanced
+      if (strstr(bufferson, "3224")) {       // Model 2.4" or 2.8" Normal or Enhanced
 		SERIAL_ECHOPGM(" 2.4");
         #if ENABLED(NEXTION_GFX)
           gfx.set_position(1, 24, 250, 155);
         #endif
       }
-      else if (strstr(buffer, "4024")) {  // Model 3.2" Normal or Enhanced
+      else if (strstr(bufferson, "4024")) {  // Model 3.2" Normal or Enhanced
 		SERIAL_ECHOPGM(" 3.2");
         #if ENABLED(NEXTION_GFX)
           gfx.set_position(1, 24, 250, 155);
         #endif
       }
-      else if (strstr(buffer, "4827")) {  // Model 4.3" Normal or Enhanced
+      else if (strstr(bufferson, "4827")) {  // Model 4.3" Normal or Enhanced
 		SERIAL_ECHOPGM(" 4.3");
         #if ENABLED(NEXTION_GFX)
           gfx.set_position(1, 24, 250, 155);
         #endif
       }
-      else if (strstr(buffer, "8048")) {  // Model 7" Normal or Enhanced
+      else if (strstr(bufferson, "8048")) {  // Model 7" Normal or Enhanced
 		SERIAL_ECHOPGM(" 7");
         #if ENABLED(NEXTION_GFX)
           gfx.set_position(274, 213, 250, 155);
@@ -1253,7 +1255,7 @@
 
   static void coordtoLCD() {
     char* valuetemp;
-    ZERO(buffer);
+    ZERO(bufferson);
 
     if (PageID == 2) {
       LcdX.setText(ftostr41sign(LOGICAL_X_POSITION(current_position[X_AXIS])));
@@ -1264,29 +1266,29 @@
     else if (PageID == 5) {
       if (axis_homed[X_AXIS]) {
         valuetemp = ftostr4sign(LOGICAL_X_POSITION(current_position[X_AXIS]));
-        strcat(buffer, "X");
-        strcat(buffer, valuetemp);
+        strcat(bufferson, "X");
+        strcat(bufferson, valuetemp);
       }
       else
-        strcat(buffer, "?");
+        strcat(bufferson, "?");
 
       if (axis_homed[Y_AXIS]) {
         valuetemp = ftostr4sign(LOGICAL_Y_POSITION(current_position[Y_AXIS]));
-        strcat(buffer, " Y");
-        strcat(buffer, valuetemp);
+        strcat(bufferson, " Y");
+        strcat(bufferson, valuetemp);
       }
       else
-        strcat(buffer, " ?");
+        strcat(bufferson, " ?");
 
       if (axis_homed[Z_AXIS]) {
         valuetemp = ftostr52sp(FIXFLOAT(LOGICAL_Z_POSITION(current_position[Z_AXIS])));
-        strcat(buffer, " Z");
-        strcat(buffer, valuetemp);
+        strcat(bufferson, " Z");
+        strcat(bufferson, valuetemp);
       }
       else
-        strcat(buffer, " ?");
+        strcat(bufferson, " ?");
 
-      LedCoord5.setText(buffer);
+      LedCoord5.setText(bufferson);
     }
     else if (PageID == 15) {
       ProbeZ.setText(ftostr43sign(FIXFLOAT(LOGICAL_Z_POSITION(current_position[Z_AXIS]))));
@@ -1390,21 +1392,21 @@
 			// Progress bar solid part
 			progressbar.setValue(progress_printing);
 			// Estimate End Time
-			ZERO(buffer);
+			ZERO(bufferson);
 			char buffer1[10];
 			uint8_t digit;
 			duration_t Time = print_job_timer.duration();
 			digit = Time.toDigital(buffer1, true);
-			strcat(buffer, "S");
-			strcat(buffer, buffer1);
+			strcat(bufferson, "S");
+			strcat(bufferson, buffer1);
 			Time = (print_job_timer.duration() * (100 - progress_printing)) / (progress_printing + 0.1);
 			digit += Time.toDigital(buffer1, true);
 			if (digit > 14)
-				strcat(buffer, "E");
+				strcat(bufferson, "E");
 			else
-				strcat(buffer, " E");
-			strcat(buffer, buffer1);
-			LcdTime.setText(buffer);
+				strcat(bufferson, " E");
+			strcat(bufferson, buffer1);
+			LcdTime.setText(bufferson);
 			PreviouspercentDone = progress_printing;
 	}
 

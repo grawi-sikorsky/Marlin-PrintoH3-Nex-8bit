@@ -103,7 +103,8 @@
     recvRetCommandFinished();
   }
 
-  void NexObject::getText(char *buffer, uint16_t len, const char *pname) {
+  void NexObject::getText(char *buffer_temp, uint16_t len, const char *pname) {
+		SERIAL_ECHOLN(" wejscie w gettext ");
     String cmd;
     cmd += "get ";
     if (pname) {
@@ -112,8 +113,11 @@
     }
     cmd += this->__name;
     cmd += ".txt";
+		SERIAL_ECHO(cmd);
     sendCommand(cmd.c_str());
-    recvRetString(buffer, len);
+		SERIAL_ECHO(cmd);
+    recvRetString(buffer_temp, len);
+		SERIAL_ECHO(buffer_temp);
   }
 
   void NexObject::setText(const char *buffer, const char *pname) {
