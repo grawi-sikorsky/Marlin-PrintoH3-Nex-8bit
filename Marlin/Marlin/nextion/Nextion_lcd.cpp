@@ -130,6 +130,14 @@
   NexObject Hot2Touch   = NexObject(2, 98,  "m2");
   NexObject FanTouch    = NexObject(2, 99,  "m3");
   
+	/**
+	*******************************************************************
+	* Nextion component for page:PRINTAAAA
+	*******************************************************************
+	*/
+
+
+
   /**
    *******************************************************************
    * Nextion component for page:SDCard
@@ -198,7 +206,7 @@
    *******************************************************************
    */
   NexObject Tgcode      = NexObject(7,   1, "tgcode");
-  NexObject Send        = NexObject(7,  27, "bsend");
+  NexObject Send        = NexObject(7,  25, "bsend");
 
   /**
    *******************************************************************
@@ -228,6 +236,31 @@
   NexObject theater     = NexObject(10,  1, "va0");
   NexObject tenter      = NexObject(10,  2, "p5");
   NexObject tset        = NexObject(10, 15, "tmp");
+
+	/**
+	*******************************************************************
+	* Nextion component for page:heatup // dodane
+	*******************************************************************
+	*/
+
+	NexObject heatupenter		= NexObject(16, 7, "m3");
+	NexObject temphe				= NexObject(16, 8, "temphe");
+	NexObject tempbe				= NexObject(16, 9, "tempbe");
+	NexObject heatbedenter	= NexObject(16, 12, "m4");
+	NexObject hotendenter		= NexObject(16, 13, "m5");
+	NexObject chillenter		= NexObject(16, 14, "m6");
+
+
+	/**
+	*******************************************************************
+	* Nextion component for page:maintain/osbluga
+	*******************************************************************
+	*/
+	NexObject cmdbuffer		= NexObject(17, 2, "cmdbuff");
+	NexObject homeaxisbtn = NexObject(17, 3, "m0");
+	NexObject bedlevelbtn = NexObject(17, 4, "m1");
+	NexObject filchangebtn = NexObject(17, 7, "m4");
+
 
   /**
    *******************************************************************
@@ -327,6 +360,12 @@
 
     // Page 15 touch listen
     &ProbeUp, &ProbeDown, &ProbeSend,
+
+		// Page 16 tacz listen
+		&heatupenter, &heatbedenter, &hotendenter, &chillenter,
+
+		// Page 17 tacz listen
+		&cmdbuffer, &homeaxisbtn, &bedlevelbtn, &filchangebtn,
 
     NULL
   };
@@ -976,32 +1015,47 @@
   void sethotPopCallback(void *ptr) {
     UNUSED(ptr);
 
-    uint16_t  Heater      = theater.getValue(),
-              temperature = tset.getValue();
+		uint16_t	temp_hotend = temphe.getValue(), //dodane
+							temp_bed = tempbe.getValue();    //dodane
 
-    #if HAS_TEMP_BED
-      if (Heater == 2)
-        thermalManager.setTargetBed(temperature); //iterator dodane trzeba zmienic
-      else
-    #endif
-    #if HAS_TEMP_CHAMBER
-      if (Heater == 3)
-        //heaters[CHAMBER_INDEX].setTarget(temperature);
-      else
-    #endif
-    #if HAS_TEMP_HOTEND
-		  thermalManager.setTargetHotend(temperature,0);
-    #endif
+		thermalManager.setTargetHotend(temp_hotend, 0);
+		thermalManager.setTargetBed(temp_bed);
 
     Pprinter.show();
   }
+	void sethotendPopCallback(void *ptr) {
+		UNUSED(ptr);
+
+		uint16_t	temp_hotend = temphe.getValue();
+
+		thermalManager.setTargetHotend(temp_hotend, 0);
+
+		Pprinter.show();
+	}
+	void setheatbedPopCallback(void *ptr) {
+		UNUSED(ptr);
+
+		uint16_t temp_bed = tempbe.getValue();    //dodane
+
+		thermalManager.setTargetBed(temp_bed);
+
+		Pprinter.show();
+	}
+	void setmaintaincodePopCallback(void *ptr) {
+		UNUSED(ptr);
+		ZERO(bufferson);
+		cmdbuffer.getText(bufferson, sizeof(bufferson));
+		enqueue_and_echo_command(bufferson);
+	}
+
+
 
   void setgcodePopCallback(void *ptr) {
     UNUSED(ptr);
     ZERO(bufferson);
     Tgcode.getText(bufferson, sizeof(bufferson), "gcode");
     Tgcode.setText("", "gcode");
-	enqueue_and_echo_command(bufferson);
+		enqueue_and_echo_command(bufferson);
   }
 
   #if FAN_COUNT > 0
@@ -1023,7 +1077,6 @@
 
   void setmovePopCallback(void *ptr) {
     UNUSED(ptr);
-	SERIAL_ECHOLN(" Wejscie w setmovePOP ");
     #if EXTRUDERS > 1
       const uint8_t temp_extruder = tools.active_extruder;
       char temp[5] = { 0 };
@@ -1035,7 +1088,6 @@
       commands.enqueue_and_echo(bufferson);
     #endif
 
-		SERIAL_ECHO(bufferson);
     ZERO(bufferson);
 		SERIAL_ECHO(bufferson);
     movecmd.getText(bufferson, sizeof(bufferson));
@@ -1055,8 +1107,7 @@
 
   void motoroffPopCallback(void *ptr) {
     UNUSED(ptr);
-	enqueue_and_echo_commands_P(PSTR("M84"));
-	//enqueue_and_echo_commands_P(bufferson);
+		enqueue_and_echo_commands_P(PSTR("M84"));
   }
 
   void sendPopCallback(void *ptr) {
@@ -1210,6 +1261,13 @@
       #endif
 
       tenter.attachPop(sethotPopCallback,   &tenter);
+			heatupenter.attachPop(sethotPopCallback, &heatupenter); //dodane
+			hotendenter.attachPop(sethotendPopCallback, &hotendenter); //dodane
+			heatbedenter.attachPop(setheatbedPopCallback, &heatbedenter); //dodane
+			chillenter.attachPop(sethotPopCallback, &chillenter); //dodane
+			homeaxisbtn.attachPop(setmaintaincodePopCallback);
+			bedlevelbtn.attachPop(setmaintaincodePopCallback);
+			filchangebtn.attachPop(setmaintaincodePopCallback);
       XYHome.attachPop(setmovePopCallback);
       XYUp.attachPop(setmovePopCallback);
       XYRight.attachPop(setmovePopCallback);
