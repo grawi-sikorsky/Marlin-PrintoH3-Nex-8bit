@@ -76,7 +76,9 @@
   NexObject Poptions      = NexObject(16, 0,  "options");
   NexObject Ptime         = NexObject(17, 0,  "time");
   NexObject Pusertemp     = NexObject(18, 0,  "usertemp");
-  
+	NexObject Pheatup				= NexObject(19, 0,	"heatup");
+	NexObject Pprinta				= NexObject(20, 0,  "printa");
+
   /**
    *******************************************************************
    * Nextion component for page:start
@@ -117,26 +119,23 @@
   NexObject VSpeed      = NexObject(2, 21,  "vs");
   NexObject Language    = NexObject(2, 22,  "lang");
   NexObject LightStatus = NexObject(2, 23,  "light");
-  NexObject NStop       = NexObject(2, 34,  "p1");
-  NexObject NPlay       = NexObject(2, 35,  "p2");
+  NexObject NStop       = NexObject(2, 33,  "p1");
+  NexObject NPlay       = NexObject(2, 34,  "p2");
   NexObject Light       = NexObject(2, 36,  "p3");
   NexObject LcdStatus   = NexObject(2, 91,  "t0");
   NexObject LcdCommand  = NexObject(2, 92,  "t1");
   NexObject LcdTime     = NexObject(2, 93,  "t2");
   NexObject progressbar = NexObject(2, 94,  "j0");
   NexObject Wavetemp    = NexObject(2, 95,  "s0");
-  NexObject Hot0Touch   = NexObject(2, 96,  "m0");
-  NexObject Hot1Touch   = NexObject(2, 97,  "m1");
-  NexObject Hot2Touch   = NexObject(2, 98,  "m2");
-  NexObject FanTouch    = NexObject(2, 99,  "m3");
+
   
 	/**
 	*******************************************************************
-	* Nextion component for page:PRINTAAAA
+	* Nextion component for page:FanSPEEEED
 	*******************************************************************
 	*/
 
-
+	NexObject FanSpeedTouch = NexObject(2, 46, "m1");
 
   /**
    *******************************************************************
@@ -324,7 +323,7 @@
   NexObject *nex_listen_list[] =
   {
     // Page 2 touch listen
-    &FanTouch, &NPlay, &Light,
+    &FanSpeedTouch, &NPlay, &Light,
 
     // Page 3 touch listen
     &sdlist, &ScrollUp, &ScrollDown, &sdrow0, &sdrow1, &sdrow2,
@@ -366,6 +365,12 @@
 
 		// Page 17 tacz listen
 		&cmdbuffer, &homeaxisbtn, &bedlevelbtn, &filchangebtn,
+
+		// Page 19 tacz listen
+		&FanSpeedTouch,
+
+		// Page 20 tacz listen
+
 
     NULL
   };
@@ -1049,7 +1054,6 @@
 	}
 
 
-
   void setgcodePopCallback(void *ptr) {
     UNUSED(ptr);
     ZERO(bufferson);
@@ -1058,12 +1062,11 @@
 		enqueue_and_echo_command(bufferson);
   }
 
-  #if FAN_COUNT > 0
-    void setfanPopCallback(void *ptr) {
+  #if FAN_PIN
+    void setfanPopCallback(void *ptr){
       UNUSED(ptr);
-      //fans[0].Speed = (fans[0].Speed ? 0 : 255);
-	  //fanSpeeds[0].setValue(((float)(fans[0].Speed) / 255) * 100);
-	  //fanSpeeds[0]
+      fanSpeeds[0] = (fanSpeeds[0] ? 0 : 255);
+			Fanspeed.setValue(((float)(fanSpeeds[0]) / 255) * 100);
     }
   #endif
 
@@ -1247,7 +1250,7 @@
       #endif
 
       #if FAN_COUNT > 0
-        FanTouch.attachPop(setfanPopCallback, &FanTouch);
+				FanSpeedTouch.attachPop(setfanPopCallback, &FanSpeedTouch);
       #endif
 
       #if HAS_CASE_LIGHT
@@ -1268,6 +1271,7 @@
 			homeaxisbtn.attachPop(setmaintaincodePopCallback);
 			bedlevelbtn.attachPop(setmaintaincodePopCallback);
 			filchangebtn.attachPop(setmaintaincodePopCallback);
+			FanSpeedTouch.attachPop(setfanPopCallback, &FanSpeedTouch);
       XYHome.attachPop(setmovePopCallback);
       XYUp.attachPop(setmovePopCallback);
       XYRight.attachPop(setmovePopCallback);
