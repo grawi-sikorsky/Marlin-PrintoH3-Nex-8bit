@@ -135,7 +135,7 @@
 	*******************************************************************
 	*/
 
-	NexObject FanSpeedTouch = NexObject(2, 46, "m1");
+	NexObject FanSpeedTouch = NexObject(2, 56, "m1");
 
   /**
    *******************************************************************
@@ -232,9 +232,9 @@
    * Nextion component for page:Temp
    *******************************************************************
    */
-  NexObject theater     = NexObject(10,  1, "va0");
-  NexObject tenter      = NexObject(10,  2, "p5");
-  NexObject tset        = NexObject(10, 15, "tmp");
+  NexObject theater     = NexObject(10,  1, "va0");//do usuniecia
+  NexObject tenter      = NexObject(10,  2, "p5");//do usuniecia
+  NexObject tset        = NexObject(10, 15, "tmp"); //do usuniecia
 
 	/**
 	*******************************************************************
