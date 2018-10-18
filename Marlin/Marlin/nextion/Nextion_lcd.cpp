@@ -67,18 +67,20 @@
   NexObject Pgcode        = NexObject(7,  0,  "gcode");
   NexObject Prfid         = NexObject(8,  0,  "rfid");
   NexObject Pbrightness   = NexObject(9,  0,  "brightness");
-  NexObject Ptemp         = NexObject(10, 0,  "temp");
-  NexObject Pinfo         = NexObject(11, 0,  "info");
-  NexObject Pyesno        = NexObject(12, 0,  "yesno");
-  NexObject Pfilament     = NexObject(13, 0,  "filament");
-  NexObject Pselect       = NexObject(14, 0,  "select");
-  NexObject Pprobe        = NexObject(15, 0,  "probe");
-  NexObject Poptions      = NexObject(16, 0,  "options");
-  NexObject Ptime         = NexObject(17, 0,  "time");
-  NexObject Pusertemp     = NexObject(18, 0,  "usertemp");
-	NexObject Pheatup				= NexObject(19, 0,	"heatup");
-	NexObject Pprinta				= NexObject(20, 0,  "printa");
+  NexObject Pinfo         = NexObject(10, 0,  "info");
+  NexObject Pyesno        = NexObject(11, 0,  "yesno");
+  NexObject Pfilament     = NexObject(12, 0,  "filament");
+  NexObject Pselect       = NexObject(13, 0,  "select");
+  NexObject Pprobe        = NexObject(14, 0,  "probe");
+	NexObject Pheatup				= NexObject(15, 0,	"heatup");
+	NexObject Poptions			= NexObject(16, 0,	"maintain");
+  NexObject Ptime         = NexObject(17, 0,  "infomove");
+  NexObject Pfanspeedpage = NexObject(18, 0,  "fanspeedpage");
+	NexObject Pstats				= NexObject(19, 0, "statscreen");
+	NexObject Ptsettings		= NexObject(20, 0,  "tempsettings");
 
+
+	
   /**
    *******************************************************************
    * Nextion component for page:start
@@ -91,7 +93,7 @@
    * Nextion component for page:menu
    *******************************************************************
    */
-  NexObject Version     = NexObject(1, 10,  "t0");
+  NexObject Version     = NexObject(1, 6,  "t0");
 
   /**
    *******************************************************************
@@ -121,12 +123,11 @@
   NexObject LightStatus = NexObject(2, 23,  "light");
   NexObject NStop       = NexObject(2, 33,  "p1");
   NexObject NPlay       = NexObject(2, 34,  "p2");
-  NexObject Light       = NexObject(2, 36,  "p3");
-  NexObject LcdStatus   = NexObject(2, 91,  "t0");
-  NexObject LcdCommand  = NexObject(2, 92,  "t1");
-  NexObject LcdTime     = NexObject(2, 93,  "t2");
-  NexObject progressbar = NexObject(2, 94,  "j0");
-  NexObject Wavetemp    = NexObject(2, 95,  "s0");
+  NexObject LcdStatus   = NexObject(2, 35,  "t0");
+  //NexObject LcdCommand  = NexObject(2, 92,  "t1");
+  NexObject LcdTime     = NexObject(2, 36,  "t2");
+  NexObject progressbar = NexObject(2, 37,  "j0");
+  NexObject Wavetemp    = NexObject(2, 38,  "s0");
 
   
 	/**
@@ -197,7 +198,7 @@
    * Nextion component for page:Speed
    *******************************************************************
    */
-  NexObject Speed       = NexObject(6,  7,  "h0");
+  NexObject Speed       = NexObject(6,  1,  "h0");
 
   /**
    *******************************************************************
@@ -232,9 +233,7 @@
    * Nextion component for page:Temp
    *******************************************************************
    */
-  NexObject theater     = NexObject(10,  1, "va0");//do usuniecia
-  NexObject tenter      = NexObject(10,  2, "p5");//do usuniecia
-  NexObject tset        = NexObject(10, 15, "tmp"); //do usuniecia
+
 
 	/**
 	*******************************************************************
@@ -242,12 +241,12 @@
 	*******************************************************************
 	*/
 
-	NexObject heatupenter		= NexObject(16, 7, "m3");
-	NexObject temphe				= NexObject(16, 8, "temphe");
-	NexObject tempbe				= NexObject(16, 9, "tempbe");
-	NexObject heatbedenter	= NexObject(16, 12, "m4");
-	NexObject hotendenter		= NexObject(16, 13, "m5");
-	NexObject chillenter		= NexObject(16, 14, "m6");
+	NexObject heatupenter		= NexObject(15, 7, "m3");
+	NexObject temphe				= NexObject(15, 8, "temphe");
+	NexObject tempbe				= NexObject(15, 9, "tempbe");
+	NexObject heatbedenter	= NexObject(15, 12, "m4");
+	NexObject hotendenter		= NexObject(15, 13, "m5");
+	NexObject chillenter		= NexObject(15, 14, "m6");
 
 
 	/**
@@ -255,10 +254,10 @@
 	* Nextion component for page:maintain/osbluga
 	*******************************************************************
 	*/
-	NexObject cmdbuffer		= NexObject(17, 2, "cmdbuff");
-	NexObject homeaxisbtn = NexObject(17, 3, "m0");
-	NexObject bedlevelbtn = NexObject(17, 4, "m1");
-	NexObject filchangebtn = NexObject(17, 7, "m4");
+	NexObject cmdbuffer		= NexObject(16, 2, "cmdbuff");
+	NexObject homeaxisbtn = NexObject(16, 3, "m0");
+	NexObject bedlevelbtn = NexObject(16, 4, "m1");
+	NexObject filchangebtn = NexObject(16, 7, "m4");
 
 
   /**
@@ -266,70 +265,86 @@
    * Nextion component for page:Info
    *******************************************************************
    */
-  NexObject InfoText    = NexObject(11, 2,  "t0");
-  NexObject ScrollText  = NexObject(11, 3,  "g0");
+  NexObject InfoText    = NexObject(10, 2,  "t0");
+  NexObject ScrollText  = NexObject(10, 3,  "g0");
 
   /**
    *******************************************************************
    * Nextion component for page:Yesno
    *******************************************************************
    */
-  NexObject Vyes        = NexObject(12, 2,  "va0");
-  NexObject Riga0       = NexObject(12, 4,  "t0");
-  NexObject Riga1       = NexObject(12, 5,  "t1");
-  NexObject Riga2       = NexObject(12, 6,  "t2");
-  NexObject Riga3       = NexObject(12, 7,  "t3");
-  NexObject Yes         = NexObject(12, 8,  "p1");
-  NexObject No          = NexObject(12, 9,  "p2");
+  NexObject Vyes        = NexObject(11, 2,  "va0");
+  NexObject Riga0       = NexObject(11, 4,  "t0");
+  NexObject Riga1       = NexObject(11, 5,  "t1");
+  NexObject Riga2       = NexObject(11, 6,  "t2");
+  NexObject Riga3       = NexObject(11, 7,  "t3");
+  NexObject Yes         = NexObject(11, 8,  "p1");
+  NexObject No          = NexObject(11, 9,  "p2");
 
   /**
    *******************************************************************
    * Nextion component for page:Filament
    *******************************************************************
    */
-  NexObject FilLoad     = NexObject(13,  3, "p2");
-  NexObject FilUnload   = NexObject(13,  4, "p3");
-  NexObject FilExtr     = NexObject(13,  5, "p4");
-  NexObject Filgcode    = NexObject(13, 10, "vacmd");
+  NexObject FilLoad     = NexObject(12,  3, "p2");
+  NexObject FilUnload   = NexObject(12,  4, "p3");
+  NexObject FilExtr     = NexObject(12,  5, "p4");
+  NexObject Filgcode    = NexObject(12, 10, "vacmd");
 
   /**
    *******************************************************************
    * Nextion component for page:Select
    *******************************************************************
    */
-  NexObject LcdRiga1    = NexObject(14,  1, "t0");
-  NexObject LcdRiga2    = NexObject(14,  2, "t1");
-  NexObject LcdRiga3    = NexObject(14,  3, "t2");
-  NexObject LcdRiga4    = NexObject(14,  4, "t3");
-  NexObject LcdValor    = NexObject(14,  5, "t4");
-  NexObject LcdUp       = NexObject(14,  6, "p0");
-  NexObject LcdSend     = NexObject(14,  7, "p1");
-  NexObject LcdDown     = NexObject(14,  8, "p2");
-  NexObject LcdMin      = NexObject(14,  9, "min");
-  NexObject LcdMax      = NexObject(14, 10, "max");
-  NexObject LcdPos      = NexObject(14, 11, "pos");
+  NexObject LcdRiga1    = NexObject(13,  1, "t0");
+  NexObject LcdRiga2    = NexObject(13,  2, "t1");
+  NexObject LcdRiga3    = NexObject(13,  3, "t2");
+  NexObject LcdRiga4    = NexObject(13,  4, "t3");
+  NexObject LcdValor    = NexObject(13,  5, "t4");
+  NexObject LcdUp       = NexObject(13,  6, "p0");
+  NexObject LcdSend     = NexObject(13,  7, "p1");
+  NexObject LcdDown     = NexObject(13,  8, "p2");
+  NexObject LcdMin      = NexObject(13,  9, "min");
+  NexObject LcdMax      = NexObject(13, 10, "max");
+  NexObject LcdPos      = NexObject(13, 11, "pos");
 
   /**
    *******************************************************************
    * Nextion component for page:Probe
    *******************************************************************
    */
-  NexObject ProbeUp     = NexObject(15, 1,  "p0");
-  NexObject ProbeSend   = NexObject(15, 2,  "p1");
-  NexObject ProbeDown   = NexObject(15, 3,  "p2");
-  NexObject ProbeMsg    = NexObject(15, 4,  "t0");
-  NexObject ProbeZ      = NexObject(15, 5,  "t1");
+  NexObject ProbeUp     = NexObject(14, 1,  "p0");
+  NexObject ProbeSend   = NexObject(14, 2,  "p1");
+  NexObject ProbeDown   = NexObject(14, 3,  "p2");
+  NexObject ProbeMsg    = NexObject(14, 4,  "t0");
+  NexObject ProbeZ      = NexObject(14, 5,  "t1");
+
+	/**
+	*******************************************************************
+	* Nextion component for page:STAT SCREEN !
+	*******************************************************************
+	*/
+	NexObject statin			= NexObject(4, 3, "m2"); //przycisk z innej strony -> setup
+	NexObject Sprints			= NexObject(19, 3, "t0");
+	NexObject Scompl			= NexObject(19, 4, "t1");
+	NexObject Spanic			= NexObject(19, 5, "t2");
+	NexObject Stimetotal	= NexObject(19, 6, "t3");
+	NexObject Stimelong		= NexObject(19, 7, "t4");
+	NexObject Sfilament		= NexObject(19, 8, "t5");
+
+
 
   NexObject *nex_listen_list[] =
   {
     // Page 2 touch listen
-    &FanSpeedTouch, &NPlay, &Light,
+    &FanSpeedTouch, &NPlay,
 
     // Page 3 touch listen
     &sdlist, &ScrollUp, &ScrollDown, &sdrow0, &sdrow1, &sdrow2,
     &sdrow3, &sdrow4, &sdrow5, &Folderup, &sd_mount, &sd_dismount,
 
-    // Page 4 touch listen
+    // Page 4 touch listen setup
+		&statin,
 
     // Page 5 touch listen
     &MotorOff, &XYHome, &XYUp, &XYRight, &XYDown, &XYLeft,
@@ -345,32 +360,27 @@
     // Page 8 touch listen
     &Rfid0, &Rfid1, &Rfid2, &Rfid3, &Rfid4, &Rfid5,
 
-    // Page 10 touch listen
-    &tenter,
-
-    // Page 12 touch listen
+    // Page 11 touch listen
     &Yes, &No,
 
-    // Page 13 touch listen
+    // Page 12 touch listen
     &FilLoad, &FilUnload, &FilExtr,
 
-    // Page 14 touch listen
+    // Page 13 touch listen
     &LcdSend,
 
-    // Page 15 touch listen
+    // Page 14 touch listen
     &ProbeUp, &ProbeDown, &ProbeSend,
 
-		// Page 16 tacz listen
+		// Page 15 tacz listen
 		&heatupenter, &heatbedenter, &hotendenter, &chillenter,
 
-		// Page 17 tacz listen
+		// Page 16 tacz listen
 		&cmdbuffer, &homeaxisbtn, &bedlevelbtn, &filchangebtn,
 
+		// Page 18 tacz listen
+
 		// Page 19 tacz listen
-		&FanSpeedTouch,
-
-		// Page 20 tacz listen
-
 
     NULL
   };
@@ -1052,7 +1062,38 @@
 		cmdbuffer.getText(bufferson, sizeof(bufferson));
 		enqueue_and_echo_command(bufferson);
 	}
+	void setsetupstatPopCallback(void *ptr)
+	{
+		UNUSED(ptr);
 
+		// ultralcd
+
+			char buffer[21];
+			printStatistics stats = print_job_timer.getStats();
+
+//			Sfilament 
+
+			Sprints.setText(itostr3left(stats.totalPrints));        // Print Count: 999
+			Scompl.setText(itostr3left(stats.finishedPrints));			// Completed  : 666
+
+			#if ENABLED(PLOSS_SUPPORT)
+				Spanic.setText(itostr3left(eeprom_read_byte((uint8_t*)EEPROM_PANIC_POWER_FAIL_COUNT))); // dodane power fail count
+			#endif
+
+			duration_t elapsed = stats.printTime;
+			elapsed.toString(buffer);
+			Stimetotal.setText(buffer);               // Total print Time: 99y 364d 23h 59m 59s
+
+			elapsed = stats.longestPrint;
+			elapsed.toString(buffer);
+			Stimelong.setText(buffer);								// Longest job time: 99y 364d 23h 59m 59s
+
+			sprintf_P(buffer, PSTR("%ld.%im"), long(stats.filamentUsed / 1000), int16_t(stats.filamentUsed / 100) % 10);
+			Sfilament.setText(buffer);								// Extruded total: 125m
+
+		//ultralcd
+
+	}
 
   void setgcodePopCallback(void *ptr) {
     UNUSED(ptr);
@@ -1263,7 +1304,6 @@
         ProbeDown.attachPop(ProbelPopCallBack, &ProbeDown);
       #endif
 
-      tenter.attachPop(sethotPopCallback,   &tenter);
 			heatupenter.attachPop(sethotPopCallback, &heatupenter); //dodane
 			hotendenter.attachPop(sethotendPopCallback, &hotendenter); //dodane
 			heatbedenter.attachPop(setheatbedPopCallback, &heatbedenter); //dodane
@@ -1271,7 +1311,8 @@
 			homeaxisbtn.attachPop(setmaintaincodePopCallback);
 			bedlevelbtn.attachPop(setmaintaincodePopCallback);
 			filchangebtn.attachPop(setmaintaincodePopCallback);
-			FanSpeedTouch.attachPop(setfanPopCallback, &FanSpeedTouch);
+			//FanSpeedTouch.attachPop(setfanPopCallback, &FanSpeedTouch);
+			statin.attachPop(setsetupstatPopCallback); //dodane info o wejsciu w statystyki
       XYHome.attachPop(setmovePopCallback);
       XYUp.attachPop(setmovePopCallback);
       XYRight.attachPop(setmovePopCallback);
