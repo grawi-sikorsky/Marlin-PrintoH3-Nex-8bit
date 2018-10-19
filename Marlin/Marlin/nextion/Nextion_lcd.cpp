@@ -62,21 +62,21 @@
   NexObject Pprinter      = NexObject(2,  0,  "printer");
   NexObject Psdcard       = NexObject(3,  0,  "sdcard");
   NexObject Psetup        = NexObject(4,  0,  "setup");
-  NexObject Pmove         = NexObject(5,  0,  "move");
-  NexObject Pspeed        = NexObject(6,  0,  "speed");
+  //NexObject Pmove         = NexObject(5,  0,  "move");
+  //NexObject Pspeed        = NexObject(6,  0,  "speed");
   NexObject Pgcode        = NexObject(7,  0,  "gcode");
-  NexObject Prfid         = NexObject(8,  0,  "rfid");
+  //NexObject Prfid         = NexObject(8,  0,  "rfid");
   NexObject Pbrightness   = NexObject(9,  0,  "brightness");
   NexObject Pinfo         = NexObject(10, 0,  "info");
   NexObject Pyesno        = NexObject(11, 0,  "yesno");
-  NexObject Pfilament     = NexObject(12, 0,  "filament");
+  //NexObject Pfilament     = NexObject(12, 0,  "filament");
   NexObject Pselect       = NexObject(13, 0,  "select");
-  NexObject Pprobe        = NexObject(14, 0,  "probe");
+  //NexObject Pprobe        = NexObject(14, 0,  "bedlevel");
 	NexObject Pheatup				= NexObject(15, 0,	"heatup");
 	NexObject Poptions			= NexObject(16, 0,	"maintain");
-  NexObject Ptime         = NexObject(17, 0,  "infomove");
+  //NexObject Ptime         = NexObject(17, 0,  "infomove");
   NexObject Pfanspeedpage = NexObject(18, 0,  "fanspeedpage");
-	NexObject Pstats				= NexObject(19, 0, "statscreen");
+	NexObject Pstats				= NexObject(19, 0,	"statscreen");
 	NexObject Ptsettings		= NexObject(20, 0,  "tempsettings");
 
 
@@ -115,12 +115,12 @@
   NexObject Chamber1    = NexObject(2, 15,  "cha1");
   NexObject DHT0        = NexObject(2, 16,  "dht0");
   NexObject SD          = NexObject(2, 17,  "sd");
-  NexObject RFID        = NexObject(2, 18,  "rfid");
-  NexObject Fan         = NexObject(2, 19,  "fan");
+  //NexObject RFID        = NexObject(2, 18,  "rfid");
+  //NexObject Fan         = NexObject(2, 19,  "fan");
   NexObject Fanspeed    = NexObject(2, 20,  "fs");
   NexObject VSpeed      = NexObject(2, 21,  "vs");
   NexObject Language    = NexObject(2, 22,  "lang");
-  NexObject LightStatus = NexObject(2, 23,  "light");
+  //NexObject LightStatus = NexObject(2, 23,  "light");
   NexObject NStop       = NexObject(2, 33,  "p1");
   NexObject NPlay       = NexObject(2, 34,  "p2");
   NexObject LcdStatus   = NexObject(2, 35,  "t0");
@@ -128,15 +128,13 @@
   NexObject LcdTime     = NexObject(2, 36,  "t2");
   NexObject progressbar = NexObject(2, 37,  "j0");
   NexObject Wavetemp    = NexObject(2, 38,  "s0");
-
+	NexObject FanSpeedTouch = NexObject(2, 56, "m1");
   
 	/**
 	*******************************************************************
 	* Nextion component for page:FanSPEEEED
 	*******************************************************************
 	*/
-
-	NexObject FanSpeedTouch = NexObject(2, 56, "m1");
 
   /**
    *******************************************************************
@@ -213,14 +211,14 @@
    * Nextion component for page:Rfid
    *******************************************************************
    */
-  NexObject Rfid0       = NexObject(8,  2,  "b0");
-  NexObject Rfid1       = NexObject(8,  3,  "b1");
-  NexObject Rfid2       = NexObject(8,  4,  "b2");
-  NexObject Rfid3       = NexObject(8,  5,  "b3");
-  NexObject Rfid4       = NexObject(8,  6,  "b4");
-  NexObject Rfid5       = NexObject(8,  7,  "b5");
-  NexObject RfidText    = NexObject(8,  8,  "t0");
-  NexObject RfidR       = NexObject(8,  9,  "bt0");
+  //NexObject Rfid0       = NexObject(8,  2,  "b0");
+  //NexObject Rfid1       = NexObject(8,  3,  "b1");
+  //NexObject Rfid2       = NexObject(8,  4,  "b2");
+  //NexObject Rfid3       = NexObject(8,  5,  "b3");
+  //NexObject Rfid4       = NexObject(8,  6,  "b4");
+  //NexObject Rfid5       = NexObject(8,  7,  "b5");
+  //NexObject RfidText    = NexObject(8,  8,  "t0");
+  //NexObject RfidR       = NexObject(8,  9,  "bt0");
 
   /**
    *******************************************************************
@@ -233,32 +231,6 @@
    * Nextion component for page:Temp
    *******************************************************************
    */
-
-
-	/**
-	*******************************************************************
-	* Nextion component for page:heatup // dodane
-	*******************************************************************
-	*/
-
-	NexObject heatupenter		= NexObject(15, 7, "m3");
-	NexObject temphe				= NexObject(15, 8, "temphe");
-	NexObject tempbe				= NexObject(15, 9, "tempbe");
-	NexObject heatbedenter	= NexObject(15, 12, "m4");
-	NexObject hotendenter		= NexObject(15, 13, "m5");
-	NexObject chillenter		= NexObject(15, 14, "m6");
-
-
-	/**
-	*******************************************************************
-	* Nextion component for page:maintain/osbluga
-	*******************************************************************
-	*/
-	NexObject cmdbuffer		= NexObject(16, 2, "cmdbuff");
-	NexObject homeaxisbtn = NexObject(16, 3, "m0");
-	NexObject bedlevelbtn = NexObject(16, 4, "m1");
-	NexObject filchangebtn = NexObject(16, 7, "m4");
-
 
   /**
    *******************************************************************
@@ -286,10 +258,10 @@
    * Nextion component for page:Filament
    *******************************************************************
    */
-  NexObject FilLoad     = NexObject(12,  3, "p2");
-  NexObject FilUnload   = NexObject(12,  4, "p3");
-  NexObject FilExtr     = NexObject(12,  5, "p4");
-  NexObject Filgcode    = NexObject(12, 10, "vacmd");
+  //NexObject FilLoad     = NexObject(12,  3, "p2");
+  //NexObject FilUnload   = NexObject(12,  4, "p3");
+  //NexObject FilExtr     = NexObject(12,  5, "p4");
+  //NexObject Filgcode    = NexObject(12, 10, "vacmd");
 
   /**
    *******************************************************************
@@ -313,12 +285,44 @@
    * Nextion component for page:Probe
    *******************************************************************
    */
-  NexObject ProbeUp     = NexObject(14, 1,  "p0");
-  NexObject ProbeSend   = NexObject(14, 2,  "p1");
-  NexObject ProbeDown   = NexObject(14, 3,  "p2");
-  NexObject ProbeMsg    = NexObject(14, 4,  "t0");
-  NexObject ProbeZ      = NexObject(14, 5,  "t1");
+  //NexObject ProbeUp     = NexObject(14, 1,  "p0");
+  //NexObject ProbeSend   = NexObject(14, 2,  "p1");
+  //NexObject ProbeDown   = NexObject(14, 3,  "p2");
+  //NexObject ProbeMsg    = NexObject(14, 4,  "t0");
+  //NexObject ProbeZ      = NexObject(14, 5,  "t1");
 
+	/**
+	*******************************************************************
+	* Nextion component for page:heatup // dodane
+	*******************************************************************
+	*/
+
+	NexObject heatupenter		= NexObject(15, 7, "m3");
+	NexObject temphe				= NexObject(15, 8, "temphe");
+	NexObject tempbe				= NexObject(15, 9, "tempbe");
+	NexObject heatbedenter	= NexObject(15, 12, "m4");
+	NexObject hotendenter		= NexObject(15, 13, "m5");
+	NexObject chillenter		= NexObject(15, 14, "m6");
+
+
+	/**
+	*******************************************************************
+	* Nextion component for page:maintain/osbluga
+	*******************************************************************
+	*/
+	NexObject cmdbuffer			= NexObject(16, 2, "cmdbuff");
+	NexObject vpageid				= NexObject(16, 8, "vpageid");
+	NexObject homeaxisbtn		= NexObject(16, 3, "m0");
+	NexObject bedlevelbtn		= NexObject(16, 4, "m1");
+	NexObject filchangebtn	= NexObject(16, 7, "m4");
+
+	/**
+	*******************************************************************
+	* Nextion component for page:FAN SCREEN !
+	*******************************************************************
+	*/
+	NexObject fansetbtn			= NexObject(18, 10, "m1");
+	NexObject vfan					= NexObject(18, 7, "vfan");
 	/**
 	*******************************************************************
 	* Nextion component for page:STAT SCREEN !
@@ -337,7 +341,7 @@
   NexObject *nex_listen_list[] =
   {
     // Page 2 touch listen
-    &FanSpeedTouch, &NPlay,
+    &NPlay,
 
     // Page 3 touch listen
     &sdlist, &ScrollUp, &ScrollDown, &sdrow0, &sdrow1, &sdrow2,
@@ -358,19 +362,19 @@
     &Send,
 
     // Page 8 touch listen
-    &Rfid0, &Rfid1, &Rfid2, &Rfid3, &Rfid4, &Rfid5,
+    //&Rfid0, &Rfid1, &Rfid2, &Rfid3, &Rfid4, &Rfid5,
 
     // Page 11 touch listen
     &Yes, &No,
 
     // Page 12 touch listen
-    &FilLoad, &FilUnload, &FilExtr,
+    //&FilLoad, &FilUnload, &FilExtr,
 
     // Page 13 touch listen
     &LcdSend,
 
     // Page 14 touch listen
-    &ProbeUp, &ProbeDown, &ProbeSend,
+    //&ProbeUp, &ProbeDown, &ProbeSend,
 
 		// Page 15 tacz listen
 		&heatupenter, &heatbedenter, &hotendenter, &chillenter,
@@ -379,6 +383,7 @@
 		&cmdbuffer, &homeaxisbtn, &bedlevelbtn, &filchangebtn,
 
 		// Page 18 tacz listen
+		&fansetbtn,
 
 		// Page 19 tacz listen
 
@@ -516,7 +521,7 @@
     VSpeed.setValue(100, "printer");
 
     #if FAN_COUNT > 0
-      Fan.setValue(1, "printer");
+      //Fan.setValue(1, "printer");
     #endif
 
     #if HAS_CASE_LIGHT
@@ -1038,40 +1043,48 @@
 
     Pprinter.show();
   }
+
 	void sethotendPopCallback(void *ptr) {
 		UNUSED(ptr);
-
 		uint16_t	temp_hotend = temphe.getValue();
-
 		thermalManager.setTargetHotend(temp_hotend, 0);
-
 		Pprinter.show();
 	}
+
 	void setheatbedPopCallback(void *ptr) {
 		UNUSED(ptr);
-
 		uint16_t temp_bed = tempbe.getValue();    //dodane
-
 		thermalManager.setTargetBed(temp_bed);
-
 		Pprinter.show();
 	}
+
 	void setmaintaincodePopCallback(void *ptr) {
 		UNUSED(ptr);
 		ZERO(bufferson);
-		cmdbuffer.getText(bufferson, sizeof(bufferson));
+		cmdbuffer.getText(bufferson, sizeof(bufferson), "maintain");
 		enqueue_and_echo_command(bufferson);
+	}
+
+	void setfanandgoPopCallback(void *ptr) {
+		uint8_t pageidbuff, vfanbuff;
+		UNUSED(ptr);
+		ZERO(bufferson);
+		vfanbuff = vfan.getValue("fanspeedpage");
+		fanSpeeds[0] = vfanbuff;
+		if (pageidbuff == 1)
+		{
+			Pprinter.show();
+		}
+		else if (pageidbuff == 0)
+		{
+			Pheatup.show();
+		}
 	}
 	void setsetupstatPopCallback(void *ptr)
 	{
 		UNUSED(ptr);
-
-		// ultralcd
-
 			char buffer[21];
 			printStatistics stats = print_job_timer.getStats();
-
-//			Sfilament 
 
 			Sprints.setText(itostr3left(stats.totalPrints));        // Print Count: 999
 			Scompl.setText(itostr3left(stats.finishedPrints));			// Completed  : 666
@@ -1090,9 +1103,6 @@
 
 			sprintf_P(buffer, PSTR("%ld.%im"), long(stats.filamentUsed / 1000), int16_t(stats.filamentUsed / 100) % 10);
 			Sfilament.setText(buffer);								// Extruded total: 125m
-
-		//ultralcd
-
 	}
 
   void setgcodePopCallback(void *ptr) {
@@ -1159,7 +1169,7 @@
     lcd_clicked = true;
     //printer.setWaitForUser(false); dodane, cos pasuje z tym zrobic..
   }
-
+	/*
   void filamentPopCallback(void *ptr) {
     ZERO(bufferson);
     Filgcode.getText(bufferson, sizeof(bufferson));
@@ -1171,7 +1181,7 @@
 	  enqueue_and_echo_commands_P(PSTR("G90"));
     }
   }
-
+	*/
   void YesNoPopCallback(void *ptr) {
 
     if (ptr == &Yes) {
@@ -1260,7 +1270,7 @@
           gfx.set_position(274, 213, 250, 155);
         #endif
       }
-	  SERIAL_CHAR('"'); SERIAL_ECHOLN(" connected!");
+	  SERIAL_CHAR('"'); SERIAL_ECHOLNPGM(" connected!");
 
       #if ENABLED(NEXTION_GFX)
         gfx.color_set(NX_AXIS + X_AXIS, 63488);
@@ -1304,15 +1314,15 @@
         ProbeDown.attachPop(ProbelPopCallBack, &ProbeDown);
       #endif
 
-			heatupenter.attachPop(sethotPopCallback, &heatupenter); //dodane
-			hotendenter.attachPop(sethotendPopCallback, &hotendenter); //dodane
-			heatbedenter.attachPop(setheatbedPopCallback, &heatbedenter); //dodane
-			chillenter.attachPop(sethotPopCallback, &chillenter); //dodane
-			homeaxisbtn.attachPop(setmaintaincodePopCallback);
-			bedlevelbtn.attachPop(setmaintaincodePopCallback);
-			filchangebtn.attachPop(setmaintaincodePopCallback);
-			//FanSpeedTouch.attachPop(setfanPopCallback, &FanSpeedTouch);
+			heatupenter.attachPop(sethotPopCallback, &heatupenter); // obs³uga przycisku rozgrzej oba
+			hotendenter.attachPop(sethotendPopCallback, &hotendenter); //obs³uga przycisku rozgrzej hotend
+			heatbedenter.attachPop(setheatbedPopCallback, &heatbedenter); //obs³uga przycisku rozgrzej bed
+			chillenter.attachPop(sethotPopCallback, &chillenter); //obs³uga przycisku chlodzenie
+			homeaxisbtn.attachPop(setmaintaincodePopCallback); //obs³uga przycisku home
+			bedlevelbtn.attachPop(setmaintaincodePopCallback); //obs³uga przycisku level
+			filchangebtn.attachPop(setmaintaincodePopCallback); //obs³uga przycisku m600
 			statin.attachPop(setsetupstatPopCallback); //dodane info o wejsciu w statystyki
+			fansetbtn.attachPop(setfanandgoPopCallback); //obs³uga przycisku fan set
       XYHome.attachPop(setmovePopCallback);
       XYUp.attachPop(setmovePopCallback);
       XYRight.attachPop(setmovePopCallback);
@@ -1328,9 +1338,6 @@
       Yes.attachPop(YesNoPopCallback, &Yes);
       No.attachPop(YesNoPopCallback, &No);
       LcdSend.attachPop(sendPopCallback);
-      FilLoad.attachPop(filamentPopCallback);
-      FilUnload.attachPop(filamentPopCallback);
-      FilExtr.attachPop(filamentPopCallback);
 
       setpagePrinter();
       startimer.enable();
@@ -1392,9 +1399,6 @@
         strcat(bufferson, " ?");
 
       LedCoord5.setText(bufferson);
-    }
-    else if (PageID == 15) {
-      ProbeZ.setText(ftostr43sign(FIXFLOAT(LOGICAL_Z_POSITION(current_position[Z_AXIS]))));
     }
   }
 

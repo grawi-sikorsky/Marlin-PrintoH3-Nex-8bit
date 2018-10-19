@@ -104,7 +104,7 @@
   }
 
   void NexObject::getText(char *buffer_temp, uint16_t len, const char *pname) {
-		SERIAL_ECHOLN(" wejscie w gettext ");
+		SERIAL_ECHOPGM(" wejscie w gettext ");
     String cmd;
     cmd += "get ";
     if (pname) {
@@ -113,7 +113,6 @@
     }
     cmd += this->__name;
     cmd += ".txt";
-		SERIAL_ECHO(cmd);
     sendCommand(cmd.c_str());
 		SERIAL_ECHO(cmd);
     recvRetString(buffer_temp, len);
