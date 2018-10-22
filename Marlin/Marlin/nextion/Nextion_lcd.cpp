@@ -285,11 +285,11 @@
    * Nextion component for page:Probe
    *******************************************************************
    */
-  //NexObject ProbeUp     = NexObject(14, 1,  "p0");
-  //NexObject ProbeSend   = NexObject(14, 2,  "p1");
-  //NexObject ProbeDown   = NexObject(14, 3,  "p2");
-  //NexObject ProbeMsg    = NexObject(14, 4,  "t0");
-  //NexObject ProbeZ      = NexObject(14, 5,  "t1");
+  NexObject ProbeUp     = NexObject(14, 1,  "p0");
+  NexObject ProbeSend   = NexObject(14, 2,  "p1");
+  NexObject ProbeDown   = NexObject(14, 3,  "p2");
+  NexObject ProbeMsg    = NexObject(14, 4,  "t0");
+  NexObject ProbeZ      = NexObject(14, 5,  "t1");
 
 	/**
 	*******************************************************************
@@ -374,7 +374,7 @@
     &LcdSend,
 
     // Page 14 touch listen
-    //&ProbeUp, &ProbeDown, &ProbeSend,
+    &ProbeUp, &ProbeDown, &ProbeSend,
 
 		// Page 15 tacz listen
 		&heatupenter, &heatbedenter, &hotendenter, &chillenter,
@@ -974,18 +974,17 @@
     }
   #endif
 
-  #if ENABLED(PROBE_MANUALLY)
-
+#if ENABLED(NEXTION_BED_LEVEL)
     void ProbelPopCallBack(void *ptr) {
 
       if (ptr == &ProbeUp || ptr == &ProbeDown) {
 
-        mechanics.set_destination_to_current();
+				set_destination_to_current();
 
         if (ptr == &ProbeUp)
-          mechanics.destination[Z_AXIS] += (LCD_Z_STEP);
+          destination[Z_AXIS] += (LCD_Z_STEP);
         else
-          mechanics.destination[Z_AXIS] -= (LCD_Z_STEP);
+          destination[Z_AXIS] -= (LCD_Z_STEP);
 
         NOLESS(mechanics.destination[Z_AXIS], -(LCD_PROBE_Z_RANGE) * 0.5);
         NOMORE(mechanics.destination[Z_AXIS], (LCD_PROBE_Z_RANGE) * 0.5);
@@ -1030,7 +1029,8 @@
       void Nextion_ProbeOff() { Pprinter.show(); }
     #endif
 
-  #endif
+#endif
+
 
   void sethotPopCallback(void *ptr) {
     UNUSED(ptr);
@@ -1399,6 +1399,9 @@
         strcat(bufferson, " ?");
 
       LedCoord5.setText(bufferson);
+    }
+    else if (PageID == 15) {
+      //ProbeZ.setText(ftostr43sign(FIXFLOAT(LOGICAL_Z_POSITION(current_position[Z_AXIS]))));
     }
   }
 

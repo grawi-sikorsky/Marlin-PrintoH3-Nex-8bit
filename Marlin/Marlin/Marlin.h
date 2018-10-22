@@ -492,4 +492,17 @@ FORCE_INLINE bool position_is_reachable_xy(const float &lx, const float &ly) {
   return position_is_reachable_raw_xy(RAW_X_POSITION(lx), RAW_Y_POSITION(ly));
 }
 
+
+/**
+* Cartesian Destination
+*   A temporary position, usually applied to 'current_position'.
+*   Set with 'gcode_get_destination' or 'set_destination_to_current'.
+*   'line_to_destination' sets 'current_position' to 'destination'.
+*/
+float destination[XYZE] = { 0.0 };
+
+
+
+inline void set_current_to_destination() { COPY(current_position, destination); }
+inline void set_destination_to_current() { COPY(destination, current_position); }
 #endif // MARLIN_H

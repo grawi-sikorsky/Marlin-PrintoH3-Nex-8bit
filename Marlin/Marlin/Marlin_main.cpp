@@ -377,13 +377,6 @@ char dir_names[3][9]; // dodane
  */
 float current_position[XYZE] = { 0.0 };
 
-/**
- * Cartesian Destination
- *   A temporary position, usually applied to 'current_position'.
- *   Set with 'gcode_get_destination' or 'set_destination_to_current'.
- *   'line_to_destination' sets 'current_position' to 'destination'.
- */
-float destination[XYZE] = { 0.0 };
 
 /**
  * axis_homed
@@ -1598,16 +1591,13 @@ inline void line_to_current_position() {
 }
 
 /**
- * Move the planner to the position stored in the destination array, which is
- * used by G0/G1/G2/G3/G5 and many other functions to set a destination.
- */
+* Move the planner to the position stored in the destination array, which is
+* used by G0/G1/G2/G3/G5 and many other functions to set a destination.
+*/
 inline void line_to_destination(const float fr_mm_s) {
-  planner.buffer_line(destination[X_AXIS], destination[Y_AXIS], destination[Z_AXIS], destination[E_AXIS], fr_mm_s, active_extruder);
+	planner.buffer_line(destination[X_AXIS], destination[Y_AXIS], destination[Z_AXIS], destination[E_AXIS], fr_mm_s, active_extruder);
 }
 inline void line_to_destination() { line_to_destination(feedrate_mm_s); }
-
-inline void set_current_to_destination() { COPY(current_position, destination); }
-inline void set_destination_to_current() { COPY(destination, current_position); }
 
 #if IS_KINEMATIC
   /**
@@ -2408,7 +2398,7 @@ static void clean_up_after_endstop_or_probe_move() {
 #if HAS_LEVELING
 
   bool leveling_is_valid() {
-    return
+    return 
       #if ENABLED(MESH_BED_LEVELING)
         mbl.has_mesh()
       #elif ENABLED(AUTO_BED_LEVELING_BILINEAR)
@@ -13142,7 +13132,7 @@ void ploss() {
 		current_position[Z_AXIS] + 16,
 		current_position[E_AXIS],
 		85, active_extruder);
-
+	
 	stepper.synchronize();
 	disable_all_steppers();
 	disable_e_steppers();
