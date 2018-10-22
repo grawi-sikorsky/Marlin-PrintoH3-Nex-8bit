@@ -29,6 +29,8 @@
 
 #if ENABLED(NEXTION)
 
+extern float feedrate_mm_s;
+
   #if ENABLED(ADVANCED_PAUSE_FEATURE)
     //#include "../../feature/advanced_pause/advanced_pause.h"
 	#include "../enum.h"

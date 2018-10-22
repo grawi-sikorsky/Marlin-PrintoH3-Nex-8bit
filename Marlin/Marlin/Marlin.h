@@ -238,6 +238,8 @@ extern volatile bool wait_for_heatup;
 
 extern float current_position[NUM_AXIS];
 
+//extern float destination[XYZE] = { 0.0 };
+
 // Workspace offsets
 #if HAS_WORKSPACE_OFFSET
   #if HAS_HOME_OFFSET
@@ -499,10 +501,8 @@ FORCE_INLINE bool position_is_reachable_xy(const float &lx, const float &ly) {
 *   Set with 'gcode_get_destination' or 'set_destination_to_current'.
 *   'line_to_destination' sets 'current_position' to 'destination'.
 */
-float destination[XYZE] = { 0.0 };
 
+void prepare_move_to_destination();
+void host_keepalive();
 
-
-inline void set_current_to_destination() { COPY(current_position, destination); }
-inline void set_destination_to_current() { COPY(destination, current_position); }
 #endif // MARLIN_H

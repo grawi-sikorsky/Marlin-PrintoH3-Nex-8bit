@@ -377,7 +377,10 @@ char dir_names[3][9]; // dodane
  */
 float current_position[XYZE] = { 0.0 };
 
+float destination[XYZE] = { 0.0 };
 
+inline void set_current_to_destination() { COPY(current_position, destination); }
+inline void set_destination_to_current() { COPY(destination, current_position); }
 /**
  * axis_homed
  *   Flags that each linear axis was homed.
@@ -3756,7 +3759,7 @@ inline void gcode_G4() {
 
 #endif // Z_SAFE_HOMING
 
-#if ENABLED(PROBE_MANUALLY)
+#if ENABLED(MESH_BED_LEVELING)
   bool g29_in_progress = false;
 #else
   constexpr bool g29_in_progress = false;
@@ -4044,6 +4047,7 @@ void home_all_axes() { gcode_G28(true); }
       line_to_destination(homing_feedrate(Z_AXIS));
       stepper.synchronize();
     #endif
+			g29_in_progress = false; // dodane po zakonczeniu g29
   }
 
   /**
@@ -4096,6 +4100,7 @@ void home_all_axes() { gcode_G28(true); }
         mbl.reset();
         mbl_probe_index = 0;
         enqueue_and_echo_commands_P(PSTR("G28\nG29 S2"));
+				g29_in_progress = true; // dodane dla manual probe
         break;
 
       case MeshNext:

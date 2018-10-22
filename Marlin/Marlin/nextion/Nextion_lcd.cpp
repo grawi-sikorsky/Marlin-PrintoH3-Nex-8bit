@@ -22,6 +22,11 @@
 //#include "Arduino.h"
 //#include "../MarlinConfig.h"
 
+#if ENABLED(NEXTION_DISPLAY)
+	#include "../stepper.h"
+	#include "../mesh_bed_leveling.h"
+#endif
+
 #if ENABLED(NEXTION)
 
   #include "Nextion_lcd.h"
@@ -40,6 +45,11 @@
   const float manual_feedrate_mm_m[]    = MANUAL_FEEDRATE;
 
   extern uint8_t progress_printing; // dodane nex
+
+	extern float destination[XYZE];// = { 0.0 };
+	extern bool g29_in_progress;// = false;
+	extern inline void set_current_to_destination() { COPY(current_position, destination); }
+	extern inline void set_destination_to_current() { COPY(destination, current_position); }
 
   #if ENABLED(SDSUPPORT)
     // 0 card not present, 1 SD not insert, 2 SD insert, 3 SD printing
@@ -71,7 +81,7 @@
   NexObject Pyesno        = NexObject(11, 0,  "yesno");
   //NexObject Pfilament     = NexObject(12, 0,  "filament");
   NexObject Pselect       = NexObject(13, 0,  "select");
-  //NexObject Pprobe        = NexObject(14, 0,  "bedlevel");
+  NexObject Pprobe        = NexObject(14, 0,  "bedlevel");
 	NexObject Pheatup				= NexObject(15, 0,	"heatup");
 	NexObject Poptions			= NexObject(16, 0,	"maintain");
   //NexObject Ptime         = NexObject(17, 0,  "infomove");
@@ -986,42 +996,48 @@
         else
           destination[Z_AXIS] -= (LCD_Z_STEP);
 
-        NOLESS(mechanics.destination[Z_AXIS], -(LCD_PROBE_Z_RANGE) * 0.5);
-        NOMORE(mechanics.destination[Z_AXIS], (LCD_PROBE_Z_RANGE) * 0.5);
+        NOLESS(destination[Z_AXIS], -(LCD_PROBE_Z_RANGE) * 0.5);
+        NOMORE(destination[Z_AXIS], (LCD_PROBE_Z_RANGE) * 0.5);
 
-        const float old_feedrate = mechanics.feedrate_mm_s;
-        mechanics.feedrate_mm_s = MMM_TO_MMS(manual_feedrate_mm_m[Z_AXIS]);
-        mechanics.prepare_move_to_destination(); // will call set_current_from_destination()
-        mechanics.feedrate_mm_s = old_feedrate;
+        const float old_feedrate = feedrate_mm_s;
+        feedrate_mm_s = MMM_TO_MMS(manual_feedrate_mm_m[Z_AXIS]);
+        prepare_move_to_destination(); // will call set_current_from_destination()
+        feedrate_mm_s = old_feedrate;
 
-        planner.synchronize();
+        stepper.synchronize();
       }
       else if (ptr == &ProbeSend) {
-        #if HAS_LEVELING && ENABLED(PROBE_MANUALLY)
-          if (bedlevel.g29_in_progress) commands.enqueue_and_echo_P(PSTR("G29"));
+				SERIAL_ECHO("probesend:");
+        #if HAS_LEVELING && ENABLED(NEXTION_BED_LEVEL)
+				if (g29_in_progress == true) {
+					enqueue_and_echo_commands_P(PSTR("G29 S2")); 
+					SERIAL_ECHO("progress? false:");
+				}
         #endif
-        printer.setWaitForUser(false);
+					wait_for_user = false;
       }
     }
 
     float lcd_probe_pt(const float &lx, const float &ly) {
 
       #if HAS_LEVELING
-        bedlevel.reset(); // After calibration bed-level data is no longer valid
+				mbl.reset();// After calibration bed-level data is no longer valid
       #endif
 
-      bedlevel.manual_goto_xy(lx, ly);
+      mbl.manual_goto_xy(lx, ly);
 
       Pprobe.show();
       ProbeMsg.setText(PSTR(MSG_MOVE_Z));
 
-      printer.keepalive(PausedforUser);
-      printer.setWaitForUser(true);
-      while (printer.isWaitForUser()) printer.idle();
-      printer.keepalive(InHandler);
+			host_keepalive();
+
+			wait_for_user = true;
+
+      while (wait_for_user == true) idle();
+			host_keepalive();
 
       Pprinter.show();
-      return mechanics.current_position[Z_AXIS];
+      return current_position[Z_AXIS];
     }
 
     #if HAS_LEVELING
@@ -1167,7 +1183,7 @@
   void sendPopCallback(void *ptr) {
     UNUSED(ptr);
     lcd_clicked = true;
-    //printer.setWaitForUser(false); dodane, cos pasuje z tym zrobic..
+		wait_for_user = false; // dodane, cos pasuje z tym zrobic..
   }
 	/*
   void filamentPopCallback(void *ptr) {
@@ -1308,7 +1324,7 @@
         Light.attachPop(setlightPopCallback, &Light);
       #endif
 
-      #if ENABLED(PROBE_MANUALLY)
+      #if ENABLED(NEXTION_BED_LEVEL)
         ProbeUp.attachPop(ProbelPopCallBack, &ProbeUp);
         ProbeSend.attachPop(ProbelPopCallBack, &ProbeSend);
         ProbeDown.attachPop(ProbelPopCallBack, &ProbeDown);
@@ -1400,8 +1416,8 @@
 
       LedCoord5.setText(bufferson);
     }
-    else if (PageID == 15) {
-      //ProbeZ.setText(ftostr43sign(FIXFLOAT(LOGICAL_Z_POSITION(current_position[Z_AXIS]))));
+    else if (PageID == 14) {
+      ProbeZ.setText(ftostr43sign(FIXFLOAT(LOGICAL_Z_POSITION(current_position[Z_AXIS]))));
     }
   }
 
@@ -1559,7 +1575,7 @@
       case 6:
         Previousfeedrate = feedrate_percentage = (int)VSpeed.getValue("printer");
         break;
-      case 15:
+      case 14:
         coordtoLCD();
         break;
     }

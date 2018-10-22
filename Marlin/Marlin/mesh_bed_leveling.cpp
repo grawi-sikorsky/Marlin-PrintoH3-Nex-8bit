@@ -47,4 +47,28 @@
     ZERO(z_values);
   }
 
+
+	#if ENABLED(MESH_BED_LEVELING) || ENABLED(PROBE_MANUALLY)
+
+		void mesh_bed_leveling::manual_goto_xy(const float &rx, const float &ry) {
+
+	#if MANUAL_PROBE_HEIGHT > 0
+			const float prev_z = current_position[Z_AXIS];
+			do_blocking_move_to(rx, ry, MANUAL_PROBE_HEIGHT);
+			do_blocking_move_to_z(prev_z);
+	#else
+			do_blocking_move_to_xy(rx, ry);
+	#endif
+
+			current_position[X_AXIS] = rx;
+			current_position[Y_AXIS] = ry;
+
+	#if ENABLED(LCD_BED_LEVELING)
+			//lcd_wait_for_move = false;
+	#endif
+
+	}
+
+#endif
+
 #endif // MESH_BED_LEVELING

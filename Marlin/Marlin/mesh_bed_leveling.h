@@ -50,6 +50,13 @@
                  index_to_xpos[GRID_MAX_POINTS_X],
                  index_to_ypos[GRID_MAX_POINTS_Y];
 
+		#if ENABLED(MESH_BED_LEVELING) || ENABLED(PROBE_MANUALLY)
+				/**
+				* Manual goto xy for Mesh Bed level or Probe Manually
+				*/
+				void manual_goto_xy(const float &rx, const float &ry);
+		#endif
+
     mesh_bed_leveling();
 
     static void reset();

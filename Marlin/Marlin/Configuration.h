@@ -1688,7 +1688,11 @@
   //#define NEXTION_GFX
   // Define name firmware file for Nextion on SD
   #define NEXTION_FIRMWARE_FILE "mk4duo.tft"
+
+
+// BED LEVELING NEXTION
+	#define NEXTION_BED_LEVEL
+	#define LCD_Z_STEP 0.04
 	#define PROBE_MANUALLY
-	//#define NEXTION_BED_LEVEL
 
 #endif // CONFIGURATION_H
