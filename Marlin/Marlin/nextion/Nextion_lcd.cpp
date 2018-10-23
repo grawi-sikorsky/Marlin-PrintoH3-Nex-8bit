@@ -86,10 +86,10 @@
 	NexObject Poptions			= NexObject(16, 0,	"maintain");
   //NexObject Ptime         = NexObject(17, 0,  "infomove");
   NexObject Pfanspeedpage = NexObject(18, 0,  "fanspeedpage");
-	NexObject Pstats				= NexObject(19, 0,	"statscreen");
-	NexObject Ptsettings		= NexObject(20, 0,  "tempsettings");
-	NexObject Pinfobedlevel = NexObject(21, 0, "infobedlevel");
-	NexObject Pservice			= NexObject(22, 0, "servicepage");
+	//NexObject Pstats				= NexObject(19, 0,	"statscreen");
+	//NexObject Ptsettings		= NexObject(20, 0,  "tempsettings");
+	//NexObject Pinfobedlevel = NexObject(21, 0, "infobedlevel");
+	//NexObject Pservice			= NexObject(22, 0, "servicepage");
 
 	
   /**
@@ -1342,15 +1342,16 @@
 			statin.attachPop(setsetupstatPopCallback); //dodane info o wejsciu w statystyki
 			fansetbtn.attachPop(setfanandgoPopCallback); //obs³uga przycisku fan set
       XYHome.attachPop(setmovePopCallback);
-      XYUp.attachPop(setmovePopCallback);
-      XYRight.attachPop(setmovePopCallback);
-      XYDown.attachPop(setmovePopCallback);
-      XYLeft.attachPop(setmovePopCallback);
+      //XYUp.attachPop(setmovePopCallback);
+			XYUp.attachPush(setmovePopCallback); // dodane
+      XYRight.attachPush(setmovePopCallback);
+      XYDown.attachPush(setmovePopCallback);
+      XYLeft.attachPush(setmovePopCallback);
       ZHome.attachPop(setmovePopCallback);
-      ZUp.attachPop(setmovePopCallback);
-      ZDown.attachPop(setmovePopCallback);
-      Extrude.attachPop(setmovePopCallback);
-      Retract.attachPop(setmovePopCallback);
+      ZUp.attachPush(setmovePopCallback);
+      ZDown.attachPush(setmovePopCallback);
+      Extrude.attachPush(setmovePopCallback);
+      Retract.attachPush(setmovePopCallback);
       MotorOff.attachPop(motoroffPopCallback);
       Send.attachPop(setgcodePopCallback);
       Yes.attachPop(YesNoPopCallback, &Yes);
