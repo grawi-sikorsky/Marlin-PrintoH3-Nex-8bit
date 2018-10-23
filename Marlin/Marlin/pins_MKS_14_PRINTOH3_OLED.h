@@ -380,5 +380,6 @@
 #if ENABLED(NEXTION_DISPLAY)
   //#define USBCON 1284  // Disable MarlinSerial etc.
   #define BEEPER_PIN 37
+	//#define BEEPER_PIN 29
   #define SDSS 53
 #endif

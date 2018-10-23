@@ -88,7 +88,8 @@
   NexObject Pfanspeedpage = NexObject(18, 0,  "fanspeedpage");
 	NexObject Pstats				= NexObject(19, 0,	"statscreen");
 	NexObject Ptsettings		= NexObject(20, 0,  "tempsettings");
-
+	NexObject Pinfobedlevel = NexObject(21, 0, "infobedlevel");
+	NexObject Pservice			= NexObject(22, 0, "servicepage");
 
 	
   /**
@@ -331,7 +332,7 @@
 	* Nextion component for page:FAN SCREEN !
 	*******************************************************************
 	*/
-	NexObject fansetbtn			= NexObject(18, 10, "m1");
+	NexObject fansetbtn			= NexObject(18, 9, "m1");
 	NexObject vfan					= NexObject(18, 7, "vfan");
 	/**
 	*******************************************************************
@@ -1086,12 +1087,13 @@
 		UNUSED(ptr);
 		ZERO(bufferson);
 		vfanbuff = vfan.getValue("fanspeedpage");
+		pageidbuff = vpageid.getValue("maintain");
 		fanSpeeds[0] = vfanbuff;
-		if (pageidbuff == 1)
+		if (pageidbuff == 1) // wejscie z status
 		{
 			Pprinter.show();
 		}
-		else if (pageidbuff == 0)
+		else if (pageidbuff == 0) // wejscie z heatup
 		{
 			Pheatup.show();
 		}
