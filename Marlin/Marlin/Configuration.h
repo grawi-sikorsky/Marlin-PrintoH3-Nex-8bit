@@ -75,9 +75,9 @@
 // startup. Implementation of an idea by Prof Braino to inform user that any changes made to this
 // build by the user have been successfully uploaded into firmware.
 #define STRING_CONFIG_H_AUTHOR "(Printo3d.pl, Jakub Sikora)" // Who made the changes.
-#define SHOW_BOOTSCREEN
-#define STRING_SPLASH_LINE1 NAZWA_DRUKARKI // will be shown during bootup in line 1
-#define STRING_SPLASH_LINE2 COREXY_SPLASH // will be shown during bootup in line 2
+//#define SHOW_BOOTSCREEN
+//#define STRING_SPLASH_LINE1 NAZWA_DRUKARKI // will be shown during bootup in line 1
+//#define STRING_SPLASH_LINE2 COREXY_SPLASH // will be shown during bootup in line 2
 
 //
 // *** VENDORS PLEASE READ *****************************************************
@@ -404,8 +404,8 @@
 
 // This option prevents a single extrusion longer than EXTRUDE_MAXLENGTH.
 // Note that for Bowden Extruders a too-small value here may prevent loading.
-#define PREVENT_LENGTHY_EXTRUDE
-#define EXTRUDE_MAXLENGTH 750
+//#define PREVENT_LENGTHY_EXTRUDE
+//#define EXTRUDE_MAXLENGTH 750
 
 //===========================================================================
 //======================== Thermal Runaway Protection =======================
@@ -528,7 +528,7 @@
  * Override with M201
  *                                      X, Y, Z, E0 [, E1[, E2[, E3[, E4]]]]
  */
-#define DEFAULT_MAX_ACCELERATION      { 5000, 5000, 100, 10000 }
+#define DEFAULT_MAX_ACCELERATION      { 5000, 5000, 100, 9000 }
 
 /**
  * Default Acceleration (change/s) change = mm/s
@@ -667,9 +667,9 @@
  *      O-- FRONT --+
  *    (0,0)
  */
-#define X_PROBE_OFFSET_FROM_EXTRUDER 10  // X offset: -left  +right  [of the nozzle]
-#define Y_PROBE_OFFSET_FROM_EXTRUDER 10  // Y offset: -front +behind [the nozzle]
-#define Z_PROBE_OFFSET_FROM_EXTRUDER 0   // Z offset: -below +above  [the nozzle]
+//#define X_PROBE_OFFSET_FROM_EXTRUDER 10  // X offset: -left  +right  [of the nozzle]
+//#define Y_PROBE_OFFSET_FROM_EXTRUDER 10  // Y offset: -front +behind [the nozzle]
+//#define Z_PROBE_OFFSET_FROM_EXTRUDER 0   // Z offset: -below +above  [the nozzle]
 
 // X and Y axis travel speed (mm/m) between probes
 #define XY_PROBE_SPEED 8000
@@ -768,7 +768,7 @@
 #define Z_MAX_POS 206
 
 // If enabled, axes won't move below MIN_POS in response to movement commands.
-//#define MIN_SOFTWARE_ENDSTOPS
+#define MIN_SOFTWARE_ENDSTOPS
 // If enabled, axes won't move above MAX_POS in response to movement commands.
 #define MAX_SOFTWARE_ENDSTOPS
 
@@ -935,8 +935,8 @@
  * Use the LCD controller for bed leveling
  * Requires MESH_BED_LEVELING or PROBE_MANUALLY
  */
-#define LCD_BED_LEVELING
 
+#define LCD_BED_LEVELING
 #if ENABLED(LCD_BED_LEVELING)
   #define MBL_Z_STEP 0.04    // Step size while manually probing Z axis.
   #define LCD_PROBE_Z_RANGE 16 // Z Range centered on Z_MIN_POS for LCD Z adjustment
@@ -996,7 +996,7 @@
 //
 #define EEPROM_SETTINGS // Enable for M500 and M501 commands
 //#define DISABLE_M503    // Saves ~2700 bytes of PROGMEM. Disable for release!
-#define EEPROM_CHITCHAT   // Give feedback on EEPROM commands. Disable to save PROGMEM.
+//#define EEPROM_CHITCHAT   // Give feedback on EEPROM commands. Disable to save PROGMEM.
 
 //
 // Host Keepalive
@@ -1492,7 +1492,6 @@
 
 //#define PRINTO3D_OLED_I2C
 //#define PRINTO3D_OLED_I2C_242
-#define NEXTION_DISPLAY
 //#define U8GLIB_SH1106
 
 
@@ -1682,6 +1681,7 @@
 //#define NEX_UPLOAD
 
   #define NEXTION
+  #define NEXTION_DISPLAY
   // Define Serial it use
   #define NEXTION_SERIAL 2
   // For GFX preview visualization enable NEXTION GFX

@@ -1091,7 +1091,7 @@ inline void get_serial_commands() {
 
       if (!serial_count) { 
 		  #if ENABLED(NEXTION_DISPLAY)
-			nextion_draw_update();//dodane dla nextiona
+				nextion_draw_update();//dodane dla nextiona
 		  #endif
 		  continue; 
 	  } // skip empty lines 
@@ -1280,8 +1280,9 @@ inline void get_serial_commands() {
         if (!sd_comment_mode) command_queue[cmd_queue_index_w][sd_count++] = sd_char;
       }
     }
-
-	progress_printing = card.percentDone();
+		#if ENABLED (NEXTION_DISPLAY)
+				progress_printing = card.percentDone();
+		#endif
   }
 
 #endif // SDSUPPORT

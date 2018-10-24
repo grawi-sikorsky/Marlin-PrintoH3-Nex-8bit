@@ -25,6 +25,7 @@
 #if ENABLED(NEXTION_DISPLAY)
 	#include "../stepper.h"
 	#include "../mesh_bed_leveling.h"
+	#include "../configuration_store.h"
 #endif
 
 #if ENABLED(NEXTION)
@@ -67,29 +68,30 @@
    * Nextion component all page
    *******************************************************************
    */
-  NexObject Pstart        = NexObject(0,  0,  "start");
-  NexObject Pmenu         = NexObject(1,  0,  "menu");
+  //NexObject Pstart        = NexObject(0,  0,  "start");
+  //NexObject Pmenu         = NexObject(1,  0,  "menu");
   NexObject Pprinter      = NexObject(2,  0,  "printer");
-  NexObject Psdcard       = NexObject(3,  0,  "sdcard");
+  //NexObject Psdcard       = NexObject(3,  0,  "sdcard");
   NexObject Psetup        = NexObject(4,  0,  "setup");
   //NexObject Pmove         = NexObject(5,  0,  "move");
   //NexObject Pspeed        = NexObject(6,  0,  "speed");
-  NexObject Pgcode        = NexObject(7,  0,  "gcode");
+  //NexObject Pgcode        = NexObject(7,  0,  "gcode");
   //NexObject Prfid         = NexObject(8,  0,  "rfid");
-  NexObject Pbrightness   = NexObject(9,  0,  "brightness");
+  //NexObject Pbrightness   = NexObject(9,  0,  "brightness");
   NexObject Pinfo         = NexObject(10, 0,  "info");
   NexObject Pyesno        = NexObject(11, 0,  "yesno");
   //NexObject Pfilament     = NexObject(12, 0,  "filament");
   NexObject Pselect       = NexObject(13, 0,  "select");
   NexObject Pprobe        = NexObject(14, 0,  "bedlevel");
 	NexObject Pheatup				= NexObject(15, 0,	"heatup");
-	NexObject Poptions			= NexObject(16, 0,	"maintain");
+	//NexObject Poptions			= NexObject(16, 0,	"maintain");
   //NexObject Ptime         = NexObject(17, 0,  "infomove");
   NexObject Pfanspeedpage = NexObject(18, 0,  "fanspeedpage");
 	//NexObject Pstats				= NexObject(19, 0,	"statscreen");
 	//NexObject Ptsettings		= NexObject(20, 0,  "tempsettings");
 	//NexObject Pinfobedlevel = NexObject(21, 0, "infobedlevel");
 	//NexObject Pservice			= NexObject(22, 0, "servicepage");
+	//NexObject Paccel				= NexObject(23, 0, "accelpage");
 
 	
   /**
@@ -347,7 +349,22 @@
 	NexObject Stimelong		= NexObject(19, 7, "t4");
 	NexObject Sfilament		= NexObject(19, 8, "t5");
 
-
+	/**
+	*******************************************************************
+	* Nextion component for page:ACCEL SCREEN !
+	*******************************************************************
+	*/
+	NexObject accelin		= NexObject(4, 6, "m5"); //przycisk prowadzacy do accel z innej strony
+	NexObject Awork			= NexObject(23, 2, "va0");
+	NexObject Aretr			= NexObject(23, 3, "va1");
+	NexObject Atravel		= NexObject(23, 4, "va2");
+	NexObject Amaxx			= NexObject(23, 5, "va3");
+	NexObject Amaxy			= NexObject(23, 6, "va4");
+	NexObject Amaxz			= NexObject(23, 7, "va5");
+	NexObject Amaxe			= NexObject(23, 8, "va6");
+	NexObject Asend			= NexObject(23, 20, "m0");
+	NexObject Asave			= NexObject(23, 31, "p10");
+	NexObject Aload			= NexObject(23, 32, "p11");
 
   NexObject *nex_listen_list[] =
   {
@@ -359,7 +376,7 @@
     &sdrow3, &sdrow4, &sdrow5, &Folderup, &sd_mount, &sd_dismount,
 
     // Page 4 touch listen setup
-		&statin,
+		&statin, &accelin,
 
     // Page 5 touch listen
     &MotorOff, &XYHome, &XYUp, &XYRight, &XYDown, &XYLeft,
@@ -397,6 +414,9 @@
 		&fansetbtn,
 
 		// Page 19 tacz listen
+
+		// Page 23 tacz listen
+		&Asend, &Asave, &Aload,
 
     NULL
   };
@@ -1008,11 +1028,10 @@
         stepper.synchronize();
       }
       else if (ptr == &ProbeSend) {
-				SERIAL_ECHO("probesend:");
+				SERIAL_ECHOLNPGM("probesend:");
         #if HAS_LEVELING && ENABLED(NEXTION_BED_LEVEL)
 				if (g29_in_progress == true) {
 					enqueue_and_echo_commands_P(PSTR("G29 S2")); 
-					SERIAL_ECHO("progress? false:");
 				}
         #endif
 					wait_for_user = false;
@@ -1121,6 +1140,28 @@
 
 			sprintf_P(buffer, PSTR("%ld.%im"), long(stats.filamentUsed / 1000), int16_t(stats.filamentUsed / 100) % 10);
 			Sfilament.setText(buffer);								// Extruded total: 125m
+	}
+	void setaccelpagePopCallback(void *ptr)
+	{
+			UNUSED(ptr);
+		
+			Awork.setValue(planner.acceleration);
+			Aretr.setValue(planner.retract_acceleration);
+			Atravel.setValue(planner.travel_acceleration);
+			Amaxx.setValue(planner.max_acceleration_mm_per_s2[X_AXIS]);
+			Amaxy.setValue(planner.max_acceleration_mm_per_s2[Y_AXIS]);
+			Amaxz.setValue(planner.max_acceleration_mm_per_s2[Z_AXIS]);
+			Amaxe.setValue(planner.max_acceleration_mm_per_s2[E_AXIS+active_extruder]);
+	}
+	void setaccelsavebtnPopCallback(void *ptr)
+	{
+		settings.save();
+		SERIAL_ECHOPGM("zapisane");
+	}
+	void setaccelloadbtnPopCallback(void *ptr)
+	{
+		settings.load();
+		SERIAL_ECHOPGM("zaladowane");
 	}
 
   void setgcodePopCallback(void *ptr) {
@@ -1340,9 +1381,12 @@
 			bedlevelbtn.attachPop(setmaintaincodePopCallback); //obs³uga przycisku level
 			filchangebtn.attachPop(setmaintaincodePopCallback); //obs³uga przycisku m600
 			statin.attachPop(setsetupstatPopCallback); //dodane info o wejsciu w statystyki
+			accelin.attachPop(setaccelpagePopCallback);
+			Asend.attachPop(setgcodePopCallback);
+			Asave.attachPop(setaccelsavebtnPopCallback);
+			Aload.attachPop(setaccelloadbtnPopCallback);
 			fansetbtn.attachPop(setfanandgoPopCallback); //obs³uga przycisku fan set
       XYHome.attachPop(setmovePopCallback);
-      //XYUp.attachPop(setmovePopCallback);
 			XYUp.attachPush(setmovePopCallback); // dodane
       XYRight.attachPush(setmovePopCallback);
       XYDown.attachPush(setmovePopCallback);
