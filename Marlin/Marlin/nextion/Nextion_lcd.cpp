@@ -92,7 +92,7 @@
 	//NexObject Pinfobedlevel = NexObject(21, 0, "infobedlevel");
 	//NexObject Pservice			= NexObject(22, 0, "servicepage");
 	//NexObject Paccel				= NexObject(23, 0, "accelpage");
-
+	//NexObject Pjerk					= NexObject(25, 0, "jerkpage");
 	
   /**
    *******************************************************************
@@ -338,33 +338,51 @@
 	NexObject vfan					= NexObject(18, 7, "vfan");
 	/**
 	*******************************************************************
-	* Nextion component for page:STAT SCREEN !
+	* Nextion component for page:STAT SCREEN 19!
 	*******************************************************************
 	*/
-	NexObject statin			= NexObject(4, 3, "m2"); //przycisk z innej strony -> setup
+	
+	NexObject statin			= NexObject(4, 2, "m2"); //przycisk z innej strony -> setup
 	NexObject Sprints			= NexObject(19, 3, "t0");
 	NexObject Scompl			= NexObject(19, 4, "t1");
 	NexObject Spanic			= NexObject(19, 5, "t2");
 	NexObject Stimetotal	= NexObject(19, 6, "t3");
 	NexObject Stimelong		= NexObject(19, 7, "t4");
 	NexObject Sfilament		= NexObject(19, 8, "t5");
+	
 
 	/**
 	*******************************************************************
-	* Nextion component for page:ACCEL SCREEN !
+	* Nextion component for page:SERVICE PAGE 22 !
 	*******************************************************************
 	*/
-	NexObject accelin		= NexObject(4, 6, "m5"); //przycisk prowadzacy do accel z innej strony
-	NexObject Awork			= NexObject(23, 2, "va0");
-	NexObject Aretr			= NexObject(23, 3, "va1");
-	NexObject Atravel		= NexObject(23, 4, "va2");
-	NexObject Amaxx			= NexObject(23, 5, "va3");
-	NexObject Amaxy			= NexObject(23, 6, "va4");
-	NexObject Amaxz			= NexObject(23, 7, "va5");
-	NexObject Amaxe			= NexObject(23, 8, "va6");
-	NexObject Asend			= NexObject(23, 20, "m0");
-	NexObject Asave			= NexObject(23, 31, "p10");
-	NexObject Aload			= NexObject(23, 32, "p11");
+	NexObject SvJerk				= NexObject(22, 4, "m2"); //wejscie w jerk -> przekazuje zmienne float na nuber nextion (brak dziesietnych)
+	NexObject SvSteps				= NexObject(22, 5, "m3");	//wejscie w steps -> przekazuje zmienne float na nuber nextion (brak dziesietnych)
+
+	/**
+	*******************************************************************
+	* Nextion component for page:ACCEL SCREEN 23!
+	*******************************************************************
+	*/
+	NexObject accelin		= NexObject(4, 5, "m5");	// setaccelpagePopCallback -> przekazuje zmienne float do strony z akceleracja
+	NexObject Awork			= NexObject(23, 22, "va0");
+	NexObject Aretr			= NexObject(23, 23, "va1");
+	NexObject Atravel		= NexObject(23, 24, "va2");
+	NexObject Amaxx			= NexObject(23, 25, "va3");
+	NexObject Amaxy			= NexObject(23, 26, "va4");
+	NexObject Amaxz			= NexObject(23, 27, "va5");
+	NexObject Amaxe			= NexObject(23, 28, "va6");
+	NexObject Asend			= NexObject(23, 33, "p12"); 
+	NexObject Asave			= NexObject(23, 30, "p10");	// setaccelsavebtnPopCallback -> wywo³uje settings.save();
+	NexObject Aload			= NexObject(23, 31, "p11"); // setaccelloadbtnPopCallback	-> wywo³uje settings.load();
+
+	/**
+	*******************************************************************
+	* Nextion component for page:JERK SCREEN 25!
+	*******************************************************************
+	*/
+	//NexObject Jsend			= NexObject(23, 33, "p12");
+
 
   NexObject *nex_listen_list[] =
   {
@@ -417,6 +435,12 @@
 
 		// Page 23 tacz listen
 		&Asend, &Asave, &Aload,
+
+		// Page 24
+		&SvSteps,
+
+		// Page 25
+		&SvJerk,
 
     NULL
   };
@@ -1144,14 +1168,30 @@
 	void setaccelpagePopCallback(void *ptr)
 	{
 			UNUSED(ptr);
-		
-			Awork.setValue(planner.acceleration);
-			Aretr.setValue(planner.retract_acceleration);
+			Awork.setValue(planner.acceleration); //va0
+			Aretr.setValue(planner.retract_acceleration);	//va1
 			Atravel.setValue(planner.travel_acceleration);
 			Amaxx.setValue(planner.max_acceleration_mm_per_s2[X_AXIS]);
 			Amaxy.setValue(planner.max_acceleration_mm_per_s2[Y_AXIS]);
 			Amaxz.setValue(planner.max_acceleration_mm_per_s2[Z_AXIS]);
 			Amaxe.setValue(planner.max_acceleration_mm_per_s2[E_AXIS+active_extruder]);
+	}
+	void setjerkpagePopCallback(void *ptr)
+	{
+			UNUSED(ptr);
+			Awork.setValue(planner.max_jerk[X_AXIS], "accelpage"); //va0
+			Aretr.setValue(planner.max_jerk[Y_AXIS], "accelpage");	//va1
+			Atravel.setValue(planner.max_jerk[Z_AXIS],"accelpage"); //va2
+			Amaxx.setValue(planner.max_jerk[E_AXIS],"accelpage");	//va3
+	}
+
+	void setstepspagePopCallback(void *ptr)
+	{
+			UNUSED(ptr);
+			Awork.setValue(planner.axis_steps_per_mm[X_AXIS], "accelpage"); //va0
+			Aretr.setValue(planner.axis_steps_per_mm[Y_AXIS], "accelpage");	//va1
+			Atravel.setValue(planner.axis_steps_per_mm[Z_AXIS], "accelpage");	//va2
+			Amaxx.setValue(planner.axis_steps_per_mm[E_AXIS+active_extruder], "accelpage");	//va3
 	}
 	void setaccelsavebtnPopCallback(void *ptr)
 	{
@@ -1377,14 +1417,16 @@
 			hotendenter.attachPop(sethotendPopCallback, &hotendenter); //obs³uga przycisku rozgrzej hotend
 			heatbedenter.attachPop(setheatbedPopCallback, &heatbedenter); //obs³uga przycisku rozgrzej bed
 			chillenter.attachPop(sethotPopCallback, &chillenter); //obs³uga przycisku chlodzenie
-			homeaxisbtn.attachPop(setmaintaincodePopCallback); //obs³uga przycisku home
+			homeaxisbtn.attachPop(setgcodePopCallback); //obs³uga przycisku home
 			bedlevelbtn.attachPop(setmaintaincodePopCallback); //obs³uga przycisku level
 			filchangebtn.attachPop(setmaintaincodePopCallback); //obs³uga przycisku m600
 			statin.attachPop(setsetupstatPopCallback); //dodane info o wejsciu w statystyki
-			accelin.attachPop(setaccelpagePopCallback);
+			accelin.attachPop(setaccelpagePopCallback); //setaccelpagePopCallback
 			Asend.attachPop(setgcodePopCallback);
 			Asave.attachPop(setaccelsavebtnPopCallback);
 			Aload.attachPop(setaccelloadbtnPopCallback);
+			SvJerk.attachPop(setjerkpagePopCallback);
+			SvSteps.attachPop(setstepspagePopCallback);
 			fansetbtn.attachPop(setfanandgoPopCallback); //obs³uga przycisku fan set
       XYHome.attachPop(setmovePopCallback);
 			XYUp.attachPush(setmovePopCallback); // dodane
