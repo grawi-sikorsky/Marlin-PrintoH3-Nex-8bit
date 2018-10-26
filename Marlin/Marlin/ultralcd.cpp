@@ -26,7 +26,7 @@
 	void ploss_recovery_menu();
 	void ploss_recovery_auto_menu();
 	void lcd_ploss_menu_ask_twice();
-		#if ENABLED(BABYSTEPPING)
+		#if ENABLED(BABYSTEPPING) && ENABLED(ULTRA_LCD)
 			int _babystep_z_shift = 0;
 		#endif
 	#endif

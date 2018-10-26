@@ -58,6 +58,12 @@
     SDstatus_enum SDstatus    = NO_SD;
     //NexUpload Firmware(NEXTION_FIRMWARE_FILE, 57600);
   #endif
+	#if ENABLED(BABYSTEPPING)
+			int _babystep_z_shift = 0;
+			long babysteps_done = 0;
+			//void nextion_babystep_z(bool dir);
+	#endif
+
 
   #if ENABLED(NEXTION_GFX)
     GFX gfx = GFX(1, 1, 1, 1);
@@ -383,6 +389,14 @@
 	*/
 	//NexObject Jsend			= NexObject(23, 33, "p12");
 
+	/**
+	*******************************************************************
+	* Nextion component for page:JERK SCREEN 28!
+	*******************************************************************
+	*/
+	NexObject ZbabyUp			= NexObject(28, 1, "m0");
+	NexObject ZbabyDown		= NexObject(28, 2, "m1");
+
 
   NexObject *nex_listen_list[] =
   {
@@ -441,6 +455,9 @@
 
 		// Page 25
 		&SvJerk,
+
+		// Page 28 babystep
+		&ZbabyUp, &ZbabyDown,
 
     NULL
   };
@@ -1203,6 +1220,14 @@
 		settings.load();
 		SERIAL_ECHOPGM("zaladowane");
 	}
+	void setBabystepUpPopCallback(void *ptr)
+	{
+		nextion_babystep_z(true);
+	}
+	void setBabystepDownPopCallback(void *ptr)
+	{
+		nextion_babystep_z(false);
+	}
 
   void setgcodePopCallback(void *ptr) {
     UNUSED(ptr);
@@ -1427,6 +1452,8 @@
 			Aload.attachPop(setaccelloadbtnPopCallback);
 			SvJerk.attachPop(setjerkpagePopCallback);
 			SvSteps.attachPop(setstepspagePopCallback);
+			ZbabyUp.attachPush(setBabystepUpPopCallback);	// obsluga przycisku babystep up
+			ZbabyDown.attachPush(setBabystepDownPopCallback); // obsluga przycisku babystep down
 			fansetbtn.attachPop(setfanandgoPopCallback); //obs³uga przycisku fan set
       XYHome.attachPop(setmovePopCallback);
 			XYUp.attachPush(setmovePopCallback); // dodane
@@ -1716,6 +1743,30 @@
     Riga1.setText(msg2);
     Riga3.setText(msg3);
   }
+
+	// dodana obsluga babystep
+	#if ENABLED(BABYSTEPPING)
+		void nextion_babystep_z(bool dir) {
+
+			#if ENABLED(PLOSS_SUPPORT)
+				_babystep_z_shift += babysteps_done; // ploss
+				eeprom_update_dword((uint32_t*)(EEPROM_PANIC_BABYSTEP_Z), _babystep_z_shift); // debug zapisz w eeprom
+			#endif
+				const int16_t babystep_increment = 8;
+
+				if (dir == true)
+				{
+					thermalManager.babystep_axis(Z_AXIS, babystep_increment);
+					babysteps_done += babystep_increment;
+				}
+				else if (dir == false)
+				{
+					thermalManager.babystep_axis(Z_AXIS, -babystep_increment);
+					babysteps_done -= babystep_increment;
+				}
+		}
+	#endif
+
 
   #if ENABLED(NEXTION_GFX)
     void gfx_origin(const float x, const float y, const float z) {

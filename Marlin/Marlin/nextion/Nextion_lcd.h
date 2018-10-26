@@ -54,6 +54,8 @@ extern float feedrate_mm_s;
   void lcd_scrollinfo(const char* titolo, const char* message);
   void lcd_yesno(const uint8_t val, const char* msg1="", const char* msg2="", const char* msg3="");
 
+	void nextion_babystep_z(bool dir);
+
   #if ENABLED(NEXTION_GFX)
     void gfx_origin(const float x, const float y, const float z);
     void gfx_scale(const float scale);
