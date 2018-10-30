@@ -649,7 +649,7 @@
     do { \
       _lcdLineNr = 0; \
       encoderLine = LcdPos.getValue(); \
-      delayMicroseconds(200)
+      delayMicroseconds(100)
 
   #define MENU_ITEM(TYPE, LABEL, ...) \
       if (lcdDrawUpdate) { \
@@ -666,12 +666,12 @@
 
   #define STATIC_ITEM_P(LABEL) \
       if (lcdDrawUpdate) { \
-        lcd_row_list[_lcdLineNr]->setText(LABEL); \
+        lcd_row_list[_lcdLineNr]->setText_PGM(LABEL); \
         LcdMin.setValue(_lcdLineNr + 1); \
       } \
       ++_lcdLineNr \
 
-  #define STATIC_ITEM(LABEL) STATIC_ITEM_P(LABEL)
+  #define STATIC_ITEM(LABEL) STATIC_ITEM_P(PSTR(LABEL))
 
   #define END_MENU() \
       idle(); \
@@ -859,14 +859,14 @@
 
   #if ENABLED(ADVANCED_PAUSE_FEATURE)
 
-    static AdvancedPauseMenuResponse advanced_pause_mode = ADVANCED_PAUSE_RESPONSE_WAIT_FOR;
+    static AdvancedPauseMenuResponse advanced_pause_mode = ADVANCED_PAUSE_RESPONSE_WAIT_FOR; // tutaj jest bagno!
 
     static const char* advanced_pause_header() {
       switch (advanced_pause_mode) {
         case ADVANCED_PAUSE_RESPONSE_EXTRUDE_MORE:
           return PSTR(MSG_FILAMENT_CHANGE_LOAD_1);
-        case ADVANCED_PAUSE_RESPONSE_WAIT_FOR:
-          return PSTR(MSG_FILAMENT_CHANGE_UNLOAD_1);
+        case ADVANCED_PAUSE_RESPONSE_WAIT_FOR: //oraz tutaj!
+          return PSTR(MSG_FILAMENT_CHANGE_UNLOAD_1); 
         default: break;
       }
       return PSTR(MSG_FILAMENT_CHANGE_HEADER); //MSG_FILAMENT_CHANGE_HEADER_PAUSE
@@ -967,11 +967,8 @@
       END_SCREEN();
     }
 
-    void lcd_advanced_pause_show_message(
-      const AdvancedPauseMessage message,
-      const AdvancedPauseMenuResponse mode/*=ADVANCED_PAUSE_MODE_PAUSE_PRINT*/
-    ) {
-
+    void lcd_advanced_pause_show_message(const AdvancedPauseMessage message,const AdvancedPauseMenuResponse mode/*=ADVANCED_PAUSE_MODE_PAUSE_PRINT*/) 
+		{
       //UNUSED(extruder);
       static AdvancedPauseMessage old_message;
       advanced_pause_mode = mode;
@@ -1189,8 +1186,8 @@
 			// END OF PRINTSTATS
 
 			// PRINTER INFO START
-			Sfirmware.setText(SHORT_BUILD_VERSION);
-			Skompil.setText(STRING_DISTRIBUTION_DATE);
+			Sfirmware.setText_PGM(PSTR(SHORT_BUILD_VERSION));
+			Skompil.setText_PGM(PSTR(STRING_DISTRIBUTION_DATE));
 			Sleveling.setText(MSG_MESH_LEVELING);
 
 			#if ENABLED(PLOSS_SUPPORT)
@@ -1200,7 +1197,9 @@
 			#endif
 
 			#if ENABLED(FILAMENT_RUNOUT_SENSOR)
-						Sfilsensor.setText(MSG_INFO_YES);
+						Sfilsensor.setText_PGM(PSTR(MSG_INFO_YES));
+						//Sfilsensor.setText_PGM("DUPAKURWAJEGOMAC");
+						//Sfilsensor.setText_PGM(PSTR("DUPAKURWAJEGOMAC"));
 			#else
 						Sfilsensor.setText(MSG_INFO_NO);
 			#endif			

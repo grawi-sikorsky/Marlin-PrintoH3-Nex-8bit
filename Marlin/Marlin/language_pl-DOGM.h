@@ -268,6 +268,7 @@
   #define MSG_FILAMENT_CHANGE_EXTRUDE_2       _UxGT("ekstruzję filamentu")
   #define MSG_FILAMENT_CHANGE_RESUME_1        _UxGT("Czekam na")
   #define MSG_FILAMENT_CHANGE_RESUME_2        _UxGT("wznowienie druku")
+
 #else // LCD_HEIGHT < 4
   // Up to 2 lines allowed
   #define MSG_FILAMENT_CHANGE_INIT_1          _UxGT("Proszę czekać...")

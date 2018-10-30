@@ -161,6 +161,14 @@ class NexObject {
      */
     void setText(const char *buffer, const char *pname=NULL);
 
+		/**
+		* Set text attribute of component.
+		*
+		* @param buffer progmem- text buffer terminated with '\0'.
+		* @param pname  - To set page name
+		*/
+		void setText_PGM(const char *buffer, const char *pname = NULL);
+
     /**
      * Get val attribute of component
      *

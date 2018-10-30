@@ -133,6 +133,25 @@
     recvRetCommandFinished();
   }
 
+	void NexObject::setText_PGM(const char *buffer, const char *pname) {
+		String cmd;
+		if (pname) {
+			cmd += pname;
+			cmd += ".";
+		}
+		cmd += this->__name;
+		cmd += ".txt=\"";
+
+		while(pgm_read_byte(buffer)!=0x00)
+		{
+			cmd += (char)pgm_read_byte(buffer++); // zczytuje narazie jedna komorke pamieci i nie przeksztalca na ascii eg. D=68, U=85 ascii
+		}
+		cmd += "\"";									// mozliwe ze dlatego iz czytamy const char buffer a wrzucamy od razu do stringa..?
+		
+		sendCommand(cmd.c_str());
+		recvRetCommandFinished();
+	}
+
   uint16_t NexObject::getValue(const char *pname) {
     String cmd;
     cmd += "get ";

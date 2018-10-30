@@ -255,17 +255,17 @@
   #define MSG_FILAMENT_CHANGE_RESUME_1        _UxGT("Czekam na")
   #define MSG_FILAMENT_CHANGE_RESUME_2        _UxGT("wznowienie druku")
 #elif ENABLED(NEXTION_DISPLAY)
-	#define MSG_NEX_FILAMENT_CHANGE_HEADER				_UxGT("Wymiana filamentu")
-	#define MSG_NEX_FILAMENT_CHANGE_OPTION_HEADER	_UxGT("Wybierz opcje:")
-	#define MSG_FILAMENT_CHANGE_INIT_1          _UxGT("Trwa rozpoczynanie")
-	#define MSG_FILAMENT_CHANGE_INIT_2          _UxGT("zmiany filamentu")
-	#define MSG_FILAMENT_CHANGE_UNLOAD_1        _UxGT("Trwa wysuwanie")
-	#define MSG_FILAMENT_CHANGE_UNLOAD_2        _UxGT("filamentu z g³owicy")
-	#define MSG_FILAMENT_CHANGE_INSERT_1        _UxGT("Wloz filament")
-	#define MSG_FILAMENT_CHANGE_INSERT_2        _UxGT("i nacisnij przycisk")
-	#define MSG_FILAMENT_CHANGE_INSERT_3        _UxGT("aby kontynuowac...")
+	#define MSG_NEX_FILAMENT_CHANGE_HEADER				"Wymiana filamentu"
+	#define MSG_NEX_FILAMENT_CHANGE_OPTION_HEADER	"Wybierz opcje"
+	#define MSG_FILAMENT_CHANGE_INIT_1          "Trwa rozpoczynanie"
+	#define MSG_FILAMENT_CHANGE_INIT_2          "zmiany filamentu"
+	#define MSG_FILAMENT_CHANGE_UNLOAD_1        "Trwa wysuwanie"
+	#define MSG_FILAMENT_CHANGE_UNLOAD_2        "filamentu z glowicy"
+	#define MSG_FILAMENT_CHANGE_INSERT_1        "Wloz filament"
+	#define MSG_FILAMENT_CHANGE_INSERT_2        "i nacisnij przycisk"
+	#define MSG_FILAMENT_CHANGE_INSERT_3        "aby kontynuowac..."
 	#define MSG_FILAMENT_CHANGE_LOAD_1          _UxGT("Trwa wprowadzanie")
-	#define MSG_FILAMENT_CHANGE_LOAD_2          _UxGT("filamentu do g³owicy")
+	#define MSG_FILAMENT_CHANGE_LOAD_2          _UxGT("filamentu do glowicy")
 	#define MSG_FILAMENT_CHANGE_EXTRUDE_1       _UxGT("Trwa ekstruzja")
 	#define MSG_FILAMENT_CHANGE_EXTRUDE_2       _UxGT("nowego materialu")
 	#define MSG_FILAMENT_CHANGE_RESUME_1        _UxGT("Trwa wznawianie")
