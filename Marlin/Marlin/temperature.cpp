@@ -1340,6 +1340,10 @@ void Temperature::init() {
         *state = TRRunaway;
       case TRRunaway:
         _temp_error(heater_id, PSTR(MSG_T_THERMAL_RUNAWAY), PSTR(MSG_THERMAL_RUNAWAY));
+				#if ENABLED(NEXTION_DISPLAY)
+						// powinno zwrocic na nextiona blad
+						// albo i nie..
+				#endif
     }
   }
 

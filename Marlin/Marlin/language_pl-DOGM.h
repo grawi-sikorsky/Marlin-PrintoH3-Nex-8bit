@@ -247,6 +247,8 @@
 #define	MSG_INFO_P3D_PHONE					_UxGT("+48 792 880 682")
 #define	MSG_INFO_VLCS_SUPPORT				_UxGT("VLCS/Power Panic")
 #define	MSG_INFO_FILAMENT_SENSOR_SUPPORT	_UxGT("Filament Sensor")
+#define	MSG_INFO_YES											_UxGT("TAK")
+#define	MSG_INFO_NO												_UxGT("NIE")
 //#define									_UxGT("O nas")
 //#define									_UxGT("O nas")
 

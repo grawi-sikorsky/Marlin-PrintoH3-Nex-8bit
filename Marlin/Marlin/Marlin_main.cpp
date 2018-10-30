@@ -6034,7 +6034,7 @@ inline void gcode_M17() {
 
     // Show initial message and wait for synchronize steppers
     if (show_lcd) {
-      #if ENABLED(ULTIPANEL)
+      #if ENABLED(ULTIPANEL) || ENABLED(NEXTION_DISPLAY)
         lcd_advanced_pause_show_message(ADVANCED_PAUSE_MESSAGE_INIT);
       #endif
     }
@@ -6067,7 +6067,7 @@ inline void gcode_M17() {
 
     if (unload_length != 0) {
       if (show_lcd) {
-        #if ENABLED(ULTIPANEL)
+        #if ENABLED(ULTIPANEL) || ENABLED(NEXTION_DISPLAY)
           lcd_advanced_pause_show_message(ADVANCED_PAUSE_MESSAGE_UNLOAD);
           idle();
         #endif
@@ -6087,7 +6087,7 @@ inline void gcode_M17() {
     }
 
     if (show_lcd) {
-      #if ENABLED(ULTIPANEL)
+      #if ENABLED(ULTIPANEL) || ENABLED(NEXTION_DISPLAY)
         lcd_advanced_pause_show_message(ADVANCED_PAUSE_MESSAGE_INSERT);
       #endif
     }
@@ -6131,7 +6131,7 @@ inline void gcode_M17() {
           nozzle_timed_out |= thermalManager.is_heater_idle(e);
 
       if (nozzle_timed_out) {
-        #if ENABLED(ULTIPANEL)
+        #if ENABLED(ULTIPANEL) || ENABLED(NEXTION_DISPLAY)
           lcd_advanced_pause_show_message(ADVANCED_PAUSE_MESSAGE_CLICK_TO_HEAT_NOZZLE);
         #endif
 
@@ -6144,7 +6144,7 @@ inline void gcode_M17() {
         // Wait for the heaters to reach the target temperatures
         ensure_safe_temperature();
 
-        #if ENABLED(ULTIPANEL)
+        #if ENABLED(ULTIPANEL) || ENABLED(NEXTION_DISPLAY)
           lcd_advanced_pause_show_message(ADVANCED_PAUSE_MESSAGE_INSERT);
         #endif
 
@@ -6185,7 +6185,7 @@ inline void gcode_M17() {
     #endif
 
     if (load_length != 0) {
-      #if ENABLED(ULTIPANEL)
+      #if ENABLED(ULTIPANEL) || ENABLED(NEXTION_DISPLAY)
         // Show "insert filament"
         if (nozzle_timed_out)
           lcd_advanced_pause_show_message(ADVANCED_PAUSE_MESSAGE_INSERT);
@@ -6201,7 +6201,7 @@ inline void gcode_M17() {
       }
       KEEPALIVE_STATE(IN_HANDLER);
 
-      #if ENABLED(ULTIPANEL)
+      #if ENABLED(ULTIPANEL) || ENABLED(NEXTION_DISPLAY)
         // Show "load" message
         lcd_advanced_pause_show_message(ADVANCED_PAUSE_MESSAGE_LOAD);
       #endif
@@ -6213,7 +6213,7 @@ inline void gcode_M17() {
       stepper.synchronize();
     }
 
-    #if ENABLED(ULTIPANEL) && ADVANCED_PAUSE_EXTRUDE_LENGTH > 0
+    #if ENABLED(ULTIPANEL) && ADVANCED_PAUSE_EXTRUDE_LENGTH > 0  || ENABLED(NEXTION_DISPLAY)
 
       float extrude_length = initial_extrude_length;
 
@@ -6242,7 +6242,7 @@ inline void gcode_M17() {
 
     #endif
 
-    #if ENABLED(ULTIPANEL)
+    #if ENABLED(ULTIPANEL) || ENABLED(NEXTION_DISPLAY)
       // "Wait for print to resume"
       lcd_advanced_pause_show_message(ADVANCED_PAUSE_MESSAGE_RESUME);
     #endif
@@ -6268,7 +6268,7 @@ inline void gcode_M17() {
       filament_ran_out = false;
     #endif
 
-    #if ENABLED(ULTIPANEL)
+    #if ENABLED(ULTIPANEL) || ENABLED(NEXTION_DISPLAY)
       // Show status screen
       lcd_advanced_pause_show_message(ADVANCED_PAUSE_MESSAGE_STATUS);
     #endif
@@ -12962,6 +12962,9 @@ void kill(const char* lcd_msg) {
 
   #if ENABLED(ULTRA_LCD)
     kill_screen(lcd_msg);
+	#elif ENABLED(NEXTION_DISPLAY)
+		// jakas czynnosc dla nextiona
+		lcd_nextion_kill_msg(lcd_msg);
   #else
     UNUSED(lcd_msg);
   #endif

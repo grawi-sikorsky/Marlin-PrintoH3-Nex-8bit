@@ -42,7 +42,7 @@
               lcd_status_message_level  = 0;
   uint16_t    slidermaxval              = 20;
   char        bufferson[70]             = { 0 };
-  char        lcd_status_message[30]    = WELCOME_MSG;
+  char        lcd_status_message[18]    = WELCOME_MSG;
   const float manual_feedrate_mm_m[]    = MANUAL_FEEDRATE;
 
   extern uint8_t progress_printing; // dodane nex
@@ -99,6 +99,7 @@
 	//NexObject Pservice			= NexObject(22, 0, "servicepage");
 	//NexObject Paccel				= NexObject(23, 0, "accelpage");
 	//NexObject Pjerk					= NexObject(25, 0, "jerkpage");
+	NexObject Pkill					= NexObject(30, 0, "killpage");
 	
   /**
    *******************************************************************
@@ -307,7 +308,7 @@
   NexObject ProbeUp     = NexObject(14, 1,  "p0");
   NexObject ProbeSend   = NexObject(14, 2,  "p1");
   NexObject ProbeDown   = NexObject(14, 3,  "p2");
-  NexObject ProbeMsg    = NexObject(14, 4,  "t0");
+  //NexObject ProbeMsg    = NexObject(14, 4,  "t0");
   NexObject ProbeZ      = NexObject(14, 5,  "t1");
 
 	/**
@@ -329,7 +330,6 @@
 	* Nextion component for page:maintain/osbluga
 	*******************************************************************
 	*/
-	NexObject cmdbuffer			= NexObject(16, 2, "cmdbuff");
 	NexObject vpageid				= NexObject(16, 8, "vpageid");
 	NexObject homeaxisbtn		= NexObject(16, 3, "m0");
 	NexObject bedlevelbtn		= NexObject(16, 4, "m1");
@@ -355,7 +355,12 @@
 	NexObject Stimetotal	= NexObject(19, 6, "t3");
 	NexObject Stimelong		= NexObject(19, 7, "t4");
 	NexObject Sfilament		= NexObject(19, 8, "t5");
-	
+
+	NexObject Sfirmware		= NexObject(19, 10, "t6");
+	NexObject Skompil			= NexObject(19, 11, "t7");
+	NexObject Sleveling		= NexObject(19, 12, "t8");
+	NexObject Svlcs				= NexObject(19, 13, "t9");
+	NexObject Sfilsensor	= NexObject(19, 14, "t10");
 
 	/**
 	*******************************************************************
@@ -396,6 +401,13 @@
 	*/
 	NexObject ZbabyUp			= NexObject(28, 1, "m0");
 	NexObject ZbabyDown		= NexObject(28, 2, "m1");
+
+	/**
+	*******************************************************************
+	* Nextion component for page:KILL SCREEN 29!
+	*******************************************************************
+	*/
+	NexObject Kmsg				= NexObject(30, 7, "t0");
 
 
   NexObject *nex_listen_list[] =
@@ -440,7 +452,7 @@
 		&heatupenter, &heatbedenter, &hotendenter, &chillenter,
 
 		// Page 16 tacz listen
-		&cmdbuffer, &homeaxisbtn, &bedlevelbtn, &filchangebtn,
+		&homeaxisbtn, &bedlevelbtn, &filchangebtn,
 
 		// Page 18 tacz listen
 		&fansetbtn,
@@ -537,8 +549,8 @@
 	  print_job_timer.stop();
 	  thermalManager.disable_all_heaters();
 		#if ENABLED(PLOSS_SUPPORT)
-	  //_babystep_z_shift = 0; // dodane - zeruje babystep po zatrzymaniu wydruku
-	  //eeprom_update_dword((uint32_t*)(EEPROM_PANIC_BABYSTEP_Z), _babystep_z_shift);	// zeruj babystepping w eeprom
+	  _babystep_z_shift = 0; // dodane - zeruje babystep po zatrzymaniu wydruku
+	  eeprom_update_dword((uint32_t*)(EEPROM_PANIC_BABYSTEP_Z), _babystep_z_shift);	// zeruj babystepping w eeprom
 		#endif
 		#if FAN_COUNT > 0
 	  for (uint8_t i = 0; i < FAN_COUNT; i++) fanSpeeds[i] = 0;
@@ -619,7 +631,7 @@
   }
 
   /**
-   * START_SCREEN  Opening code for a screen having only static items.
+   * START_SCREEN  Opening code for a screen having only static items.s
    *               Do simplified scrolling of the entire screen.
    *
    * START_MENU    Opening code for a screen with menu items.
@@ -641,7 +653,7 @@
 
   #define MENU_ITEM(TYPE, LABEL, ...) \
       if (lcdDrawUpdate) { \
-        lcd_row_list[_lcdLineNr]->setText(PSTR(LABEL)); \
+        lcd_row_list[_lcdLineNr]->setText(LABEL); \
         LcdMax.setValue(_lcdLineNr); \
       } \
       if (lcd_clicked && encoderLine == _lcdLineNr) { \
@@ -659,7 +671,7 @@
       } \
       ++_lcdLineNr \
 
-  #define STATIC_ITEM(LABEL) STATIC_ITEM_P(PSTR(LABEL))
+  #define STATIC_ITEM(LABEL) STATIC_ITEM_P(LABEL)
 
   #define END_MENU() \
       idle(); \
@@ -871,7 +883,7 @@
 
     static void lcd_advanced_pause_option_menu() {
       START_MENU();
-      STATIC_ITEM(MSG_FILAMENT_CHANGE_OPTION_HEADER);
+      STATIC_ITEM(MSG_NEX_FILAMENT_CHANGE_OPTION_HEADER);
       MENU_ITEM(function, MSG_FILAMENT_CHANGE_OPTION_RESUME, lcd_advanced_pause_resume_print);
       MENU_ITEM(function, MSG_FILAMENT_CHANGE_OPTION_EXTRUDE, lcd_advanced_pause_extrude_more);
       END_MENU();
@@ -881,7 +893,7 @@
       START_SCREEN();
       STATIC_ITEM_P(advanced_pause_header());
       STATIC_ITEM(MSG_FILAMENT_CHANGE_INIT_1);
-      //STATIC_ITEM(MSG_FILAMENT_CHANGE_INIT_2);
+      STATIC_ITEM(MSG_FILAMENT_CHANGE_INIT_2);
       //STATIC_ITEM(MSG_FILAMENT_CHANGE_INIT_3);
       END_SCREEN();
     }
@@ -890,7 +902,7 @@
       START_SCREEN();
       STATIC_ITEM_P(advanced_pause_header());
       STATIC_ITEM(MSG_FILAMENT_CHANGE_UNLOAD_1);
-     //STATIC_ITEM(MSG_FILAMENT_CHANGE_UNLOAD_2);
+			STATIC_ITEM(MSG_FILAMENT_CHANGE_UNLOAD_2);
       //STATIC_ITEM(MSG_FILAMENT_CHANGE_UNLOAD_3);
       END_SCREEN();
     }
@@ -923,8 +935,8 @@
       START_SCREEN();
       STATIC_ITEM_P(advanced_pause_header());
       STATIC_ITEM(MSG_FILAMENT_CHANGE_INSERT_1);
-      //STATIC_ITEM(MSG_FILAMENT_CHANGE_INSERT_2);
-      //STATIC_ITEM(MSG_FILAMENT_CHANGE_INSERT_3);
+      STATIC_ITEM(MSG_FILAMENT_CHANGE_INSERT_2);
+      STATIC_ITEM(MSG_FILAMENT_CHANGE_INSERT_3);
       END_SCREEN();
     }
 
@@ -932,7 +944,7 @@
       START_SCREEN();
       STATIC_ITEM_P(advanced_pause_header());
       STATIC_ITEM(MSG_FILAMENT_CHANGE_LOAD_1);
-      //STATIC_ITEM(MSG_FILAMENT_CHANGE_LOAD_2);
+      STATIC_ITEM(MSG_FILAMENT_CHANGE_LOAD_2);
       //STATIC_ITEM(MSG_FILAMENT_CHANGE_LOAD_3);
       END_SCREEN();
     }
@@ -940,8 +952,8 @@
     static void lcd_advanced_pause_purge_message() {
       START_SCREEN();
       STATIC_ITEM_P(advanced_pause_header());
-      //STATIC_ITEM(MSG_FILAMENT_CHANGE_PURGE_1);
-      //STATIC_ITEM(MSG_FILAMENT_CHANGE_PURGE_2);
+      STATIC_ITEM(MSG_FILAMENT_CHANGE_EXTRUDE_1);
+      STATIC_ITEM(MSG_FILAMENT_CHANGE_EXTRUDE_2);
       //STATIC_ITEM(MSG_FILAMENT_CHANGE_PURGE_3);
       END_SCREEN();
     }
@@ -950,7 +962,7 @@
       START_SCREEN();
       STATIC_ITEM_P(advanced_pause_header());
       STATIC_ITEM(MSG_FILAMENT_CHANGE_RESUME_1);
-      //STATIC_ITEM(MSG_FILAMENT_CHANGE_RESUME_2);
+      STATIC_ITEM(MSG_FILAMENT_CHANGE_RESUME_2);
       //STATIC_ITEM(MSG_FILAMENT_CHANGE_RESUME_3);
       END_SCREEN();
     }
@@ -1088,7 +1100,6 @@
       mbl.manual_goto_xy(lx, ly);
 
       Pprobe.show();
-      ProbeMsg.setText(PSTR(MSG_MOVE_Z));
 
 			host_keepalive();
 
@@ -1135,13 +1146,6 @@
 		Pprinter.show();
 	}
 
-	void setmaintaincodePopCallback(void *ptr) {
-		UNUSED(ptr);
-		ZERO(bufferson);
-		cmdbuffer.getText(bufferson, sizeof(bufferson), "maintain");
-		enqueue_and_echo_command(bufferson);
-	}
-
 	void setfanandgoPopCallback(void *ptr) {
 		uint8_t pageidbuff, vfanbuff;
 		UNUSED(ptr);
@@ -1161,6 +1165,7 @@
 	void setsetupstatPopCallback(void *ptr)
 	{
 		UNUSED(ptr);
+			// PRINTSTATS START
 			char buffer[21];
 			printStatistics stats = print_job_timer.getStats();
 
@@ -1181,7 +1186,27 @@
 
 			sprintf_P(buffer, PSTR("%ld.%im"), long(stats.filamentUsed / 1000), int16_t(stats.filamentUsed / 100) % 10);
 			Sfilament.setText(buffer);								// Extruded total: 125m
+			// END OF PRINTSTATS
+
+			// PRINTER INFO START
+			Sfirmware.setText(SHORT_BUILD_VERSION);
+			Skompil.setText(STRING_DISTRIBUTION_DATE);
+			Sleveling.setText(MSG_MESH_LEVELING);
+
+			#if ENABLED(PLOSS_SUPPORT)
+						Svlcs.setText(MSG_INFO_YES);
+			#else
+						Svlcs.setText(MSG_INFO_NO);
+			#endif
+
+			#if ENABLED(FILAMENT_RUNOUT_SENSOR)
+						Sfilsensor.setText(MSG_INFO_YES);
+			#else
+						Sfilsensor.setText(MSG_INFO_NO);
+			#endif			
+			// END OF PRINTER INFO
 	}
+
 	void setaccelpagePopCallback(void *ptr)
 	{
 			UNUSED(ptr);
@@ -1433,9 +1458,9 @@
       #endif
 
       #if ENABLED(NEXTION_BED_LEVEL)
-        ProbeUp.attachPop(ProbelPopCallBack, &ProbeUp);
+        ProbeUp.attachPush(ProbelPopCallBack, &ProbeUp);
         ProbeSend.attachPop(ProbelPopCallBack, &ProbeSend);
-        ProbeDown.attachPop(ProbelPopCallBack, &ProbeDown);
+        ProbeDown.attachPush(ProbelPopCallBack, &ProbeDown);
       #endif
 
 			heatupenter.attachPop(sethotPopCallback, &heatupenter); // obs³uga przycisku rozgrzej oba
@@ -1443,8 +1468,8 @@
 			heatbedenter.attachPop(setheatbedPopCallback, &heatbedenter); //obs³uga przycisku rozgrzej bed
 			chillenter.attachPop(sethotPopCallback, &chillenter); //obs³uga przycisku chlodzenie
 			homeaxisbtn.attachPop(setgcodePopCallback); //obs³uga przycisku home
-			bedlevelbtn.attachPop(setmaintaincodePopCallback); //obs³uga przycisku level
-			filchangebtn.attachPop(setmaintaincodePopCallback); //obs³uga przycisku m600
+			bedlevelbtn.attachPop(setgcodePopCallback); //obs³uga przycisku level
+			filchangebtn.attachPop(setgcodePopCallback); //obs³uga przycisku m600
 			statin.attachPop(setsetupstatPopCallback); //dodane info o wejsciu w statystyki
 			accelin.attachPop(setaccelpagePopCallback); //setaccelpagePopCallback
 			Asend.attachPop(setgcodePopCallback);
@@ -1743,6 +1768,12 @@
     Riga1.setText(msg2);
     Riga3.setText(msg3);
   }
+
+	void lcd_nextion_kill_msg(const char* lcd_msg)
+	{
+		Kmsg.setText(lcd_msg);
+		Pkill.show();
+	}
 
 	// dodana obsluga babystep
 	#if ENABLED(BABYSTEPPING)

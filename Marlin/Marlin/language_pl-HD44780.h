@@ -209,10 +209,10 @@
 #define MSG_DAC_PERCENT                     _UxGT("Sila %")
 #define MSG_DAC_EEPROM_WRITE                _UxGT("Zapisz DAC EEPROM")
 
-#define MSG_FILAMENT_CHANGE_HEADER          _UxGT("ZMIEN FILAMENT")
-#define MSG_FILAMENT_CHANGE_OPTION_HEADER   _UxGT("ZMIEN OPCJE:")
-#define MSG_FILAMENT_CHANGE_OPTION_EXTRUDE  _UxGT("Ekstruduj wiecej")
-#define MSG_FILAMENT_CHANGE_OPTION_RESUME   _UxGT("Wznow drukowanie")
+#define MSG_FILAMENT_CHANGE_HEADER						_UxGT("ZMIEN FILAMENT")
+#define MSG_FILAMENT_CHANGE_OPTION_HEADER			_UxGT("ZMIEN OPCJE:")
+#define MSG_FILAMENT_CHANGE_OPTION_EXTRUDE		_UxGT("Ekstruduj wiecej")
+#define MSG_FILAMENT_CHANGE_OPTION_RESUME			_UxGT("Wznow drukowanie")
 
 #if LCD_HEIGHT >= 4
   // Up to 3 lines allowed
@@ -254,6 +254,22 @@
   #define MSG_FILAMENT_CHANGE_EXTRUDE_2       _UxGT("ekstruzje filamentu")
   #define MSG_FILAMENT_CHANGE_RESUME_1        _UxGT("Czekam na")
   #define MSG_FILAMENT_CHANGE_RESUME_2        _UxGT("wznowienie druku")
+#elif ENABLED(NEXTION_DISPLAY)
+	#define MSG_NEX_FILAMENT_CHANGE_HEADER				_UxGT("Wymiana filamentu")
+	#define MSG_NEX_FILAMENT_CHANGE_OPTION_HEADER	_UxGT("Wybierz opcje:")
+	#define MSG_FILAMENT_CHANGE_INIT_1          _UxGT("Trwa rozpoczynanie")
+	#define MSG_FILAMENT_CHANGE_INIT_2          _UxGT("zmiany filamentu")
+	#define MSG_FILAMENT_CHANGE_UNLOAD_1        _UxGT("Trwa wysuwanie")
+	#define MSG_FILAMENT_CHANGE_UNLOAD_2        _UxGT("filamentu z g³owicy")
+	#define MSG_FILAMENT_CHANGE_INSERT_1        _UxGT("Wloz filament")
+	#define MSG_FILAMENT_CHANGE_INSERT_2        _UxGT("i nacisnij przycisk")
+	#define MSG_FILAMENT_CHANGE_INSERT_3        _UxGT("aby kontynuowac...")
+	#define MSG_FILAMENT_CHANGE_LOAD_1          _UxGT("Trwa wprowadzanie")
+	#define MSG_FILAMENT_CHANGE_LOAD_2          _UxGT("filamentu do g³owicy")
+	#define MSG_FILAMENT_CHANGE_EXTRUDE_1       _UxGT("Trwa ekstruzja")
+	#define MSG_FILAMENT_CHANGE_EXTRUDE_2       _UxGT("nowego materialu")
+	#define MSG_FILAMENT_CHANGE_RESUME_1        _UxGT("Trwa wznawianie")
+	#define MSG_FILAMENT_CHANGE_RESUME_2        _UxGT("wydruku")
 #else // LCD_HEIGHT < 4
   // Up to 2 lines allowed
   #define MSG_FILAMENT_CHANGE_INIT_1          _UxGT("Prosze czekac...")
