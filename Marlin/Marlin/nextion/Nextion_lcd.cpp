@@ -46,6 +46,9 @@
   const float manual_feedrate_mm_m[]    = MANUAL_FEEDRATE;
 
   extern uint8_t progress_printing; // dodane nex
+	extern uint8_t commands_in_queue;
+	extern void process_next_command();
+
 
 	extern float destination[XYZE];// = { 0.0 };
 	extern bool g29_in_progress;// = false;
@@ -87,6 +90,7 @@
   NexObject Pinfo         = NexObject(10, 0,  "info");
   NexObject Pyesno        = NexObject(11, 0,  "yesno");
   //NexObject Pfilament     = NexObject(12, 0,  "filament");
+
   NexObject Pselect       = NexObject(13, 0,  "select");
   NexObject Pprobe        = NexObject(14, 0,  "bedlevel");
 	NexObject Pheatup				= NexObject(15, 0,	"heatup");
@@ -288,17 +292,17 @@
    * Nextion component for page:Select
    *******************************************************************
    */
-  NexObject LcdRiga1    = NexObject(13,  1, "t0");
-  NexObject LcdRiga2    = NexObject(13,  2, "t1");
-  NexObject LcdRiga3    = NexObject(13,  3, "t2");
-  NexObject LcdRiga4    = NexObject(13,  4, "t3");
-  NexObject LcdValor    = NexObject(13,  5, "t4");
-  NexObject LcdUp       = NexObject(13,  6, "p0");
-  NexObject LcdSend     = NexObject(13,  7, "p1");
-  NexObject LcdDown     = NexObject(13,  8, "p2");
-  NexObject LcdMin      = NexObject(13,  9, "min");
-  NexObject LcdMax      = NexObject(13, 10, "max");
-  NexObject LcdPos      = NexObject(13, 11, "pos");
+  NexObject LcdRiga1    = NexObject(13,  2, "t0");
+  NexObject LcdRiga2    = NexObject(13,  3, "t1");
+  NexObject LcdRiga3    = NexObject(13,  4, "t2");
+  NexObject LcdRiga4    = NexObject(13,  5, "t3");
+  NexObject LcdValor    = NexObject(13,  6, "t4");
+  NexObject LcdUp       = NexObject(13,  15, "p4");
+  NexObject LcdSend     = NexObject(13,  14, "p1");
+  NexObject LcdDown     = NexObject(13,  16, "p5");
+  NexObject LcdMin      = NexObject(13,  7, "min");
+  NexObject LcdMax      = NexObject(13, 8, "max");
+  NexObject LcdPos      = NexObject(13, 9, "pos");
 
   /**
    *******************************************************************
@@ -333,7 +337,7 @@
 	NexObject vpageid				= NexObject(16, 8, "vpageid");
 	NexObject homeaxisbtn		= NexObject(16, 3, "m0");
 	NexObject bedlevelbtn		= NexObject(16, 4, "m1");
-	NexObject filchangebtn	= NexObject(16, 7, "m4");
+	//NexObject filchangebtn	= NexObject(16, 7, "m4");
 
 	/**
 	*******************************************************************
@@ -452,7 +456,7 @@
 		&heatupenter, &heatbedenter, &hotendenter, &chillenter,
 
 		// Page 16 tacz listen
-		&homeaxisbtn, &bedlevelbtn, &filchangebtn,
+		&homeaxisbtn, &bedlevelbtn,
 
 		// Page 18 tacz listen
 		&fansetbtn,
@@ -565,7 +569,7 @@
   void setpagePrinter() {
     char temp[10] = { 0 };
 
-    Version.setText(SHORT_BUILD_VERSION, "menu");
+    //Version.setText_PGM(SHORT_BUILD_VERSION, "menu");
 
     #if HOTENDS > 0
       Hotend00.setValue(1, "printer");
@@ -621,13 +625,15 @@
     Language.setText(NEXTION_LANGUAGE, "printer");
   }
 
-  void start_menu(const bool encoder=false, const bool push=false) {
+  void start_menu(const bool encoder=false, const bool push=false) 
+	{
     Pselect.show();
     LcdUp.SetVisibility(encoder);
     LcdDown.SetVisibility(encoder);
     LcdSend.SetVisibility(push);
     lcdDrawUpdate = true;
     lcd_clicked = !push;
+		SERIAL_ECHOPGM("end of start_menu()");
   }
 
   /**
@@ -649,11 +655,11 @@
     do { \
       _lcdLineNr = 0; \
       encoderLine = LcdPos.getValue(); \
-      delayMicroseconds(100)
+      delayMicroseconds(900)
 
   #define MENU_ITEM(TYPE, LABEL, ...) \
       if (lcdDrawUpdate) { \
-        lcd_row_list[_lcdLineNr]->setText(LABEL); \
+        lcd_row_list[_lcdLineNr]->setText_PGM(PSTR(LABEL)); \
         LcdMax.setValue(_lcdLineNr); \
       } \
       if (lcd_clicked && encoderLine == _lcdLineNr) { \
@@ -860,7 +866,7 @@
   #if ENABLED(ADVANCED_PAUSE_FEATURE)
 
     static AdvancedPauseMenuResponse advanced_pause_mode = ADVANCED_PAUSE_RESPONSE_WAIT_FOR; // tutaj jest bagno!
-
+		/*
     static const char* advanced_pause_header() {
       switch (advanced_pause_mode) {
         case ADVANCED_PAUSE_RESPONSE_EXTRUDE_MORE:
@@ -871,7 +877,7 @@
       }
       return PSTR(MSG_FILAMENT_CHANGE_HEADER); //MSG_FILAMENT_CHANGE_HEADER_PAUSE
     }
-
+		*/
     static void lcd_advanced_pause_resume_print() {
       advanced_pause_menu_response = ADVANCED_PAUSE_RESPONSE_RESUME_PRINT;
       Pprinter.show();
@@ -891,7 +897,8 @@
 
     static void lcd_advanced_pause_init_message() {
       START_SCREEN();
-      STATIC_ITEM_P(advanced_pause_header());
+			STATIC_ITEM(MSG_NEX_FILAMENT_CHANGE_HEADER);
+      //STATIC_ITEM_P(advanced_pause_header());
       STATIC_ITEM(MSG_FILAMENT_CHANGE_INIT_1);
       STATIC_ITEM(MSG_FILAMENT_CHANGE_INIT_2);
       //STATIC_ITEM(MSG_FILAMENT_CHANGE_INIT_3);
@@ -900,8 +907,9 @@
 
     static void lcd_advanced_pause_unload_message() {
       START_SCREEN();
-      STATIC_ITEM_P(advanced_pause_header());
-      STATIC_ITEM(MSG_FILAMENT_CHANGE_UNLOAD_1);
+      //STATIC_ITEM_P(advanced_pause_header());
+			STATIC_ITEM(MSG_NEX_FILAMENT_CHANGE_HEADER);
+			STATIC_ITEM(MSG_FILAMENT_CHANGE_UNLOAD_1);
 			STATIC_ITEM(MSG_FILAMENT_CHANGE_UNLOAD_2);
       //STATIC_ITEM(MSG_FILAMENT_CHANGE_UNLOAD_3);
       END_SCREEN();
@@ -909,7 +917,8 @@
 
     static void lcd_advanced_pause_wait_for_nozzles_to_heat() {
       START_SCREEN();
-      STATIC_ITEM_P(advanced_pause_header());
+      //STATIC_ITEM_P(advanced_pause_header());
+			STATIC_ITEM(MSG_NEX_FILAMENT_CHANGE_HEADER);
       STATIC_ITEM(MSG_FILAMENT_CHANGE_HEATING_1);
       STATIC_ITEM(MSG_FILAMENT_CHANGE_HEATING_2);
       END_SCREEN();
@@ -917,7 +926,8 @@
 
     static void lcd_advanced_pause_heat_nozzle() {
       START_SCREEN();
-      STATIC_ITEM_P(advanced_pause_header());
+      //STATIC_ITEM_P(advanced_pause_header());
+			STATIC_ITEM(MSG_NEX_FILAMENT_CHANGE_HEADER);
       STATIC_ITEM(MSG_FILAMENT_CHANGE_HEAT_1);
       STATIC_ITEM(MSG_FILAMENT_CHANGE_HEAT_2);
       END_SCREEN();
@@ -925,7 +935,8 @@
 
     static void lcd_advanced_pause_printer_off() {
       START_SCREEN();
-      STATIC_ITEM_P(advanced_pause_header());
+      //STATIC_ITEM_P(advanced_pause_header());
+			//STATIC_ITEM(MSG_NEX_FILAMENT_CHANGE_HEADER);
       //STATIC_ITEM(MSG_FILAMENT_CHANGE_ZZZ_1);
       //STATIC_ITEM(MSG_FILAMENT_CHANGE_ZZZ_2);
       END_SCREEN();
@@ -933,7 +944,8 @@
 
     static void lcd_advanced_pause_insert_message() {
       START_SCREEN();
-      STATIC_ITEM_P(advanced_pause_header());
+      //STATIC_ITEM_P(advanced_pause_header());
+			STATIC_ITEM(MSG_NEX_FILAMENT_CHANGE_HEADER);
       STATIC_ITEM(MSG_FILAMENT_CHANGE_INSERT_1);
       STATIC_ITEM(MSG_FILAMENT_CHANGE_INSERT_2);
       STATIC_ITEM(MSG_FILAMENT_CHANGE_INSERT_3);
@@ -942,7 +954,8 @@
 
     static void lcd_advanced_pause_load_message() {
       START_SCREEN();
-      STATIC_ITEM_P(advanced_pause_header());
+      //STATIC_ITEM_P(advanced_pause_header());
+			STATIC_ITEM(MSG_NEX_FILAMENT_CHANGE_HEADER);
       STATIC_ITEM(MSG_FILAMENT_CHANGE_LOAD_1);
       STATIC_ITEM(MSG_FILAMENT_CHANGE_LOAD_2);
       //STATIC_ITEM(MSG_FILAMENT_CHANGE_LOAD_3);
@@ -951,7 +964,8 @@
 
     static void lcd_advanced_pause_purge_message() {
       START_SCREEN();
-      STATIC_ITEM_P(advanced_pause_header());
+      //STATIC_ITEM_P(advanced_pause_header());
+			STATIC_ITEM(MSG_NEX_FILAMENT_CHANGE_HEADER);
       STATIC_ITEM(MSG_FILAMENT_CHANGE_EXTRUDE_1);
       STATIC_ITEM(MSG_FILAMENT_CHANGE_EXTRUDE_2);
       //STATIC_ITEM(MSG_FILAMENT_CHANGE_PURGE_3);
@@ -960,7 +974,8 @@
 
     static void lcd_advanced_pause_resume_message() {
       START_SCREEN();
-      STATIC_ITEM_P(advanced_pause_header());
+      //STATIC_ITEM_P(advanced_pause_header());
+			STATIC_ITEM(MSG_NEX_FILAMENT_CHANGE_HEADER);
       STATIC_ITEM(MSG_FILAMENT_CHANGE_RESUME_1);
       STATIC_ITEM(MSG_FILAMENT_CHANGE_RESUME_2);
       //STATIC_ITEM(MSG_FILAMENT_CHANGE_RESUME_3);
@@ -1006,7 +1021,7 @@
             advanced_pause_menu_response = ADVANCED_PAUSE_RESPONSE_WAIT_FOR;
             lcd_advanced_pause_option_menu();
             break;
-          case ADVANCED_PAUSE_MESSAGE_STATUS:
+          //case ADVANCED_PAUSE_MESSAGE_STATUS:
           default:
             Pprinter.show();
             break;
@@ -1258,7 +1273,15 @@
     ZERO(bufferson);
     Tgcode.getText(bufferson, sizeof(bufferson), "gcode");
     Tgcode.setText("", "gcode");
-		enqueue_and_echo_command(bufferson);
+
+		if (strcmp(bufferson,"M600") == 0)
+		{
+			enqueue_and_echo_commands_P(PSTR("M600 B0"));
+		}
+		else
+		{
+			enqueue_and_echo_command(bufferson);
+		}
   }
 
   #if FAN_PIN
@@ -1468,7 +1491,7 @@
 			chillenter.attachPop(sethotPopCallback, &chillenter); //obs³uga przycisku chlodzenie
 			homeaxisbtn.attachPop(setgcodePopCallback); //obs³uga przycisku home
 			bedlevelbtn.attachPop(setgcodePopCallback); //obs³uga przycisku level
-			filchangebtn.attachPop(setgcodePopCallback); //obs³uga przycisku m600
+			//filchangebtn.attachPop(setgcodePopCallback); //obs³uga przycisku m600
 			statin.attachPop(setsetupstatPopCallback); //dodane info o wejsciu w statystyki
 			accelin.attachPop(setaccelpagePopCallback); //setaccelpagePopCallback
 			Asend.attachPop(setgcodePopCallback);
@@ -1582,7 +1605,8 @@
     switch(PageID)
 	{
       case 2:
-        if (PreviousPage != 2) {
+        if (PreviousPage != 2) 
+				{
           lcd_setstatus(lcd_status_message);
           #if ENABLED(NEXTION_GFX)
             #if MECH(DELTA)
@@ -1591,7 +1615,7 @@
               gfx_clear(X_MAX_POS, Y_MAX_POS, Z_MAX_POS);
             #endif
           #endif
-		}
+				}
         #if FAN_COUNT > 0
           if (PreviousfanSpeed != fanSpeeds[0]) {
           Fanspeed.setValue(((float)(fanSpeeds[0]) / 255) * 100);
