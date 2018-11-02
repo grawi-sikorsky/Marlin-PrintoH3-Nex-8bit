@@ -13015,9 +13015,7 @@ void stop() {
 
 #ifdef PLOSS_SUPPORT
 
-// Printo H3 dodane
-float backup_temp_hotend = 0;
-float backup_temp_bed = 0;
+
 union Data
 {
 	byte b[2];
@@ -13053,9 +13051,11 @@ void planner_abort_hard()
 
 	memcpy(destination, current_position, sizeof(destination));
 }
-//extern void print_eeprom();
-// dodane Printo H3 ustawienie przerwania ploss
+
+// dodane Printo H3 obsługa przerwania ploss
 void ploss() {
+	float backup_temp_hotend = 0; //przeniesione do wnetrza funkcji
+	float backup_temp_bed = 0;		//przeniesione do wnetrza ploss() dodatkowe 8 bajtów ram
 	thermalManager.disable_all_heaters(); // wylacz grzalki
 
 	// Zrob kopie temperatur przed wylaczeniem grzalek
@@ -13182,13 +13182,13 @@ void ploss_recover(uint8_t automatic) {
 	// jakas inna czynnosc wyswietlajaca mesydz wazny na tft
 	#endif
 
-	//print_eeprom();
-
 	recover_machine_state_after_power_panic(); // przywraca stan urzadzenia po zaniku
 	
 	// Ustaw temperatury dla glowicy bez oczekiwania
-	sprintf_P(cmd, PSTR("M104 S%d"), thermalManager.target_temperature[0]);	// do sprawdzenia
-	enqueue_and_echo_command(cmd); //2
+	sprintf_P(cmd, PSTR("M104 S%d"), thermalManager.target_temperature[0]);
+	enqueue_and_echo_command(cmd); //2 zamiast enqueue command są dwie opcje ponizej: do sprawdzenia:
+	//thermalManager.setTargetHotend(thermalManager.target_temperature[0], 0);
+	//thermalManager.setTargetHotend(eeprom_read_word((uint16_t*)EEPROM_PANIC_TARGET_HOTEND), 0);
 	
 	// Bazujemy cala drukarke
 	home_all_axes(); // zamiast: enqueue_and_echo_commands_P(PSTR("G28")); 
@@ -13197,7 +13197,7 @@ void ploss_recover(uint8_t automatic) {
 	_babystep_z_shift = eeprom_read_dword((uint32_t*)EEPROM_PANIC_BABYSTEP_Z);
 	thermalManager.babystep_axis(Z_AXIS, _babystep_z_shift); //dodane
 
-	// Ustaw temperatury i czekaj na osiagniecie temp.
+	// Ustaw temperatury i czekaj na osiagniecie temp. mozliwe ze da sie usunac enqueue command
 	sprintf_P(cmd, PSTR("M109 S%d"), thermalManager.target_temperature[0]);
 	enqueue_and_echo_command(cmd); //3
 	sprintf_P(cmd, PSTR("M190 S%d"), thermalManager.target_temperature_bed);
@@ -13208,7 +13208,6 @@ void ploss_recover(uint8_t automatic) {
 
 	// Rozpocznik wydruk z eeprom po zaniku
 	restore_print_from_eeprom();
-	//print_eeprom();
 }
 /**	Odczyt pozycji i przypisnie jej do plannera
 *	Wlaczenie stepperow, przypisanie flagi znanej pozycji
@@ -13216,7 +13215,7 @@ void ploss_recover(uint8_t automatic) {
 */
 void recover_machine_state_after_power_panic()
 {
-	char cmd[30];
+	char cmd[30]; // moze da sie zmniejszyc? 30 znakow dla ustawienia G92 E to chyba za duzo..
 	// Przywroc pozycje sprzed zaniku na dane zapisane w eepromie
 	current_position[X_AXIS] = eeprom_read_float((float*)EEPROM_PANIC_CURRENT_XPOS);
 	current_position[Y_AXIS] = eeprom_read_float((float*)EEPROM_PANIC_CURRENT_YPOS);
@@ -13242,13 +13241,12 @@ void recover_machine_state_after_power_panic()
 }
 
 void restore_print_from_eeprom() {
-	//MYSERIAL.println("Restore Print from EEPROM: wejscie");
 	uint8_t _axis_rel_modes;
 	uint32_t _sdpos;
-	float _e;
-	float _x;
-	float _y;
-	float _z;
+	//float _e;
+	//float _x;
+	//float _y;
+	//float _z;
 	uint16_t _fan;
 	uint16_t _hotend;
 	uint16_t _bed;
@@ -13258,10 +13256,10 @@ void restore_print_from_eeprom() {
 	
 	_axis_rel_modes = eeprom_read_byte((uint8_t*)EEPROM_PANIC_AXIS_REL_MODES);
 	_sdpos = eeprom_read_dword((uint32_t*)EEPROM_PANIC_SD_FILE_POSITION); //+
-	_e = eeprom_read_float((float*)EEPROM_PANIC_CURRENT_EPOS);
-	_x = eeprom_read_float((float*)EEPROM_PANIC_CURRENT_XPOS);
-	_y = eeprom_read_float((float*)EEPROM_PANIC_CURRENT_YPOS);
-	_z = eeprom_read_float((float*)EEPROM_PANIC_CURRENT_ZPOS);
+	//_e = eeprom_read_float((float*)EEPROM_PANIC_CURRENT_EPOS);
+	//_x = eeprom_read_float((float*)EEPROM_PANIC_CURRENT_XPOS);
+	//_y = eeprom_read_float((float*)EEPROM_PANIC_CURRENT_YPOS);
+	//_z = eeprom_read_float((float*)EEPROM_PANIC_CURRENT_ZPOS);
 	_fan = eeprom_read_word((uint16_t*)EEPROM_PANIC_FAN_SPEED); // +
 	_hotend = eeprom_read_word((uint16_t*)EEPROM_PANIC_TARGET_HOTEND);
 	_bed = eeprom_read_word((uint16_t*)EEPROM_PANIC_TARGET_BED);
@@ -13276,15 +13274,13 @@ void restore_print_from_eeprom() {
 	char dir_name[9];
 	
 	depth = eeprom_read_byte((uint8_t*)EEPROM_SD_FILE_DIR_DEPTH);
-	//MYSERIAL.print("DIR DEPTH: ");
-	//MYSERIAL.println(int(depth));
 	for (int i = 0; i < depth; i++) {
 		for (int j = 0; j < 8; j++) {
 			dir_name[j] = eeprom_read_byte((uint8_t*)EEPROM_SD_DIRS + j + 8 * i);
 
 		}
 		dir_name[8] = '\0';
-		MYSERIAL.println(dir_name);
+		//MYSERIAL.println(dir_name);
 		#if ENABLED(SDSUPPORT)
 		card.chdir(dir_name);
 		#endif	
@@ -13296,19 +13292,17 @@ void restore_print_from_eeprom() {
 	}
 	filename[8] = '\0';
 	
-	//MYSERIAL.print("PLIK: ");
-	//MYSERIAL.println(filename);
 	strcat_P(filename, PSTR(".gco"));
 	sprintf_P(cmd_buff, PSTR("M23 %s"), filename);
 	for (c = &cmd_buff[4]; *c; c++)
 		*c = tolower(*c);
-	enqueue_and_echo_command(cmd_buff); //6
+	enqueue_and_echo_command(cmd_buff); //5
 
 	//MYSERIAL.print("Pozycja pliku SD: ");
 	//MYSERIAL.println(_sdpos);
 
 	// Ekstruder tryb relative
-	enqueue_and_echo_commands_P(PSTR("M83")); //7
+	enqueue_and_echo_commands_P(PSTR("M83")); //6 (5+1PGM)
 
 	// 1. XY na poz zmiany filamentu, Z na pol drogi do wydruku
 	//float _z_half = (Z_MAX_POS - _z) / 2 + _z; //problem bo pojawiaja sie liczby niewymierne i powoduja pręgi na zetce
@@ -13317,21 +13311,21 @@ void restore_print_from_eeprom() {
 	strcat_P(cmd_buff, PSTR(" Y"));   strcat(cmd_buff, ftostr32(PAUSE_PARK_Y_POS));
 	//strcat_P(cmd_buff, PSTR(" Z"));   strcat(cmd_buff, ftostr32(_z_half));
 	strcat_P(cmd_buff, PSTR(" F3000"));
-	enqueue_and_echo_command(cmd_buff); //8
+	enqueue_and_echo_command(cmd_buff); //7 (6+1PGM)
 
 	// 2. Extruzja
-	enqueue_and_echo_commands_P(PSTR("G1 E10 F1500")); //9
+	enqueue_and_echo_commands_P(PSTR("G1 E10 F1500")); //8 (6+2PGM)
 
 	// 3. Confirm Menu 
 	// Do poprawienia. Niestety umieszone w Mcode bo musi się wykonac w tym konkretym miejscu
 	// w przeciwnym razie wykona sie szybciej niz zakolejkowane komendy w buforze..
-	enqueue_and_echo_commands_P(PSTR("M812")); //10
+	enqueue_and_echo_commands_P(PSTR("M812")); //9 (6+3PGM)
 
 	// 4. Ext+, Zetka na pozycje wlasciwa
 	// Podnies zetkę na miejsce druku
 	strcpy_P(cmd_buff, PSTR("G1 Z")); strcat(cmd_buff, ftostr32(eeprom_read_float((float*)EEPROM_PANIC_CURRENT_ZPOS))); // do uzycia zmienna z poczatku funkcji
 	strcat_P(cmd_buff, PSTR(" F3000"));
-	enqueue_and_echo_command(cmd_buff); //11
+	enqueue_and_echo_command(cmd_buff); //10 (7+3PGM)
 
 
 	// 5. XY na pozycje wlasciwa z ekstruzja w trakcie
@@ -13340,29 +13334,26 @@ void restore_print_from_eeprom() {
 	strcat_P(cmd_buff, PSTR(" Y"));   strcat(cmd_buff, ftostr32(eeprom_read_float((float*)EEPROM_PANIC_CURRENT_YPOS)));// do uzycia zmienna z poczatku funkcji
 	strcat_P(cmd_buff, PSTR(" E3"));
 	strcat_P(cmd_buff, PSTR(" F3000"));
-	enqueue_and_echo_command(cmd_buff); //12
+	enqueue_and_echo_command(cmd_buff); //11 (8+3PGM)
 
 
-	enqueue_and_echo_commands_P(PSTR("M82")); //Ekstruder tryb absolute //13
+	enqueue_and_echo_commands_P(PSTR("M82")); //Ekstruder tryb absolute //12 (8+4PGM)
 
-	current_position[E_AXIS] = eeprom_read_float((float*)EEPROM_PANIC_CURRENT_EPOS);
+	current_position[E_AXIS] = eeprom_read_float((float*)EEPROM_PANIC_CURRENT_EPOS); // do uzycia zmienna z poczatku funkcji
 	sprintf_P(cmd_buff, PSTR("G92 E"));
 	dtostrf(current_position[E_AXIS], 6, 3, cmd_buff + strlen(cmd_buff));
-	enqueue_and_echo_command(cmd_buff); //14
+	enqueue_and_echo_command(cmd_buff); //13 (9+4PGM)
 
 	// Ustaw obroty wentylatora na te sprzed zaniku
-	//strcpy_P(cmd_buff, PSTR("M106 S"));
-	//strcat(cmd_buff, itostr3(int(_fan)));
-	//enqueue_and_echo_command(cmd_buff); //15
 	fanSpeeds[0] = _fan;
 
 	// Ustaw pozycje wybranego pliku na karcie sd
 	sprintf_P(cmd_buff, PSTR("M26 S%lu"), _sdpos);
-	enqueue_and_echo_command(cmd_buff); //16
+	enqueue_and_echo_command(cmd_buff); //14 (10+4PGM)
 
 	// Rozpocznik wydruk
-	enqueue_and_echo_commands_P(PSTR("M24")); //17
-	enqueue_and_echo_commands_P(PSTR("M117 Drukowanie.."));//18
+	enqueue_and_echo_commands_P(PSTR("M24")); //15 (10+5PGM)
+	enqueue_and_echo_commands_P(PSTR("M117 Drukowanie.."));//16 (10+6PGM)
 }
 
 
