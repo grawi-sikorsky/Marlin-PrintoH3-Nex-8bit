@@ -172,7 +172,6 @@ void CardReader::ls() {
 }
 
 #if ENABLED(LONG_FILENAME_HOST_SUPPORT)
-
   /**
    * Get a long pretty path based on a DOS 8.3 path
    */
