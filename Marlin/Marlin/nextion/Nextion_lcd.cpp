@@ -130,7 +130,6 @@
    * Nextion component for page:printer
    *******************************************************************
    */
-  
   NexObject LcdX        = NexObject(2,  4,  "vx");
   NexObject LcdY        = NexObject(2,  5,  "vy");
   NexObject LcdZ        = NexObject(2,  6,  "vz");
@@ -140,6 +139,9 @@
   NexObject Hotend10    = NexObject(2, 10,  "he10");
   NexObject Hotend11    = NexObject(2, 11,  "he11");
   NexObject Bed0        = NexObject(2, 12,  "bed0");
+	NexObject Bed1				= NexObject(2, 13, "bed1");
+	NexObject Chamber0		= NexObject(2, 14, "cha0");
+	NexObject Chamber1		= NexObject(2, 15, "cha1");
   NexObject DHT0        = NexObject(2, 16,  "dht0");
   NexObject SD          = NexObject(2, 17,  "sd");
   NexObject Fanspeed    = NexObject(2, 20,  "fs");
@@ -152,6 +154,9 @@
   NexObject progressbar = NexObject(2, 37,  "j0");
   NexObject Wavetemp    = NexObject(2, 38,  "s0");
 	NexObject FanSpeedTouch = NexObject(2, 56, "m1");
+	//NexObject Fan         = NexObject(2, 19,  "fan");
+	//NexObject LightStatus = NexObject(2, 23,  "light");
+	//NexObject LcdCommand  = NexObject(2, 92,  "t1");
 	//
 	// == 21
 	// == 32
@@ -211,11 +216,11 @@
   NexObject MotorOff    = NexObject(5,  17, "p0");
   NexObject ext         = NexObject(5,  18, "va0");
   NexObject Extrude     = NexObject(5,  19, "p12");
-  NexObject Retract     = NexObject(5,  21, "p14");
-  NexObject SpeedX      = NexObject(5,  22, "vafrx");
-  NexObject SpeedY      = NexObject(5,  23, "vafry");
-  NexObject SpeedZ      = NexObject(5,  24, "vafrz");
-  NexObject SpeedE      = NexObject(5,  25, "vafre");
+  NexObject Retract     = NexObject(5,  20, "p14");
+  NexObject SpeedX      = NexObject(5,  21, "vafrx");
+  NexObject SpeedY      = NexObject(5,  22, "vafry");
+  NexObject SpeedZ      = NexObject(5,  23, "vafrz");
+  NexObject SpeedE      = NexObject(5,  24, "vafre");
 	// 
 	// == 18
 	// == 69
@@ -409,7 +414,7 @@
 
 	/**
 	*******************************************************************
-	* Nextion component for page:JERK SCREEN 28!
+	* Nextion component for page:BABYSTEP SCREEN 28!
 	*******************************************************************
 	*/
 	NexObject ZbabyUp			= NexObject(28, 1, "m0");
@@ -433,7 +438,6 @@
     // Page 3 touch listen
     &sdlist, &ScrollUp, &ScrollDown, &sdrow0, &sdrow1, &sdrow2,
     &sdrow3, &sdrow4, &sdrow5, &Folderup, &sd_mount, &sd_dismount,
-		//&file83_0, &file83_1, &file83_2, &file83_3, &file83_4, &file83_5,
 
     // Page 4 touch listen setup
 		&statin, &accelin,
@@ -496,16 +500,20 @@
 
   NexObject *heater_list0[] =
   {
-    &Hotend00,
-    &Hotend10,
-    &DHT0,
+		&Hotend00,
+		&Hotend10,
+		&Bed0,
+		&Chamber0,
+		&DHT0,
     NULL
   };
 
   NexObject *heater_list1[] =
   {
-    &Hotend01,
-    &Hotend11,
+		&Hotend01,
+		&Hotend11,
+		&Bed1,
+		&Chamber1,
     NULL
   };
 
@@ -586,18 +594,18 @@
     //Version.setText_PGM(SHORT_BUILD_VERSION, "menu");
 
     #if HOTENDS > 0
-      Hotend00.setValue(1, "printer");
+      Hotend00.setValue(10, "printer");
       #if HOTENDS > 1
-        Hotend10.setValue(1, "printer");
+        Hotend10.setValue(10, "printer");
       #elif HAS_TEMP_CHAMBER
-        Chamber0.setValue(1, "printer");
+        Chamber0.setValue(10, "printer");
       #elif ENABLED(DHT_SENSOR)
-        DHT0.setValue(1, "printer");
+        DHT0.setValue(10, "printer");
       #endif
     #endif
 
     #if HAS_TEMP_BED
-      Bed0.setValue(1, "printer");
+      Bed0.setValue(10, "printer");
     #endif
 
     Extruders.setValue(EXTRUDERS, "printer");
@@ -713,49 +721,7 @@
 	}
 	#endif
 
-	///// rypniete z marlina ultralcd
-	/*
-	void lcd_sdcard_menu() {
-		if (!lcdDrawUpdate && !lcd_clicked) return; // nothing to do (so don't thrash the SD card)
-		const uint16_t fileCnt = card.getnrfilenames();
-		START_MENU();
-		MENU_BACK(MSG_MAIN);
-		card.getWorkDirName();
-		if (card.filename[0] == '/') {
-#if !PIN_EXISTS(SD_DETECT)
-			MENU_ITEM(function, LCD_STR_REFRESH MSG_REFRESH, lcd_sd_refresh);
-#endif
-		}
-		else {
-			MENU_ITEM(function, LCD_STR_FOLDER "..", lcd_sd_updir);
-		}
-
-		for (uint16_t i = 0; i < fileCnt; i++) {
-			if (_menuLineNr == _thisItemNr) {
-				const uint16_t nr =
-#if ENABLED(SDCARD_RATHERRECENTFIRST) && DISABLED(SDCARD_SORT_ALPHA)
-					fileCnt - 1 -
-#endif
-					i;
-
-#if ENABLED(SDCARD_SORT_ALPHA)
-				card.getfilename_sorted(nr);
-#else
-				card.getfilename(nr);
-#endif
-				if (card.filenameIsDir)
-					MENU_ITEM(sddirectory, MSG_CARD_MENU, card.filename, card.longFilename);
-				else
-					MENU_ITEM(sdfile, MSG_CARD_MENU, card.filename, card.longFilename);
-			}
-		}
-		END_MENU();
-	}
-	*/
-	
-	
-
-    void printrowsd(uint8_t row, const bool folder, const char* filename) {
+    void printrowsd(uint8_t row, const bool folder, const char* filename){//, const char* longfilename) {
       if (folder) {
         folder_list[row]->SetVisibility(true);
         row_list[row]->attachPop(sdfolderPopCallback, row_list[row]);
@@ -767,7 +733,7 @@
         row_list[row]->attachPop(sdfilePopCallback, row_list[row]);
       }
       row_list[row]->setText(filename);
-			//card.printLongPath(filename);
+			//file_list83[row]->setText(filename);
     }
 
     static void setrowsdcard(uint32_t number = 0) {
@@ -794,9 +760,10 @@
             #else
               card.getfilename(i);
             #endif
-            printrowsd(row, card.filenameIsDir, card.filename); //card.isFilenameIsDir()
+							printrowsd(row, card.filenameIsDir, card.filename);// , card.longFilename); //card.isFilenameIsDir()
+
           } else {
-            printrowsd(row, false, "");
+						printrowsd(row, false, "");// , "");
           }
         }
       }
@@ -829,7 +796,6 @@
       sdlist.setValue(slidermaxval);
       sendCommand("ref 0");
 
-			
       setrowsdcard(); //po wejsciu w folder pozostaja stare nazwy plikow mimo ze folder pusty
     }
 
@@ -859,6 +825,7 @@
     void sdfilePopCallback(void *ptr) {
       ZERO(bufferson);
 
+			
       if (ptr == &sdrow0)
         sdrow0.getText(bufferson, sizeof(bufferson));
       else if (ptr == &sdrow1)
@@ -871,13 +838,26 @@
         sdrow4.getText(bufferson, sizeof(bufferson));
       else if (ptr == &sdrow5)
         sdrow5.getText(bufferson, sizeof(bufferson));
-
+				/*
+			if (ptr == &sdrow0)
+				file83_0.getText(bufferson, sizeof(bufferson));
+			else if (ptr == &sdrow1)
+				file83_1.getText(bufferson, sizeof(bufferson));
+			else if (ptr == &sdrow2)
+				file83_2.getText(bufferson, sizeof(bufferson));
+			else if (ptr == &sdrow3)
+				file83_3.getText(bufferson, sizeof(bufferson));
+			else if (ptr == &sdrow4)
+				file83_4.getText(bufferson, sizeof(bufferson));
+			else if (ptr == &sdrow5)
+				file83_5.getText(bufferson, sizeof(bufferson));
+				*/
       menu_action_sdfile(bufferson);
     }
 
     void sdfolderPopCallback(void *ptr) {
       ZERO(bufferson);
-
+			
       if (ptr == &sdrow0)
         sdrow0.getText(bufferson, sizeof(bufferson));
       else if (ptr == &sdrow1)
@@ -890,7 +870,21 @@
         sdrow4.getText(bufferson, sizeof(bufferson));
       else if (ptr == &sdrow5)
         sdrow5.getText(bufferson, sizeof(bufferson));
-
+				
+			/*
+			if (ptr == &sdrow0)
+				file83_0.getText(bufferson, sizeof(bufferson));
+			else if (ptr == &sdrow1)
+				file83_1.getText(bufferson, sizeof(bufferson));
+			else if (ptr == &sdrow2)
+				file83_2.getText(bufferson, sizeof(bufferson));
+			else if (ptr == &sdrow3)
+				file83_3.getText(bufferson, sizeof(bufferson));
+			else if (ptr == &sdrow4)
+				file83_4.getText(bufferson, sizeof(bufferson));
+			else if (ptr == &sdrow5)
+				file83_5.getText(bufferson, sizeof(bufferson));
+				*/
       menu_action_sddirectory(bufferson);
     }
 
@@ -1651,12 +1645,12 @@
         }
         #if HAS_TEMP_0
           if (PreviousdegHeater[0] != thermalManager.current_temperature[0]) 
-		  {
-			  PreviousdegHeater[0] = thermalManager.current_temperature[0];
+					{
+						PreviousdegHeater[0] = thermalManager.current_temperature[0];
             degtoLCD(0, PreviousdegHeater[0]);
           }
           if (PrevioustargetdegHeater[0] != thermalManager.target_temperature[0]) 
-		  {
+					{
 			  PrevioustargetdegHeater[0] = thermalManager.target_temperature[0];
             targetdegtoLCD(0, PrevioustargetdegHeater[0]);
           }
@@ -1670,16 +1664,15 @@
             PrevioustargetdegHeater[1] = thermalManager.current_temperature[1];
             targetdegtoLCD(1, PrevioustargetdegHeater[1]);
           }
-		  
-        #elif HAS_TEMP_CHAMBER
-          if (PreviousdegHeater[1] != heaters[CHAMBER_INDEX].current_temperature) {
-            PreviousdegHeater[1] = heaters[CHAMBER_INDEX].current_temperature;
-            degtoLCD(3, PreviousdegHeater[1]);
-          }
-          if (PrevioustargetdegHeater[1] != heaters[CHAMBER_INDEX].target_temperature) {
-            PrevioustargetdegHeater[1] = heaters[CHAMBER_INDEX].target_temperature;
-            targetdegtoLCD(3, PrevioustargetdegHeater[1]);
-          }
+				#elif HAS_TEMP_CHAMBER
+					if (PreviousdegHeater[1] != heaters[CHAMBER_INDEX].current_temperature) {
+						PreviousdegHeater[1] = heaters[CHAMBER_INDEX].current_temperature;
+						degtoLCD(3, PreviousdegHeater[1]);
+					}
+					if (PrevioustargetdegHeater[1] != heaters[CHAMBER_INDEX].target_temperature) {
+						PrevioustargetdegHeater[1] = heaters[CHAMBER_INDEX].target_temperature;
+						targetdegtoLCD(3, PrevioustargetdegHeater[1]);
+				}
         #elif ENABLED(DHT_SENSOR)
           if (PreviousdegHeater[1] != dhtsensor.Humidity) {
             PreviousdegHeater[1] = dhtsensor.Humidity;
