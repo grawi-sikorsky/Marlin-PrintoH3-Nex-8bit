@@ -387,7 +387,7 @@ void CardReader::openFile(char* name, bool read, bool push_current/*=false*/) {
       //SERIAL_ECHOPGM("start:");SERIAL_ECHOLN((int)(dirname_start - name));
       //SERIAL_ECHOPGM("end  :");SERIAL_ECHOLN((int)(dirname_end - name));
       if (dirname_end != NULL && dirname_end > dirname_start) {
-        char subdirname[FILENAME_LENGTH];
+        char subdirname[LONG_FILENAME_LENGTH]; //bylo zwykle short filename
         strncpy(subdirname, dirname_start, dirname_end - dirname_start);
         subdirname[dirname_end - dirname_start] = 0;
         SERIAL_ECHOLN(subdirname);

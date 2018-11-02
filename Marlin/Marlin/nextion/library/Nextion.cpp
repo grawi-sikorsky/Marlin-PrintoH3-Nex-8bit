@@ -23,6 +23,9 @@
 #include "../../Marlin.h"
 #include "Arduino.h"
 #include "HardwareSerial.h"
+#if ENABLED(NEX_UPLOAD)
+	#include "../../cardreader.h"
+#endif
 
 #if ENABLED(NEXTION)
 
@@ -473,24 +476,24 @@
 
     void NexUpload::startUpload(void) {
       if (!_checkFile()) {
-        SERIAL_LM(ER, "The file is error");
+        SERIAL_ECHOPGM("The file is error");
         return;
       }
       if (_getBaudrate() == 0) {
-        SERIAL_LM(ER, "baudrate error");
+				SERIAL_ECHOPGM("baudrate error");
         return;
       }
       if (!_setUploadBaudrate(_upload_baudrate)) {
-        SERIAL_LM(ER, "modify baudrate error");
+				SERIAL_ECHOPGM("modify baudrate error");
         return;
       }
       if (!_uploadTftFile()) {
-        SERIAL_LM(ER, "upload file error");
+				SERIAL_ECHOPGM("upload file error");
         return;
       }
       nextion_file.sync();
       nextion_file.close();
-      SERIAL_EM("upload ok");
+			SERIAL_ECHOPGM("upload ok");
     }
 
     uint16_t NexUpload::_getBaudrate(void) {
@@ -505,9 +508,9 @@
     }
 
     bool NexUpload::_checkFile(void) {
-      SERIAL_EMT("Start checkFile ", _file_name);
+			SERIAL_ECHOPAIR("Start checkFile ", _file_name);
       if (!nextion_file.open(&card.root, _file_name, O_READ)) {
-        SERIAL_LM(ER, "file is not exit");
+				SERIAL_ECHOPGM("file is not exist");
         return false;
       }
       _unuploadByte = nextion_file.fileSize();
@@ -517,7 +520,7 @@
     bool NexUpload::_searchBaudrate(uint32_t baudrate) {
       String string = String("");
       nexSerial.end();
-      HAL::delayMilliseconds(100);
+      delay(100);
       nexSerial.begin(baudrate);
       sendCommand("");
       sendCommand("connect");
@@ -563,7 +566,7 @@
 
       sendCommand("");
       sendCommand(cmd.c_str());
-      HAL::delayMilliseconds(50);
+      delay(50);
       nexSerial.begin(baudrate);
       this->recvRetString(string, 500);
       if (string.indexOf(0x05) != -1)
@@ -618,7 +621,6 @@
     delay(100);
     sendCommand("connect");
     delay(20);
-	//SERIAL_ECHOLN(" getConnect: za delayami ");
 
 	  uint8_t   c = 0;
 	  String temp = String("");
@@ -634,7 +636,6 @@
 			#endif
 		  temp += (char)c;
 	  }
-	//SERIAL_ECHOLN(" getConnect: za while ");
 	#if ENABLED(NEXTION_CONNECT_DEBUG)
 		SERIAL_EOL();
 	#endif
@@ -769,12 +770,12 @@
     nexSerial.setTimeout(NEX_TIMEOUT);
 
     if (sizeof(temp) != nexSerial.readBytes((char *)temp, sizeof(temp)))
-      return 2;
+      return 0; // niechaj zwraca zero zamist 2
 
     if (temp[0] == NEX_RET_CURRENT_PAGE_ID_HEAD && temp[2] == 0xFF && temp[3] == 0xFF && temp[4] == 0xFF)
       return temp[1];
     else
-      return 2;
+      return 0; // niechaj zwraca zero zamist 2
   }
 
   void setCurrentBrightness(uint8_t dimValue) {

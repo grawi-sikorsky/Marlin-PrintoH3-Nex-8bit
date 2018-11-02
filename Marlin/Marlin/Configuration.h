@@ -1682,12 +1682,13 @@
 
   #define NEXTION
   #define NEXTION_DISPLAY
+	#define NEX_UPLOAD // dodane na chwile
   // Define Serial it use
   #define NEXTION_SERIAL 2
   // For GFX preview visualization enable NEXTION GFX
   //#define NEXTION_GFX
   // Define name firmware file for Nextion on SD
-  #define NEXTION_FIRMWARE_FILE "mk4duo.tft"
+  #define NEXTION_FIRMWARE_FILE "printoh3nex35.tft"
 
 
 // BED LEVELING NEXTION

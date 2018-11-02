@@ -59,7 +59,7 @@
     // 0 card not present, 1 SD not insert, 2 SD insert, 3 SD printing
     enum SDstatus_enum {NO_SD = 0, SD_NO_INSERT = 1, SD_INSERT = 2, SD_PRINTING = 3, SD_PAUSE = 4 };
     SDstatus_enum SDstatus    = NO_SD;
-    //NexUpload Firmware(NEXTION_FIRMWARE_FILE, 57600);
+    NexUpload Firmware(NEXTION_FIRMWARE_FILE, 57600);
   #endif
 	#if ENABLED(BABYSTEPPING)
 			int _babystep_z_shift = 0;
@@ -353,12 +353,12 @@
 	*/
 	
 	NexObject statin			= NexObject(4, 2, "m2"); //przycisk z innej strony -> setup
-	NexObject Sprints			= NexObject(19, 3, "t0");
-	NexObject Scompl			= NexObject(19, 4, "t1");
-	NexObject Spanic			= NexObject(19, 5, "t2");
-	NexObject Stimetotal	= NexObject(19, 6, "t3");
-	NexObject Stimelong		= NexObject(19, 7, "t4");
-	NexObject Sfilament		= NexObject(19, 8, "t5");
+	NexObject Sprints			= NexObject(19, 2, "t0");
+	NexObject Scompl			= NexObject(19, 3, "t1");
+	NexObject Spanic			= NexObject(19, 4, "t2");
+	NexObject Stimetotal	= NexObject(19, 5, "t3");
+	NexObject Stimelong		= NexObject(19, 6, "t4");
+	NexObject Sfilament		= NexObject(19, 7, "t5");
 
 	NexObject Sfirmware		= NexObject(19, 10, "t6");
 	NexObject Skompil			= NexObject(19, 11, "t7");
@@ -633,7 +633,6 @@
     LcdSend.SetVisibility(push);
     lcdDrawUpdate = true;
     lcd_clicked = !push;
-		SERIAL_ECHOPGM("end of start_menu()");
   }
 
   /**
@@ -650,12 +649,12 @@
 
   #define START_MENU() \
     start_menu(true, true); \
-    uint16_t encoderLine; \
+    uint16_t encoderLine = 1; \
     uint8_t _lcdLineNr = 0; \
     do { \
       _lcdLineNr = 0; \
       encoderLine = LcdPos.getValue(); \
-      delayMicroseconds(900)
+      delay(100)
 
   #define MENU_ITEM(TYPE, LABEL, ...) \
       if (lcdDrawUpdate) { \
@@ -692,7 +691,7 @@
 
 	#if ENABLED(NEX_UPLOAD)
     void UploadNewFirmware() {
-      if (IS_SD_INSERTED || card.cardOK()) {
+      if (IS_SD_INSERTED || card.cardOK) {
         Firmware.startUpload();
         nexSerial.end();
         lcd_init();
@@ -738,7 +737,7 @@
             #else
               card.getfilename(i);
             #endif
-            printrowsd(row, card.isFilenameIsDir(), card.filename); //card.isFilenameIsDir()
+            printrowsd(row, card.filenameIsDir, card.filename); //card.isFilenameIsDir()
           } else {
             printrowsd(row, false, "");
           }
@@ -773,7 +772,8 @@
       sdlist.setValue(slidermaxval);
       sendCommand("ref 0");
 
-      setrowsdcard();
+			
+      setrowsdcard(); //po wejsciu w folder pozostaja stare nazwy plikow mimo ze folder pusty
     }
 
     void sdmountdismountPopCallback(void *ptr) {
@@ -1125,8 +1125,8 @@
     }
 
     #if HAS_LEVELING
-      void Nextion_ProbeOn()  { Pprobe.show(); }
-      void Nextion_ProbeOff() { Pprinter.show(); }
+      //void Nextion_ProbeOn()  { Pprobe.show(); }
+      //void Nextion_ProbeOff() { Pprinter.show(); }
     #endif
 
 #endif
@@ -1317,9 +1317,9 @@
 		SERIAL_ECHO(bufferson);
     movecmd.getText(bufferson, sizeof(bufferson));
 		SERIAL_ECHOLN(bufferson);
-	enqueue_and_echo_commands_P(PSTR("G91"));
-	enqueue_and_echo_command(bufferson);
-	enqueue_and_echo_commands_P(PSTR("G90"));
+		enqueue_and_echo_commands_P(PSTR("G91"));
+		enqueue_and_echo_command(bufferson);
+		enqueue_and_echo_commands_P(PSTR("G90"));
 
     #if EXTRUDERS > 1
       ZERO(bufferson);
@@ -1406,7 +1406,6 @@
       if (NextionON) break;
       delay(20);
     }
-	//SERIAL_ECHOPGM("lcd_init za petla for");
 
     if (!NextionON) {
 	  SERIAL_ECHOPGM("Nextion not connected!");
@@ -1586,7 +1585,7 @@
 
   void lcd_update() {
     if (!NextionON) return;
-    nexLoop(nex_listen_list);
+    nexLoop(nex_listen_list); // odswieza sie z delayem 5 ms
   }
 
   void nextion_draw_update() {
@@ -1605,9 +1604,9 @@
     switch(PageID)
 	{
       case 2:
+				lcd_setstatus(lcd_status_message);
         if (PreviousPage != 2) 
 				{
-          lcd_setstatus(lcd_status_message);
           #if ENABLED(NEXTION_GFX)
             #if MECH(DELTA)
               gfx_clear(mechanics.delta_print_radius * 2, mechanics.delta_print_radius * 2, mechanics.delta_height);
