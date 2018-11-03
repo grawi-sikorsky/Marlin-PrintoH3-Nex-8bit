@@ -737,7 +737,7 @@
             #else
               card.getfilename(i);
             #endif
-            printrowsd(row, card.filenameIsDir, card.filename); //card.isFilenameIsDir()
+							printrowsd(row, card.filenameIsDir, card.filename);
           } else {
             printrowsd(row, false, "");
           }
@@ -866,18 +866,7 @@
   #if ENABLED(ADVANCED_PAUSE_FEATURE)
 
     static AdvancedPauseMenuResponse advanced_pause_mode = ADVANCED_PAUSE_RESPONSE_WAIT_FOR; // tutaj jest bagno!
-		/*
-    static const char* advanced_pause_header() {
-      switch (advanced_pause_mode) {
-        case ADVANCED_PAUSE_RESPONSE_EXTRUDE_MORE:
-          return PSTR(MSG_FILAMENT_CHANGE_LOAD_1);
-        case ADVANCED_PAUSE_RESPONSE_WAIT_FOR: //oraz tutaj!
-          return PSTR(MSG_FILAMENT_CHANGE_UNLOAD_1); 
-        default: break;
-      }
-      return PSTR(MSG_FILAMENT_CHANGE_HEADER); //MSG_FILAMENT_CHANGE_HEADER_PAUSE
-    }
-		*/
+		
     static void lcd_advanced_pause_resume_print() {
       advanced_pause_menu_response = ADVANCED_PAUSE_RESPONSE_RESUME_PRINT;
       Pprinter.show();

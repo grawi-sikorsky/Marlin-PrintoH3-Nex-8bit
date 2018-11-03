@@ -98,7 +98,7 @@ public:
 
 public:
   bool saving, logging, sdprinting, cardOK, filenameIsDir;
-  char filename[FILENAME_LENGTH], longFilename[LONG_FILENAME_LENGTH]; // zmiana z filename_length na long, druga zmienna moglaby byc usunieta
+  char filename[FILENAME_LENGTH], longFilename[LONG_FILENAME_LENGTH]; 
   int autostart_index;
   uint16_t getWorkDirDepth(); // dodane
 	SdFile root, *curDir, workDir, workDirParents[MAX_DIR_DEPTH]; // przeniesone z private do public na rzecz nexupload
