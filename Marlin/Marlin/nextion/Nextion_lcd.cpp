@@ -760,12 +760,8 @@
             #else
               card.getfilename(i);
             #endif
-<<<<<<< HEAD
 							printrowsd(row, card.filenameIsDir, card.filename);
-=======
 							printrowsd(row, card.filenameIsDir, card.filename);// , card.longFilename); //card.isFilenameIsDir()
-
->>>>>>> 12be6c803dab949a20248708f10e0a544c954ddf
           } else {
 						printrowsd(row, false, "");// , "");
           }
@@ -921,11 +917,7 @@
   #if ENABLED(ADVANCED_PAUSE_FEATURE)
 
     static AdvancedPauseMenuResponse advanced_pause_mode = ADVANCED_PAUSE_RESPONSE_WAIT_FOR; // tutaj jest bagno!
-<<<<<<< HEAD
-		
-=======
 
->>>>>>> 12be6c803dab949a20248708f10e0a544c954ddf
     static void lcd_advanced_pause_resume_print() {
       advanced_pause_menu_response = ADVANCED_PAUSE_RESPONSE_RESUME_PRINT;
       Pprinter.show();
