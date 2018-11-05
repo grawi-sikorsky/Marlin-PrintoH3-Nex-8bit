@@ -996,7 +996,7 @@
 //
 #define EEPROM_SETTINGS // Enable for M500 and M501 commands
 //#define DISABLE_M503    // Saves ~2700 bytes of PROGMEM. Disable for release!
-//#define EEPROM_CHITCHAT   // Give feedback on EEPROM commands. Disable to save PROGMEM.
+#define EEPROM_CHITCHAT   // Give feedback on EEPROM commands. Disable to save PROGMEM.
 
 //
 // Host Keepalive
@@ -1682,14 +1682,16 @@
 
   #define NEXTION
   #define NEXTION_DISPLAY
-	#define NEX_UPLOAD // dodane na chwile
   // Define Serial it use
   #define NEXTION_SERIAL 2
+
   // For GFX preview visualization enable NEXTION GFX
   //#define NEXTION_GFX
+	//#define NEX_UPLOAD // dodane na chwile
   // Define name firmware file for Nextion on SD
   #define NEXTION_FIRMWARE_FILE "printoh3nex35.tft"
 
+	#define NEXTION_SD_LONG_NAMES
 
 // BED LEVELING NEXTION
 	#define NEXTION_BED_LEVEL

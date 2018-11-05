@@ -101,9 +101,9 @@ public:
   char filename[FILENAME_LENGTH], longFilename[LONG_FILENAME_LENGTH]; 
   int autostart_index;
   uint16_t getWorkDirDepth(); // dodane
-	SdFile root, *curDir, workDir, workDirParents[MAX_DIR_DEPTH]; // przeniesone z private do public na rzecz nexupload
+	//SdFile root; // , *curDir, workDir, workDirParents[MAX_DIR_DEPTH]; // przeniesone z private do public na rzecz nexupload
 private:
-  //SdFile root, *curDir, workDir, workDirParents[MAX_DIR_DEPTH];
+  SdFile root, *curDir, workDir, workDirParents[MAX_DIR_DEPTH];
   uint16_t workDirDepth; // zmiana z uint8_t na uint16_t
   static uint8_t card_flag;
 

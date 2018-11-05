@@ -46,9 +46,6 @@
   const float manual_feedrate_mm_m[]    = MANUAL_FEEDRATE;
 
   extern uint8_t progress_printing; // dodane nex
-	extern uint8_t commands_in_queue;
-	extern void process_next_command();
-
 
 	extern float destination[XYZE];// = { 0.0 };
 	extern bool g29_in_progress;// = false;
@@ -59,7 +56,9 @@
     // 0 card not present, 1 SD not insert, 2 SD insert, 3 SD printing
     enum SDstatus_enum {NO_SD = 0, SD_NO_INSERT = 1, SD_INSERT = 2, SD_PRINTING = 3, SD_PAUSE = 4 };
     SDstatus_enum SDstatus    = NO_SD;
-    NexUpload Firmware(NEXTION_FIRMWARE_FILE, 57600);
+		#if ENABLED(NEX_UPLOAD)
+			NexUpload Firmware(NEXTION_FIRMWARE_FILE, 57600);
+		#endif
   #endif
 	#if ENABLED(BABYSTEPPING)
 			int _babystep_z_shift = 0;
@@ -158,8 +157,8 @@
 	//NexObject LightStatus = NexObject(2, 23,  "light");
 	//NexObject LcdCommand  = NexObject(2, 92,  "t1");
 	//
-	// == 21
-	// == 32
+	// == 24
+	// == 35
 
 
   /**
@@ -167,13 +166,6 @@
    * Nextion component for page:SDCard
    *******************************************************************
    */
-	/*
-	NexObject file83_0 = NexObject(3, 22, "va1"); // 13 bajtów szt.
-	NexObject file83_1 = NexObject(3, 23, "va2");
-	NexObject file83_2 = NexObject(3, 24, "va3");
-	NexObject file83_3 = NexObject(3, 25, "va4");
-	NexObject file83_4 = NexObject(3, 26, "va5");
-	NexObject file83_5 = NexObject(3, 27, "va6");*/
   NexObject sdlist      = NexObject(3,   1, "h0");
   NexObject sdrow0      = NexObject(3,   2, "t0");
   NexObject sdrow1      = NexObject(3,   3, "t1");
@@ -189,13 +181,21 @@
   NexObject Folder5     = NexObject(3,  13, "p5");
   NexObject Folderup    = NexObject(3,  14, "p6");
   NexObject sdfolder    = NexObject(3,  16, "t6");
-  NexObject ScrollUp    = NexObject(3,  18, "p7");
-  NexObject ScrollDown  = NexObject(3,  19, "p8");
-  NexObject sd_mount    = NexObject(3,  21, "p12");
-  NexObject sd_dismount = NexObject(3,  22, "p13");
+  NexObject ScrollUp    = NexObject(3,  17, "p7");
+  NexObject ScrollDown  = NexObject(3,  18, "p8");
+  NexObject sd_mount    = NexObject(3,  19, "p12");
+  NexObject sd_dismount = NexObject(3,  20, "p13");
+#if ENABLED(NEXTION_SD_LONG_NAMES)
+	NexObject file0				= NexObject(3, 22, "va1");
+	NexObject file1				= NexObject(3, 23, "va2");
+	NexObject file2				= NexObject(3, 24, "va3");
+	NexObject file3				= NexObject(3, 25, "va4");
+	NexObject file4				= NexObject(3, 26, "va5");
+	NexObject file5				= NexObject(3, 27, "va6");
+#endif
 	// 
-	// == 19
-	// == 51
+	// == 19+6
+	// == 60
 
 
   /**
@@ -223,7 +223,7 @@
   NexObject SpeedE      = NexObject(5,  24, "vafre");
 	// 
 	// == 18
-	// == 69
+	// == 78
 
   /**
    *******************************************************************
@@ -232,7 +232,7 @@
    */
   NexObject Speed       = NexObject(6,  1,  "h0");
 	// 
-	// == 60
+	// == 79
 
   /**
    *******************************************************************
@@ -242,7 +242,7 @@
   NexObject Tgcode      = NexObject(7,   1, "tgcode");
   NexObject Send        = NexObject(7,  25, "bsend");
 	// 
-	// == 62
+	// == 81
 
   /**
    *******************************************************************
@@ -252,7 +252,7 @@
   NexObject InfoText    = NexObject(10, 2,  "t0");
   NexObject ScrollText  = NexObject(10, 3,  "g0");
 	// 
-	// == 64
+	// == 83
 
   /**
    *******************************************************************
@@ -268,7 +268,7 @@
   NexObject No          = NexObject(11, 9,  "p2");
 	// 
 	// == 7
-	// == 71
+	// == 90
 
   /**
    *******************************************************************
@@ -298,7 +298,7 @@
   NexObject LcdPos      = NexObject(13, 9, "pos");
 	// 
 	// == 11
-	// == 82
+	// == 101
 
   /**
    *******************************************************************
@@ -311,7 +311,7 @@
   //NexObject ProbeMsg    = NexObject(14, 4,  "t0");
   NexObject ProbeZ      = NexObject(14, 5,  "t1");
 	// 
-	// == 86
+	// == 105
 
 
 	/**
@@ -328,7 +328,7 @@
 	NexObject chillenter		= NexObject(15, 14, "m6");
 	// 
 	// == 6
-	// == 92
+	// == 111
 
 	/**
 	*******************************************************************
@@ -341,7 +341,7 @@
 	//NexObject filchangebtn	= NexObject(16, 7, "m4");
 	// 
 	// == 3
-	// == 95
+	// == 114
 
 	/**
 	*******************************************************************
@@ -351,7 +351,7 @@
 	NexObject fansetbtn			= NexObject(18, 9, "m1");
 	NexObject vfan					= NexObject(18, 7, "vfan");
 	// 
-	// == 97
+	// == 116
 
 	/**
 	*******************************************************************
@@ -370,10 +370,10 @@
 	NexObject Skompil			= NexObject(19, 11, "t7");
 	NexObject Sleveling		= NexObject(19, 12, "t8");
 	NexObject Svlcs				= NexObject(19, 13, "t9");
-	NexObject Sfilsensor	= NexObject(19, 14, "t10");
+	//NexObject Sfilsensor	= NexObject(19, 14, "t10");
 	// 
 	// == 12
-	// == 109
+	// == 128
 
 	/**
 	*******************************************************************
@@ -383,7 +383,7 @@
 	NexObject SvJerk				= NexObject(22, 4, "m2"); //wejscie w jerk -> przekazuje zmienne float na nuber nextion (brak dziesietnych)
 	NexObject SvSteps				= NexObject(22, 5, "m3");	//wejscie w steps -> przekazuje zmienne float na nuber nextion (brak dziesietnych)
 	// 
-	// == 111
+	// == 130
 
 	/**
 	*******************************************************************
@@ -403,7 +403,7 @@
 	NexObject Aload			= NexObject(23, 31, "p11"); // setaccelloadbtnPopCallback	-> wywo³uje settings.load();
 	// 
 	// == 11
-	// == 122
+	// == 141
 
 	/**
 	*******************************************************************
@@ -420,7 +420,7 @@
 	NexObject ZbabyUp			= NexObject(28, 1, "m0");
 	NexObject ZbabyDown		= NexObject(28, 2, "m1");
 	// 
-	// == 124 == 1612 bajtów! (1.6kb) == 19,68% !!!!!!!!!!!!!!!!!!!
+	// == 143 == 1859 bajtów! (1.8kb) == 19,68%+ !!!!!!!!!!!!!!!!!!!
 
 	/**
 	*******************************************************************
@@ -547,18 +547,19 @@
     &SpeedE,
     NULL
   };
-	/*
-	NexObject *file_list83[] =
-	{
-		&file83_0,
-		&file83_1,
-		&file83_2,
-		&file83_3,
-		&file83_4,
-		&file83_5,
-		NULL
-	};*/
-
+	#if ENABLED(NEXTION_SD_LONG_NAMES)
+		NexObject *file_list83[] =
+		{
+			&file0,
+			&file1,
+			&file2,
+			&file3,
+			&file4,
+			&file5,
+			NULL
+		};
+	#endif
+	
   // Function pointer to menu functions.
   typedef void (*screenFunc_t)();
 
@@ -721,20 +722,47 @@
 	}
 	#endif
 
-    void printrowsd(uint8_t row, const bool folder, const char* filename){//, const char* longfilename) {
-      if (folder) {
-        folder_list[row]->SetVisibility(true);
-        row_list[row]->attachPop(sdfolderPopCallback, row_list[row]);
-      } else if (filename == "") {
-        folder_list[row]->SetVisibility(false);
-        row_list[row]->detachPop();
-      } else {
-        folder_list[row]->SetVisibility(false);
-        row_list[row]->attachPop(sdfilePopCallback, row_list[row]);
-      }
-      row_list[row]->setText(filename);
-			//file_list83[row]->setText(filename);
-    }
+	#if ENABLED(NEXTION_SD_LONG_NAMES)
+		//1 iterator
+		//2 folder
+		//3 nazwa 8.3
+		//4 nazwa do wyswietlenia
+		void printrowsd(uint8_t row, const bool folder, const char* filename, const char* longfilename) {
+				if (folder) {
+					folder_list[row]->SetVisibility(true);
+					row_list[row]->attachPop(sdfolderPopCallback, row_list[row]);
+				} else if (filename == "") {
+					folder_list[row]->SetVisibility(false);
+					row_list[row]->detachPop();
+				} else {
+					folder_list[row]->SetVisibility(false);
+					row_list[row]->attachPop(sdfilePopCallback, row_list[row]);
+				}
+				file_list83[row]->setText(filename);
+				row_list[row]->setText(longfilename);
+			}
+	#else
+		//1 iterator
+		//2 folder
+		//3 nazwa 8.3
+		//4 nazwa do wyswietlenia
+		void printrowsd(uint8_t row, const bool folder, const char* filename) {
+			if (folder) {
+				folder_list[row]->SetVisibility(true);
+				row_list[row]->attachPop(sdfolderPopCallback, row_list[row]);
+			}
+			else if (filename == "") {
+				folder_list[row]->SetVisibility(false);
+				row_list[row]->detachPop();
+			}
+			else {
+				folder_list[row]->SetVisibility(false);
+				row_list[row]->attachPop(sdfilePopCallback, row_list[row]);
+			}
+			row_list[row]->setText(filename);
+		}
+	#endif
+
 
     static void setrowsdcard(uint32_t number = 0) {
       uint16_t fileCnt = card.getnrfilenames(); // nalezaloby przeniesc funkcje get_num_files z mk4duo / jakis tweak
@@ -760,10 +788,20 @@
             #else
               card.getfilename(i);
             #endif
+
+						#if ENABLED(NEXTION_SD_LONG_NAMES)
+							printrowsd(row, card.filenameIsDir, card.filename, card.longFilename);
+						#else
 							printrowsd(row, card.filenameIsDir, card.filename);
-							printrowsd(row, card.filenameIsDir, card.filename);// , card.longFilename); //card.isFilenameIsDir()
+						#endif
+
           } else {
-						printrowsd(row, false, "");// , "");
+						#if ENABLED(NEXTION_SD_LONG_NAMES)
+							printrowsd(row, false, "", "");
+						#else
+							printrowsd(row, false, "");
+						#endif
+						
           }
         }
       }
@@ -825,66 +863,68 @@
     void sdfilePopCallback(void *ptr) {
       ZERO(bufferson);
 
-			
-      if (ptr == &sdrow0)
-        sdrow0.getText(bufferson, sizeof(bufferson));
-      else if (ptr == &sdrow1)
-        sdrow1.getText(bufferson, sizeof(bufferson));
-      else if (ptr == &sdrow2)
-        sdrow2.getText(bufferson, sizeof(bufferson));
-      else if (ptr == &sdrow3)
-        sdrow3.getText(bufferson, sizeof(bufferson));
-      else if (ptr == &sdrow4)
-        sdrow4.getText(bufferson, sizeof(bufferson));
-      else if (ptr == &sdrow5)
-        sdrow5.getText(bufferson, sizeof(bufferson));
-				/*
-			if (ptr == &sdrow0)
-				file83_0.getText(bufferson, sizeof(bufferson));
-			else if (ptr == &sdrow1)
-				file83_1.getText(bufferson, sizeof(bufferson));
-			else if (ptr == &sdrow2)
-				file83_2.getText(bufferson, sizeof(bufferson));
-			else if (ptr == &sdrow3)
-				file83_3.getText(bufferson, sizeof(bufferson));
-			else if (ptr == &sdrow4)
-				file83_4.getText(bufferson, sizeof(bufferson));
-			else if (ptr == &sdrow5)
-				file83_5.getText(bufferson, sizeof(bufferson));
-				*/
+			#if ENABLED(NEXTION_SD_LONG_NAMES)
+				if (ptr == &sdrow0)
+					file0.getText(bufferson, sizeof(bufferson));
+				else if (ptr == &sdrow1)
+					file1.getText(bufferson, sizeof(bufferson));
+				else if (ptr == &sdrow2)
+					file2.getText(bufferson, sizeof(bufferson));
+				else if (ptr == &sdrow3)
+					file3.getText(bufferson, sizeof(bufferson));
+				else if (ptr == &sdrow4)
+					file4.getText(bufferson, sizeof(bufferson));
+				else if (ptr == &sdrow5)
+					file5.getText(bufferson, sizeof(bufferson));
+			#else
+				if (ptr == &sdrow0)
+					sdrow0.getText(bufferson, sizeof(bufferson));
+				else if (ptr == &sdrow1)
+					sdrow1.getText(bufferson, sizeof(bufferson));
+				else if (ptr == &sdrow2)
+					sdrow2.getText(bufferson, sizeof(bufferson));
+				else if (ptr == &sdrow3)
+					sdrow3.getText(bufferson, sizeof(bufferson));
+				else if (ptr == &sdrow4)
+					sdrow4.getText(bufferson, sizeof(bufferson));
+				else if (ptr == &sdrow5)
+					sdrow5.getText(bufferson, sizeof(bufferson));
+			#endif
+
       menu_action_sdfile(bufferson);
     }
 
     void sdfolderPopCallback(void *ptr) {
       ZERO(bufferson);
-			
-      if (ptr == &sdrow0)
-        sdrow0.getText(bufferson, sizeof(bufferson));
-      else if (ptr == &sdrow1)
-        sdrow1.getText(bufferson, sizeof(bufferson));
-      else if (ptr == &sdrow2)
-        sdrow2.getText(bufferson, sizeof(bufferson));
-      else if (ptr == &sdrow3)
-        sdrow3.getText(bufferson, sizeof(bufferson));
-      else if (ptr == &sdrow4)
-        sdrow4.getText(bufferson, sizeof(bufferson));
-      else if (ptr == &sdrow5)
-        sdrow5.getText(bufferson, sizeof(bufferson));
+
+			#if ENABLED(NEXTION_SD_LONG_NAMES)
+				if (ptr == &sdrow0)
+					file0.getText(bufferson, sizeof(bufferson));
+				else if (ptr == &sdrow1)
+					file1.getText(bufferson, sizeof(bufferson));
+				else if (ptr == &sdrow2)
+					file2.getText(bufferson, sizeof(bufferson));
+				else if (ptr == &sdrow3)
+					file3.getText(bufferson, sizeof(bufferson));
+				else if (ptr == &sdrow4)
+					file4.getText(bufferson, sizeof(bufferson));
+				else if (ptr == &sdrow5)
+					file5.getText(bufferson, sizeof(bufferson));
+			#else
+				if (ptr == &sdrow0)
+					sdrow0.getText(bufferson, sizeof(bufferson));
+				else if (ptr == &sdrow1)
+					sdrow1.getText(bufferson, sizeof(bufferson));
+				else if (ptr == &sdrow2)
+					sdrow2.getText(bufferson, sizeof(bufferson));
+				else if (ptr == &sdrow3)
+					sdrow3.getText(bufferson, sizeof(bufferson));
+				else if (ptr == &sdrow4)
+					sdrow4.getText(bufferson, sizeof(bufferson));
+				else if (ptr == &sdrow5)
+					sdrow5.getText(bufferson, sizeof(bufferson));
+			#endif
 				
-			/*
-			if (ptr == &sdrow0)
-				file83_0.getText(bufferson, sizeof(bufferson));
-			else if (ptr == &sdrow1)
-				file83_1.getText(bufferson, sizeof(bufferson));
-			else if (ptr == &sdrow2)
-				file83_2.getText(bufferson, sizeof(bufferson));
-			else if (ptr == &sdrow3)
-				file83_3.getText(bufferson, sizeof(bufferson));
-			else if (ptr == &sdrow4)
-				file83_4.getText(bufferson, sizeof(bufferson));
-			else if (ptr == &sdrow5)
-				file83_5.getText(bufferson, sizeof(bufferson));
-				*/
       menu_action_sddirectory(bufferson);
     }
 
@@ -1227,7 +1267,7 @@
 			#endif
 
 			#if ENABLED(FILAMENT_RUNOUT_SENSOR)
-						Sfilsensor.setText_PGM(PSTR(MSG_INFO_YES));
+						//Sfilsensor.setText_PGM(PSTR(MSG_INFO_YES));
 						//Sfilsensor.setText_PGM("DUPAKURWAJEGOMAC");
 						//Sfilsensor.setText_PGM(PSTR("DUPAKURWAJEGOMAC"));
 			#else
