@@ -13552,6 +13552,7 @@ void setup() {
 
   lcd_init();
   SERIAL_ECHOPGM("za lcd init");
+
   #ifndef CUSTOM_BOOTSCREEN_TIMEOUT
     #define CUSTOM_BOOTSCREEN_TIMEOUT 100 // 2500
   #endif

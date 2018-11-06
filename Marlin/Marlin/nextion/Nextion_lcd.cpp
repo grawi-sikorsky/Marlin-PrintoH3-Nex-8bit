@@ -19,7 +19,7 @@
 #include "../Marlin.h"
 #include "../temperature.h"
 #include "../cardreader.h"
-
+#include <MemoryFree.h>
 
 #if ENABLED(NEXTION_DISPLAY)
 	#include "../stepper.h"
@@ -78,14 +78,14 @@
   //NexObject Pstart        = NexObject(0,  0,  "start");
   //NexObject Pmenu         = NexObject(1,  0,  "menu");
   NexObject Pprinter      = NexObject(2,  0,  "printer");
-  //NexObject Psdcard       = NexObject(3,  0,  "sdcard");
+  NexObject Psdcard       = NexObject(3,  0,  "sdcard");
   NexObject Psetup        = NexObject(4,  0,  "setup");
   //NexObject Pmove         = NexObject(5,  0,  "move");
   //NexObject Pspeed        = NexObject(6,  0,  "speed");
   //NexObject Pgcode        = NexObject(7,  0,  "gcode");
   //NexObject Prfid         = NexObject(8,  0,  "rfid");
   //NexObject Pbrightness   = NexObject(9,  0,  "brightness");
-  NexObject Pinfo         = NexObject(10, 0,  "info");
+  //NexObject Pinfo         = NexObject(10, 0,  "info");
   NexObject Pyesno        = NexObject(11, 0,  "yesno");
   //NexObject Pfilament     = NexObject(12, 0,  "filament");
   NexObject Pselect       = NexObject(13, 0,  "select");
@@ -93,14 +93,14 @@
 	NexObject Pheatup				= NexObject(15, 0,	"heatup");
 	//NexObject Poptions			= NexObject(16, 0,	"maintain");
   //NexObject Ptime         = NexObject(17, 0,  "infomove");
-  NexObject Pfanspeedpage = NexObject(18, 0,  "fanspeedpage");
+  //NexObject Pfanspeedpage = NexObject(18, 0,  "fanspeedpage");
 	//NexObject Pstats				= NexObject(19, 0,	"statscreen");
 	//NexObject Ptsettings		= NexObject(20, 0,  "tempsettings");
 	//NexObject Pinfobedlevel = NexObject(21, 0, "infobedlevel");
 	//NexObject Pservice			= NexObject(22, 0, "servicepage");
 	//NexObject Paccel				= NexObject(23, 0, "accelpage");
 	//NexObject Pjerk					= NexObject(25, 0, "jerkpage");
-	NexObject Pkill					= NexObject(30, 0, "killpage");
+	//NexObject Pkill					= NexObject(30, 0, "killpage");
 	// 
 	// == 9 
 
@@ -177,12 +177,12 @@
   NexObject sd_mount    = NexObject(3,  19, "p12");
   NexObject sd_dismount = NexObject(3,  20, "p13");
 #if ENABLED(NEXTION_SD_LONG_NAMES)
-	NexObject file0				= NexObject(3, 22, "nam1");
-	NexObject file1				= NexObject(3, 23, "nam2");
-	NexObject file2				= NexObject(3, 24, "nam3");
-	NexObject file3				= NexObject(3, 25, "nam4");
-	NexObject file4				= NexObject(3, 26, "nam5");
-	NexObject file5				= NexObject(3, 27, "nam6");
+	NexObject file0				= NexObject(3, 21, "nam1");
+	NexObject file1				= NexObject(3, 22, "nam2");
+	NexObject file2				= NexObject(3, 23, "nam3");
+	NexObject file3				= NexObject(3, 24, "nam4");
+	NexObject file4				= NexObject(3, 25, "nam5");
+	NexObject file5				= NexObject(3, 26, "nam6");
 #endif
 	// 
 	// == 19+6
@@ -382,6 +382,7 @@
 	* Nextion component for page:ACCEL SCREEN 23!
 	*******************************************************************
 	*/
+#if ENABLED(NEX_ACC_PAGE)
 	NexObject accelin		= NexObject(4, 5, "m5");	// setaccelpagePopCallback -> przekazuje zmienne float do strony z akceleracja
 	NexObject Awork			= NexObject(23, 22, "va0");
 	NexObject Aretr			= NexObject(23, 23, "va1");
@@ -393,6 +394,7 @@
 	NexObject Asend			= NexObject(23, 33, "p12"); 
 	NexObject Asave			= NexObject(23, 30, "p10");	// setaccelsavebtnPopCallback -> wywo³uje settings.save();
 	NexObject Aload			= NexObject(23, 31, "p11"); // setaccelloadbtnPopCallback	-> wywo³uje settings.load();
+#endif
 	// 
 	// == 11
 	// == 141
@@ -436,7 +438,11 @@
 				&statin, 
 		#endif
 
-		&accelin,
+		#if ENABLED(NEX_ACC_PAGE)
+				&accelin,
+				// Page 23 tacz listen
+				&Asend, &Asave, &Aload,
+		#endif
 
     // Page 5 touch listen
     &MotorOff, &XYHome, &XYUp, &XYRight, &XYDown, &XYLeft,
@@ -470,8 +476,7 @@
 		// Page 18 tacz listen
 		&fansetbtn,
 
-		// Page 23 tacz listen
-		&Asend, &Asave, &Aload,
+
 
 		// Page 24
 		//&SvSteps,
@@ -585,23 +590,21 @@
   void menu_action_function(screenFunc_t func) { (*func)(); }
 
   void setpagePrinter() {
-    char temp[10] = { 0 };
-
-    //Version.setText_PGM(SHORT_BUILD_VERSION, "menu");
+    char temp[8] = { 0 };
 
     #if HOTENDS > 0
-      Hotend00.setValue(10, "printer");
+      Hotend00.setValue(0, "printer");
       #if HOTENDS > 1
-        Hotend10.setValue(10, "printer");
+        Hotend10.setValue(0, "printer");
       #elif HAS_TEMP_CHAMBER
-        Chamber0.setValue(10, "printer");
+        Chamber0.setValue(0, "printer");
       #elif ENABLED(DHT_SENSOR)
-        DHT0.setValue(10, "printer");
+        DHT0.setValue(0, "printer");
       #endif
     #endif
 
     #if HAS_TEMP_BED
-      Bed0.setValue(10, "printer");
+      Bed0.setValue(0,"printer");
     #endif
 
     //Extruders.setValue(EXTRUDERS, "printer");
@@ -614,7 +617,7 @@
 
     #if ENABLED(SDSUPPORT)
       if (!card.cardOK) card.initsd();
-      delay(50);
+      delay(100);
       if (card.cardOK) {
         SDstatus = SD_INSERT;
         card.setroot();  // Initial boot
@@ -1255,23 +1258,22 @@
 				Sfirmware.setText_PGM(PSTR(SHORT_BUILD_VERSION));
 				Skompil.setText_PGM(PSTR(STRING_DISTRIBUTION_DATE));
 				Sleveling.setText_PGM(PSTR(MSG_MESH_LEVELING));
-				//Svlcs.setText_PGM(PSTR(STRING_DISTRIBUTION_DATE));
-				//Svlcs.setText("DUPSKO");
 				#if ENABLED(PLOSS_SUPPORT)
-							//Svlcs.setText_PGM(PSTR(MSG_INFO_YES));
+							Svlcs.setText_PGM(PSTR(MSG_INFO_YES));
 				#else
 							Svlcs.setText_PGM(MSG_INFO_NO);
 				#endif
 
 				#if ENABLED(FILAMENT_RUNOUT_SENSOR)
-							//Sfilsensor.setText_PGM(PSTR(MSG_INFO_YES));
+							Sfilsensor.setText_PGM(PSTR(MSG_INFO_YES));
 				#else
 							Sfilsensor.setText_PGM(MSG_INFO_NO);
 				#endif			
 				// END OF PRINTER INFO
+
 		}
 	#endif
-
+#if ENABLED(NEX_ACC_PAGE)
 	void setaccelpagePopCallback(void *ptr)
 	{
 			UNUSED(ptr);
@@ -1300,6 +1302,7 @@
 			Atravel.setValue(planner.axis_steps_per_mm[Z_AXIS], "accelpage");	//va2
 			Amaxx.setValue(planner.axis_steps_per_mm[E_AXIS+active_extruder], "accelpage");	//va3
 	}
+#endif
 	void setaccelsavebtnPopCallback(void *ptr)
 	{
 		settings.save();
@@ -1538,6 +1541,12 @@
 			#if ENABLED(NEX_STAT_PAGE)
 				statin.attachPop(setsetupstatPopCallback); //dodane info o wejsciu w statystyki
 			#endif
+			#if ENABLED(NEX_ACC_PAGE)
+				accelin.attachPop(setaccelpagePopCallback); //setaccelpagePopCallback
+				Asend.attachPop(setgcodePopCallback);
+				Asave.attachPop(setaccelsavebtnPopCallback);
+				Aload.attachPop(setaccelloadbtnPopCallback);
+			#endif
 
 			heatupenter.attachPop(sethotPopCallback, &heatupenter); // obsluga przycisku rozgrzej oba
 			hotendenter.attachPop(sethotendPopCallback, &hotendenter); //obsluga przycisku rozgrzej hotend
@@ -1545,10 +1554,7 @@
 			chillenter.attachPop(sethotPopCallback, &chillenter); //obs³uga przycisku chlodzenie
 			homeaxisbtn.attachPop(setgcodePopCallback); //obsluga przycisku home
 			bedlevelbtn.attachPop(setgcodePopCallback); //obsluga przycisku level
-			accelin.attachPop(setaccelpagePopCallback); //setaccelpagePopCallback
-			Asend.attachPop(setgcodePopCallback);
-			Asave.attachPop(setaccelsavebtnPopCallback);
-			Aload.attachPop(setaccelloadbtnPopCallback);
+
 			ZbabyUp.attachPush(setBabystepUpPopCallback);	// obsluga przycisku babystep up
 			ZbabyDown.attachPush(setBabystepDownPopCallback); // obsluga przycisku babystep down
 			fansetbtn.attachPop(setfanandgoPopCallback); //obsluga przycisku fan set
@@ -1846,7 +1852,7 @@
 	void lcd_nextion_kill_msg(const char* lcd_msg)
 	{
 		//Kmsg.setText(lcd_msg);
-		Pkill.show();
+		//Pkill.show();
 	}
 
 	// dodana obsluga babystep

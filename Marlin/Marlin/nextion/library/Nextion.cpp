@@ -122,19 +122,19 @@
 		SERIAL_ECHO(buffer_temp);
   }
 
-  void NexObject::setText(const char *buffer, const char *pname) {
-    String cmd;
-    if (pname) {
-      cmd += pname;
-      cmd += ".";
-    }
-    cmd += this->__name;
-    cmd += ".txt=\"";
-    cmd += buffer;
-    cmd += "\"";
-    sendCommand(cmd.c_str());
-    recvRetCommandFinished();
-  }
+	void NexObject::setText(const char *buffer, const char *pname) {
+		String cmd;
+		if (pname) {
+			cmd += pname;
+			cmd += ".";
+		}
+		cmd += this->__name;
+		cmd += ".txt=\"";
+		cmd += buffer;
+		cmd += "\"";
+		sendCommand(cmd.c_str());
+		recvRetCommandFinished();
+	}
 
 	void NexObject::setText_PGM(const char *buffer, const char *pname) {
 		String cmd;
