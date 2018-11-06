@@ -19,8 +19,7 @@
 #include "../Marlin.h"
 #include "../temperature.h"
 #include "../cardreader.h"
-//#include "Arduino.h"
-//#include "../MarlinConfig.h"
+
 
 #if ENABLED(NEXTION_DISPLAY)
 	#include "../stepper.h"
@@ -1540,19 +1539,19 @@
 				statin.attachPop(setsetupstatPopCallback); //dodane info o wejsciu w statystyki
 			#endif
 
-			heatupenter.attachPop(sethotPopCallback, &heatupenter); // obs³uga przycisku rozgrzej oba
-			hotendenter.attachPop(sethotendPopCallback, &hotendenter); //obs³uga przycisku rozgrzej hotend
-			heatbedenter.attachPop(setheatbedPopCallback, &heatbedenter); //obs³uga przycisku rozgrzej bed
+			heatupenter.attachPop(sethotPopCallback, &heatupenter); // obsluga przycisku rozgrzej oba
+			hotendenter.attachPop(sethotendPopCallback, &hotendenter); //obsluga przycisku rozgrzej hotend
+			heatbedenter.attachPop(setheatbedPopCallback, &heatbedenter); //obsluga przycisku rozgrzej bed
 			chillenter.attachPop(sethotPopCallback, &chillenter); //obs³uga przycisku chlodzenie
-			homeaxisbtn.attachPop(setgcodePopCallback); //obs³uga przycisku home
-			bedlevelbtn.attachPop(setgcodePopCallback); //obs³uga przycisku level
+			homeaxisbtn.attachPop(setgcodePopCallback); //obsluga przycisku home
+			bedlevelbtn.attachPop(setgcodePopCallback); //obsluga przycisku level
 			accelin.attachPop(setaccelpagePopCallback); //setaccelpagePopCallback
 			Asend.attachPop(setgcodePopCallback);
 			Asave.attachPop(setaccelsavebtnPopCallback);
 			Aload.attachPop(setaccelloadbtnPopCallback);
 			ZbabyUp.attachPush(setBabystepUpPopCallback);	// obsluga przycisku babystep up
 			ZbabyDown.attachPush(setBabystepDownPopCallback); // obsluga przycisku babystep down
-			fansetbtn.attachPop(setfanandgoPopCallback); //obs³uga przycisku fan set
+			fansetbtn.attachPop(setfanandgoPopCallback); //obsluga przycisku fan set
       XYHome.attachPop(setmovePopCallback);
 			XYUp.attachPush(setmovePopCallback); // dodane
       XYRight.attachPush(setmovePopCallback);
