@@ -141,13 +141,13 @@
   NexObject Fanspeed    = NexObject(2, 15,  "fs");
   NexObject VSpeed      = NexObject(2, 16,  "vs");
   NexObject Language    = NexObject(2, 17,  "lang");
-  NexObject NStop       = NexObject(2, 28,  "p1");
-  NexObject NPlay       = NexObject(2, 29,  "p2");
-  NexObject LcdStatus   = NexObject(2, 30,  "t0");
-  NexObject LcdTime     = NexObject(2, 31,  "t2");
-  NexObject progressbar = NexObject(2, 32,  "j0");
-  NexObject Wavetemp    = NexObject(2, 33,  "s0");
-	NexObject FanSpeedTouch = NexObject(2, 51, "m1");
+  NexObject NStop       = NexObject(2, 21,  "p1");
+  NexObject NPlay       = NexObject(2, 22,  "p2");
+  NexObject LcdStatus   = NexObject(2, 23,  "t0");
+  NexObject LcdTime     = NexObject(2, 24,  "t2");
+  NexObject progressbar = NexObject(2, 25,  "j0");
+  NexObject Wavetemp    = NexObject(2, 26,  "s0");
+	NexObject FanSpeedTouch = NexObject(2, 44, "m1");
 	//
 	// == 24
 	// == 35
@@ -178,12 +178,12 @@
   NexObject sd_mount    = NexObject(3,  19, "p12");
   NexObject sd_dismount = NexObject(3,  20, "p13");
 #if ENABLED(NEXTION_SD_LONG_NAMES)
-	NexObject file0				= NexObject(3, 22, "va1");
-	NexObject file1				= NexObject(3, 23, "va2");
-	NexObject file2				= NexObject(3, 24, "va3");
-	NexObject file3				= NexObject(3, 25, "va4");
-	NexObject file4				= NexObject(3, 26, "va5");
-	NexObject file5				= NexObject(3, 27, "va6");
+	NexObject file0				= NexObject(3, 22, "nam1");
+	NexObject file1				= NexObject(3, 23, "nam2");
+	NexObject file2				= NexObject(3, 24, "nam3");
+	NexObject file3				= NexObject(3, 25, "nam4");
+	NexObject file4				= NexObject(3, 26, "nam5");
+	NexObject file5				= NexObject(3, 27, "nam6");
 #endif
 	// 
 	// == 19+6
@@ -251,11 +251,11 @@
    * Nextion component for page:Yesno
    *******************************************************************
    */
-  NexObject Vyes        = NexObject(11, 2,  "va0");
-  NexObject Riga0       = NexObject(11, 4,  "t0");
-  NexObject Riga1       = NexObject(11, 5,  "t1");
-  NexObject Riga2       = NexObject(11, 6,  "t2");
-  NexObject Riga3       = NexObject(11, 7,  "t3");
+  NexObject Vyes        = NexObject(11, 2,  "yn0");
+  NexObject Riga0       = NexObject(11, 4,  "tl0");
+  NexObject Riga1       = NexObject(11, 5,  "tl1");
+  NexObject Riga2       = NexObject(11, 6,  "tl2");
+  NexObject Riga3       = NexObject(11, 7,  "tl3");
   NexObject Yes         = NexObject(11, 8,  "p1");
   NexObject No          = NexObject(11, 9,  "p2");
 	// 
@@ -349,19 +349,21 @@
 	* Nextion component for page:STAT SCREEN 19!
 	*******************************************************************
 	*/
-	NexObject statin			= NexObject(4, 2, "m2"); //przycisk z innej strony -> setup
-	NexObject Sprints			= NexObject(19, 2, "t0");
-	NexObject Scompl			= NexObject(19, 3, "t1");
-	NexObject Spanic			= NexObject(19, 4, "t2");
-	NexObject Stimetotal	= NexObject(19, 5, "t3");
-	NexObject Stimelong		= NexObject(19, 6, "t4");
-	NexObject Sfilament		= NexObject(19, 7, "t5");
+	#if ENABLED(NEX_STAT_PAGE)
+		NexObject statin			= NexObject(4, 2, "m2"); //przycisk z innej strony -> setup
+		NexObject Sprints			= NexObject(19, 2, "t0");
+		NexObject Scompl			= NexObject(19, 3, "t1");
+		NexObject Spanic			= NexObject(19, 4, "t2");
+		NexObject Stimetotal	= NexObject(19, 5, "t3");
+		NexObject Stimelong		= NexObject(19, 6, "t4");
+		NexObject Sfilament		= NexObject(19, 7, "t5");
 
-	NexObject Sfirmware		= NexObject(19, 10, "t6");
-	NexObject Skompil			= NexObject(19, 11, "t7");
-	NexObject Sleveling		= NexObject(19, 12, "t8");
-	NexObject Svlcs				= NexObject(19, 13, "t9");
-	NexObject Sfilsensor	= NexObject(19, 14, "t10");
+		NexObject Sfirmware		= NexObject(19, 9, "t6");
+		NexObject Skompil			= NexObject(19, 10, "t7");
+		NexObject Sleveling		= NexObject(19, 11, "t8");
+		NexObject Svlcs				= NexObject(19, 12, "t9");
+		NexObject Sfilsensor	= NexObject(19, 13, "t10");
+	#endif
 	// 
 	// == 12
 	// == 128
@@ -418,7 +420,7 @@
 	* Nextion component for page:KILL SCREEN 29!
 	*******************************************************************
 	*/
-	//NexObject Kmsg				= NexObject(30, 7, "t0");
+	//NexObject Kmsg				= NexObject(30, 2, "tkmsg");
 
 
   NexObject *nex_listen_list[] =
@@ -431,7 +433,11 @@
     &sdrow3, &sdrow4, &sdrow5, &Folderup, &sd_mount, &sd_dismount,
 
     // Page 4 touch listen setup
-		&statin, &accelin,
+		#if ENABLED(NEX_STAT_PAGE)
+				&statin, 
+		#endif
+
+		&accelin,
 
     // Page 5 touch listen
     &MotorOff, &XYHome, &XYUp, &XYRight, &XYDown, &XYLeft,
@@ -880,7 +886,7 @@
 				else if (ptr == &sdrow5)
 					sdrow5.getText(bufferson, sizeof(bufferson));
 			#endif
-
+				
       menu_action_sdfile(bufferson);
     }
 
@@ -1219,50 +1225,53 @@
 			Pheatup.show();
 		}
 	}
-	void setsetupstatPopCallback(void *ptr)
-	{
-		UNUSED(ptr);
-			// PRINTSTATS START
-			char buffer[21];
-			printStatistics stats = print_job_timer.getStats();
+	#if ENABLED(NEX_STAT_PAGE)
+		void setsetupstatPopCallback(void *ptr)
+		{
+			UNUSED(ptr);
+				// PRINTSTATS START
+				char buffer[21];
+				printStatistics stats = print_job_timer.getStats();
 
-			Sprints.setText(itostr3left(stats.totalPrints));        // Print Count: 999
-			Scompl.setText(itostr3left(stats.finishedPrints));			// Completed  : 666
+				Sprints.setText(itostr3left(stats.totalPrints));        // Print Count: 999
+				Scompl.setText(itostr3left(stats.finishedPrints));			// Completed  : 666
 
-			#if ENABLED(PLOSS_SUPPORT)
-				Spanic.setText(itostr3left(eeprom_read_byte((uint8_t*)EEPROM_PANIC_POWER_FAIL_COUNT))); // dodane power fail count
-			#endif
+				#if ENABLED(PLOSS_SUPPORT)
+					Spanic.setText(itostr3left(eeprom_read_byte((uint8_t*)EEPROM_PANIC_POWER_FAIL_COUNT))); // dodane power fail count
+				#endif
 
-			duration_t elapsed = stats.printTime;
-			elapsed.toString(buffer);
-			Stimetotal.setText(buffer);               // Total print Time: 99y 364d 23h 59m 59s
+				duration_t elapsed = stats.printTime;
+				elapsed.toString(buffer);
+				Stimetotal.setText(buffer);               // Total print Time: 99y 364d 23h 59m 59s
 
-			elapsed = stats.longestPrint;
-			elapsed.toString(buffer);
-			Stimelong.setText(buffer);								// Longest job time: 99y 364d 23h 59m 59s
+				elapsed = stats.longestPrint;
+				elapsed.toString(buffer);
+				Stimelong.setText(buffer);								// Longest job time: 99y 364d 23h 59m 59s
 
-			sprintf_P(buffer, PSTR("%ld.%im"), long(stats.filamentUsed / 1000), int16_t(stats.filamentUsed / 100) % 10);
-			Sfilament.setText(buffer);								// Extruded total: 125m
-			// END OF PRINTSTATS
+				sprintf_P(buffer, PSTR("%ld.%im"), long(stats.filamentUsed / 1000), int16_t(stats.filamentUsed / 100) % 10);
+				Sfilament.setText(buffer);								// Extruded total: 125m
+				// END OF PRINTSTATS
 
-			// PRINTER INFO START
-			Sfirmware.setText_PGM(PSTR(SHORT_BUILD_VERSION));
-			Skompil.setText_PGM(PSTR(STRING_DISTRIBUTION_DATE));
-			Sleveling.setText_PGM(PSTR(MSG_MESH_LEVELING));
+				// PRINTER INFO START
+				Sfirmware.setText_PGM(PSTR(SHORT_BUILD_VERSION));
+				Skompil.setText_PGM(PSTR(STRING_DISTRIBUTION_DATE));
+				Sleveling.setText_PGM(PSTR(MSG_MESH_LEVELING));
+				//Svlcs.setText_PGM(PSTR(STRING_DISTRIBUTION_DATE));
+				//Svlcs.setText("DUPSKO");
+				#if ENABLED(PLOSS_SUPPORT)
+							//Svlcs.setText_PGM(PSTR(MSG_INFO_YES));
+				#else
+							Svlcs.setText_PGM(MSG_INFO_NO);
+				#endif
 
-			#if ENABLED(PLOSS_SUPPORT)
-						Svlcs.setText_PGM(PSTR(MSG_INFO_YES));
-			#else
-						Svlcs.setText_PGM(MSG_INFO_NO);
-			#endif
-
-			#if ENABLED(FILAMENT_RUNOUT_SENSOR)
-						Sfilsensor.setText_PGM(PSTR(MSG_INFO_YES));
-			#else
-						Sfilsensor.setText_PGM(MSG_INFO_NO);
-			#endif			
-			// END OF PRINTER INFO
-	}
+				#if ENABLED(FILAMENT_RUNOUT_SENSOR)
+							//Sfilsensor.setText_PGM(PSTR(MSG_INFO_YES));
+				#else
+							Sfilsensor.setText_PGM(MSG_INFO_NO);
+				#endif			
+				// END OF PRINTER INFO
+		}
+	#endif
 
 	void setaccelpagePopCallback(void *ptr)
 	{
@@ -1527,13 +1536,16 @@
         ProbeDown.attachPush(ProbelPopCallBack, &ProbeDown);
       #endif
 
+			#if ENABLED(NEX_STAT_PAGE)
+				statin.attachPop(setsetupstatPopCallback); //dodane info o wejsciu w statystyki
+			#endif
+
 			heatupenter.attachPop(sethotPopCallback, &heatupenter); // obs³uga przycisku rozgrzej oba
 			hotendenter.attachPop(sethotendPopCallback, &hotendenter); //obs³uga przycisku rozgrzej hotend
 			heatbedenter.attachPop(setheatbedPopCallback, &heatbedenter); //obs³uga przycisku rozgrzej bed
 			chillenter.attachPop(sethotPopCallback, &chillenter); //obs³uga przycisku chlodzenie
 			homeaxisbtn.attachPop(setgcodePopCallback); //obs³uga przycisku home
 			bedlevelbtn.attachPop(setgcodePopCallback); //obs³uga przycisku level
-			statin.attachPop(setsetupstatPopCallback); //dodane info o wejsciu w statystyki
 			accelin.attachPop(setaccelpagePopCallback); //setaccelpagePopCallback
 			Asend.attachPop(setgcodePopCallback);
 			Asave.attachPop(setaccelsavebtnPopCallback);

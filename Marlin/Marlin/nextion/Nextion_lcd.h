@@ -49,9 +49,9 @@ extern float feedrate_mm_s;
   void setmovePopCallback(void *ptr);
   void setgcodePopCallback(void *ptr);
   void sendPopCallback(void *ptr);
-  void filamentPopCallback(void *ptr);
+  //void filamentPopCallback(void *ptr);
   void nextion_draw_update();
-  void lcd_scrollinfo(const char* titolo, const char* message);
+  //void lcd_scrollinfo(const char* titolo, const char* message);
   void lcd_yesno(const uint8_t val, const char* msg1="", const char* msg2="", const char* msg3="");
 
 	void nextion_babystep_z(bool dir);

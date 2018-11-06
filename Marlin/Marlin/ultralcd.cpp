@@ -753,10 +753,10 @@ void kill_screen(const char* lcd_msg) {
       quickstop_stepper();
       print_job_timer.stop();
       thermalManager.disable_all_heaters();
-	#if ENABLED(PLOSS_SUPPORT)
-	  _babystep_z_shift = 0; // dodane - zeruje babystep po zatrzymaniu wydruku
-	  eeprom_update_dword((uint32_t*)(EEPROM_PANIC_BABYSTEP_Z), _babystep_z_shift);	// zeruj babystepping w eeprom
-	#endif
+			#if ENABLED(PLOSS_SUPPORT)
+				_babystep_z_shift = 0; // dodane - zeruje babystep po zatrzymaniu wydruku
+				eeprom_update_dword((uint32_t*)(EEPROM_PANIC_BABYSTEP_Z), _babystep_z_shift);	// zeruj babystepping w eeprom
+			#endif
       #if FAN_COUNT > 0
         for (uint8_t i = 0; i < FAN_COUNT; i++) fanSpeeds[i] = 0;
       #endif

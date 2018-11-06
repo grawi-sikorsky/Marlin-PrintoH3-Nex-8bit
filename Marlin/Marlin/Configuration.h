@@ -1010,7 +1010,7 @@
 //
 // M100 Free Memory Watcher
 //
-//#define M100_FREE_MEMORY_WATCHER // uncomment to add the M100 Free Memory Watcher for debug purpose
+#define M100_FREE_MEMORY_WATCHER // uncomment to add the M100 Free Memory Watcher for debug purpose
 
 //
 // G20/G21 Inch mode support
@@ -1691,7 +1691,8 @@
   // Define name firmware file for Nextion on SD
   #define NEXTION_FIRMWARE_FILE "printoh3nex35.tft"
 
-	#define NEXTION_SD_LONG_NAMES
+	//#define NEXTION_SD_LONG_NAMES
+	//#define NEX_STAT_PAGE
 	#define NEXTION_STEP_SETTINGS
 	#define NEXTION_JERK_SETTINGS
 
