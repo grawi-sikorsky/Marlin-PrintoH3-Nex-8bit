@@ -89,7 +89,6 @@
   NexObject Pinfo         = NexObject(10, 0,  "info");
   NexObject Pyesno        = NexObject(11, 0,  "yesno");
   //NexObject Pfilament     = NexObject(12, 0,  "filament");
-
   NexObject Pselect       = NexObject(13, 0,  "select");
   NexObject Pprobe        = NexObject(14, 0,  "bedlevel");
 	NexObject Pheatup				= NexObject(15, 0,	"heatup");
@@ -132,30 +131,23 @@
   NexObject LcdX        = NexObject(2,  4,  "vx");
   NexObject LcdY        = NexObject(2,  5,  "vy");
   NexObject LcdZ        = NexObject(2,  6,  "vz");
-  NexObject Extruders   = NexObject(2,  7,  "extruder");
-  NexObject Hotend00    = NexObject(2,  8,  "he00");
-  NexObject Hotend01    = NexObject(2,  9,  "he01");
-  NexObject Hotend10    = NexObject(2, 10,  "he10");
-  NexObject Hotend11    = NexObject(2, 11,  "he11");
-  NexObject Bed0        = NexObject(2, 12,  "bed0");
-	NexObject Bed1				= NexObject(2, 13, "bed1");
-	NexObject Chamber0		= NexObject(2, 14, "cha0");
-	NexObject Chamber1		= NexObject(2, 15, "cha1");
-  NexObject DHT0        = NexObject(2, 16,  "dht0");
-  NexObject SD          = NexObject(2, 17,  "sd");
-  NexObject Fanspeed    = NexObject(2, 20,  "fs");
-  NexObject VSpeed      = NexObject(2, 21,  "vs");
-  NexObject Language    = NexObject(2, 22,  "lang");
-  NexObject NStop       = NexObject(2, 33,  "p1");
-  NexObject NPlay       = NexObject(2, 34,  "p2");
-  NexObject LcdStatus   = NexObject(2, 35,  "t0");
-  NexObject LcdTime     = NexObject(2, 36,  "t2");
-  NexObject progressbar = NexObject(2, 37,  "j0");
-  NexObject Wavetemp    = NexObject(2, 38,  "s0");
-	NexObject FanSpeedTouch = NexObject(2, 56, "m1");
-	//NexObject Fan         = NexObject(2, 19,  "fan");
-	//NexObject LightStatus = NexObject(2, 23,  "light");
-	//NexObject LcdCommand  = NexObject(2, 92,  "t1");
+  NexObject Hotend00    = NexObject(2,  7,  "he00");
+  NexObject Hotend01    = NexObject(2,  8,  "he01");
+  NexObject Hotend10    = NexObject(2, 9,  "he10");
+  NexObject Hotend11    = NexObject(2, 10,  "he11");
+  NexObject Bed0        = NexObject(2, 11,  "bed0");
+	NexObject Bed1				= NexObject(2, 12, "bed1");
+  NexObject SD          = NexObject(2, 13,  "sd");
+  NexObject Fanspeed    = NexObject(2, 15,  "fs");
+  NexObject VSpeed      = NexObject(2, 16,  "vs");
+  NexObject Language    = NexObject(2, 17,  "lang");
+  NexObject NStop       = NexObject(2, 28,  "p1");
+  NexObject NPlay       = NexObject(2, 29,  "p2");
+  NexObject LcdStatus   = NexObject(2, 30,  "t0");
+  NexObject LcdTime     = NexObject(2, 31,  "t2");
+  NexObject progressbar = NexObject(2, 32,  "j0");
+  NexObject Wavetemp    = NexObject(2, 33,  "s0");
+	NexObject FanSpeedTouch = NexObject(2, 51, "m1");
 	//
 	// == 24
 	// == 35
@@ -214,8 +206,8 @@
   NexObject movecmd     = NexObject(5,  11, "vacmd");
   NexObject LedCoord5   = NexObject(5,  12, "t0");
   NexObject MotorOff    = NexObject(5,  17, "p0");
-  NexObject ext         = NexObject(5,  18, "va0");
-  NexObject Extrude     = NexObject(5,  19, "p12");
+  //NexObject ext         = NexObject(5,  18, "va0"); //
+  NexObject Extrude     = NexObject(5,  19, "p12");	
   NexObject Retract     = NexObject(5,  20, "p14");
   NexObject SpeedX      = NexObject(5,  21, "vafrx");
   NexObject SpeedY      = NexObject(5,  22, "vafry");
@@ -249,8 +241,8 @@
    * Nextion component for page:Info
    *******************************************************************
    */
-  NexObject InfoText    = NexObject(10, 2,  "t0");
-  NexObject ScrollText  = NexObject(10, 3,  "g0");
+  //NexObject InfoText    = NexObject(10, 2,  "t0");
+  //NexObject ScrollText  = NexObject(10, 3,  "g0");
 	// 
 	// == 83
 
@@ -338,7 +330,6 @@
 	NexObject vpageid				= NexObject(16, 8, "vpageid");
 	NexObject homeaxisbtn		= NexObject(16, 3, "m0");
 	NexObject bedlevelbtn		= NexObject(16, 4, "m1");
-	//NexObject filchangebtn	= NexObject(16, 7, "m4");
 	// 
 	// == 3
 	// == 114
@@ -370,7 +361,7 @@
 	NexObject Skompil			= NexObject(19, 11, "t7");
 	NexObject Sleveling		= NexObject(19, 12, "t8");
 	NexObject Svlcs				= NexObject(19, 13, "t9");
-	//NexObject Sfilsensor	= NexObject(19, 14, "t10");
+	NexObject Sfilsensor	= NexObject(19, 14, "t10");
 	// 
 	// == 12
 	// == 128
@@ -380,8 +371,8 @@
 	* Nextion component for page:SERVICE PAGE 22 !
 	*******************************************************************
 	*/
-	NexObject SvJerk				= NexObject(22, 4, "m2"); //wejscie w jerk -> przekazuje zmienne float na nuber nextion (brak dziesietnych)
-	NexObject SvSteps				= NexObject(22, 5, "m3");	//wejscie w steps -> przekazuje zmienne float na nuber nextion (brak dziesietnych)
+	//NexObject SvJerk				= NexObject(22, 4, "m2"); //wejscie w jerk -> przekazuje zmienne float na nuber nextion (brak dziesietnych)
+	//NexObject SvSteps				= NexObject(22, 5, "m3");	//wejscie w steps -> przekazuje zmienne float na nuber nextion (brak dziesietnych)
 	// 
 	// == 130
 
@@ -478,10 +469,10 @@
 		&Asend, &Asave, &Aload,
 
 		// Page 24
-		&SvSteps,
+		//&SvSteps,
 
 		// Page 25
-		&SvJerk,
+		//&SvJerk,
 
 		// Page 28 babystep
 		&ZbabyUp, &ZbabyDown,
@@ -503,8 +494,8 @@
 		&Hotend00,
 		&Hotend10,
 		&Bed0,
-		&Chamber0,
-		&DHT0,
+		//&Chamber0,
+		//&DHT0,
     NULL
   };
 
@@ -513,7 +504,7 @@
 		&Hotend01,
 		&Hotend11,
 		&Bed1,
-		&Chamber1,
+		//&Chamber1,
     NULL
   };
 
@@ -568,7 +559,6 @@
    * Menu actions
    *
    */
-
   void lcd_sdcard_stop() {
 	  card.stopSDPrint();
 	  clear_command_queue();
@@ -609,7 +599,7 @@
       Bed0.setValue(10, "printer");
     #endif
 
-    Extruders.setValue(EXTRUDERS, "printer");
+    //Extruders.setValue(EXTRUDERS, "printer");
 
     LOOP_XYZE(i) {
       ZERO(temp);
@@ -1258,20 +1248,18 @@
 			// PRINTER INFO START
 			Sfirmware.setText_PGM(PSTR(SHORT_BUILD_VERSION));
 			Skompil.setText_PGM(PSTR(STRING_DISTRIBUTION_DATE));
-			Sleveling.setText(MSG_MESH_LEVELING);
+			Sleveling.setText_PGM(PSTR(MSG_MESH_LEVELING));
 
 			#if ENABLED(PLOSS_SUPPORT)
-						Svlcs.setText(MSG_INFO_YES);
+						Svlcs.setText_PGM(PSTR(MSG_INFO_YES));
 			#else
-						Svlcs.setText(MSG_INFO_NO);
+						Svlcs.setText_PGM(MSG_INFO_NO);
 			#endif
 
 			#if ENABLED(FILAMENT_RUNOUT_SENSOR)
-						//Sfilsensor.setText_PGM(PSTR(MSG_INFO_YES));
-						//Sfilsensor.setText_PGM("DUPAKURWAJEGOMAC");
-						//Sfilsensor.setText_PGM(PSTR("DUPAKURWAJEGOMAC"));
+						Sfilsensor.setText_PGM(PSTR(MSG_INFO_YES));
 			#else
-						Sfilsensor.setText(MSG_INFO_NO);
+						Sfilsensor.setText_PGM(MSG_INFO_NO);
 			#endif			
 			// END OF PRINTER INFO
 	}
@@ -1545,14 +1533,11 @@
 			chillenter.attachPop(sethotPopCallback, &chillenter); //obs³uga przycisku chlodzenie
 			homeaxisbtn.attachPop(setgcodePopCallback); //obs³uga przycisku home
 			bedlevelbtn.attachPop(setgcodePopCallback); //obs³uga przycisku level
-			//filchangebtn.attachPop(setgcodePopCallback); //obs³uga przycisku m600
 			statin.attachPop(setsetupstatPopCallback); //dodane info o wejsciu w statystyki
 			accelin.attachPop(setaccelpagePopCallback); //setaccelpagePopCallback
 			Asend.attachPop(setgcodePopCallback);
 			Asave.attachPop(setaccelsavebtnPopCallback);
 			Aload.attachPop(setaccelloadbtnPopCallback);
-			SvJerk.attachPop(setjerkpagePopCallback);
-			SvSteps.attachPop(setstepspagePopCallback);
 			ZbabyUp.attachPush(setBabystepUpPopCallback);	// obsluga przycisku babystep up
 			ZbabyDown.attachPush(setBabystepDownPopCallback); // obsluga przycisku babystep down
 			fansetbtn.attachPop(setfanandgoPopCallback); //obs³uga przycisku fan set
@@ -1831,11 +1816,13 @@
 
   void lcd_reset_alert_level() { lcd_status_message_level = 0; }
 
+	/*
   void lcd_scrollinfo(const char* titolo, const char* message) {
     Pinfo.show();
     InfoText.setText(titolo);
     ScrollText.setText(message);
   }
+	*/
 
   void lcd_yesno(const uint8_t val, const char* msg1, const char* msg2, const char* msg3) {
     Vyes.setValue(val, "yesno");
