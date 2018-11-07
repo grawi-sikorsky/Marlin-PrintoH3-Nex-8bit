@@ -80,7 +80,7 @@
   NexObject Pprinter      = NexObject(2,  0,  "printer");
   NexObject Psdcard       = NexObject(3,  0,  "sdcard");
   NexObject Psetup        = NexObject(4,  0,  "setup");
-  //NexObject Pmove         = NexObject(5,  0,  "move");
+  NexObject Pmove         = NexObject(5,  0,  "move");
   //NexObject Pspeed        = NexObject(6,  0,  "speed");
   //NexObject Pgcode        = NexObject(7,  0,  "gcode");
   //NexObject Prfid         = NexObject(8,  0,  "rfid");
@@ -744,21 +744,21 @@
 		//2 folder
 		//3 nazwa 8.3
 		//4 nazwa do wyswietlenia
-		void printrowsd(uint8_t row, const bool folder, const char* filename) {
-			if (folder) {
-				folder_list[row]->SetVisibility(true);
-				row_list[row]->attachPop(sdfolderPopCallback, row_list[row]);
-			}
-			else if (filename == "") {
-				folder_list[row]->SetVisibility(false);
-				row_list[row]->detachPop();
-			}
-			else {
-				folder_list[row]->SetVisibility(false);
-				row_list[row]->attachPop(sdfilePopCallback, row_list[row]);
-			}
-			row_list[row]->setText(filename);
+	void printrowsd(uint8_t row, const bool folder, const char* filename) {
+		if (folder) {
+			folder_list[row]->SetVisibility(true);
+			row_list[row]->attachPop(sdfolderPopCallback, row_list[row]);
 		}
+		else if (filename == "") {
+			folder_list[row]->SetVisibility(false);
+			row_list[row]->detachPop();
+		}
+		else {
+			folder_list[row]->SetVisibility(false);
+			row_list[row]->attachPop(sdfilePopCallback, row_list[row]);
+		}
+		row_list[row]->setText(filename);
+	}
 	#endif
 
 

@@ -381,7 +381,7 @@
 // @section extras
 
 // minimum time in microseconds that a movement needs to take if the buffer is emptied.
-#define DEFAULT_MINSEGMENTTIME        20000
+#define DEFAULT_MINSEGMENTTIME        25000 // dodane zmiana z 20000
 
 // If defined the movements slow down when the look ahead buffer is only half full
 #define SLOWDOWN
@@ -728,8 +728,8 @@
 // @section serial
 
 // The ASCII buffer for serial input
-#define MAX_CMD_SIZE 96
-#define BUFSIZE 4  // dodane: z 4 zamienione na 8, problem z panic // 16?
+#define MAX_CMD_SIZE 64 // trzeba uwazac, nie kojarze dluzszej komendy niz 49 znakow ale moze jakas wystepuje: M205 S0.00 T0.00 B20000 X20.00 Y20.00 Z0.60 E5.00
+#define BUFSIZE 8  // dodane: z 4 zamienione na 8, problem z panic // 16?
 
 // Transfer Buffer Size
 // To save 386 bytes of PROGMEM (and TX_BUFFER_SIZE+3 bytes of RAM) set to 0.
@@ -738,7 +738,7 @@
 // For debug-echo: 128 bytes for the optimal speed.
 // Other output doesn't need to be that speedy.
 // :[0, 2, 4, 8, 16, 32, 64, 128, 256]
-#define TX_BUFFER_SIZE 0
+#define TX_BUFFER_SIZE 8
 
 // Enable an emergency-command parser to intercept certain commands as they
 // enter the serial receive buffer, so they cannot be blocked.
