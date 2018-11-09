@@ -81,7 +81,7 @@
   NexObject Psdcard       = NexObject(3,  0,  "sdcard");
   NexObject Psetup        = NexObject(4,  0,  "setup");
 	//NexObject Pmove         = NexObject(5,  0,  "move");// lipa
-  //NexObject Pspeed        = NexObject(6,  0,  "speed");// lipa
+  NexObject Pspeed        = NexObject(6,  0,  "speed");// lipa
   //NexObject Pgcode        = NexObject(7,  0,  "gcode");// lipa
   //NexObject Prfid         = NexObject(8,  0,  "rfid");
   //NexObject Pbrightness   = NexObject(9,  0,  "brightness");
@@ -91,14 +91,14 @@
   NexObject Pselect       = NexObject(13, 0,  "select");
   NexObject Pprobe        = NexObject(14, 0,  "bedlevel");
 	NexObject Pheatup				= NexObject(15, 0,	"heatup");
-	//NexObject Poptions			= NexObject(16, 0,	"maintain");//
+	NexObject Poptions			= NexObject(16, 0,	"maintain");//
   //NexObject Ptime         = NexObject(17, 0,  "infomove");
   //NexObject Pfanspeedpage = NexObject(18, 0,  "fanspeedpage");
 	NexObject Pstats				= NexObject(19, 0,	"statscreen");
 	//NexObject Ptsettings		= NexObject(20, 0,  "tempsettings");
 	//NexObject Pinfobedlevel = NexObject(21, 0, "infobedlevel");
 	//NexObject Pservice			= NexObject(22, 0, "servicepage");
-	//NexObject Paccel				= NexObject(23, 0, "accelpage");
+	NexObject Paccel				= NexObject(23, 0, "accelpage");
 	//NexObject Pjerk					= NexObject(25, 0, "jerkpage");
 	NexObject Pkill					= NexObject(30, 0, "killpage");
 	// 
@@ -1505,7 +1505,6 @@
   static void coordtoLCD() {
     char* valuetemp;
     ZERO(bufferson);
-
     if (PageID == 2) {
       LcdX.setText(ftostr41sign(LOGICAL_X_POSITION(current_position[X_AXIS])),"printer");
       LcdY.setText(ftostr41sign(LOGICAL_Y_POSITION(current_position[Y_AXIS])),"printer");
@@ -1566,7 +1565,7 @@
       case 2:
         if (PreviousPage != 2) 
 				{
-					lcd_setstatus(lcd_status_message);
+					//lcd_setstatus(lcd_status_message);
           #if ENABLED(NEXTION_GFX)
             #if MECH(DELTA)
               gfx_clear(mechanics.delta_print_radius * 2, mechanics.delta_print_radius * 2, mechanics.delta_height);
@@ -1610,50 +1609,50 @@
  
         coordtoLCD();
 				
-		if (PreviouspercentDone != progress_printing) {
-			// Progress bar solid part
-			progressbar.setValue(progress_printing,"printer");
-			// Estimate End Time
-			ZERO(bufferson);
-			char buffer1[10];
-			uint8_t digit;
-			duration_t Time = print_job_timer.duration();
-			digit = Time.toDigital(buffer1, true);
-			strcat(bufferson, "S");
-			strcat(bufferson, buffer1);
-			Time = (print_job_timer.duration() * (100 - progress_printing)) / (progress_printing + 0.1);
-			digit += Time.toDigital(buffer1, true);
-			if (digit > 14)
-				strcat(bufferson, "E");
-			else
-				strcat(bufferson, " E");
-			strcat(bufferson, buffer1);
-			LcdTime.setText(bufferson,"printer");
-			PreviouspercentDone = progress_printing;
-	}
+				if (PreviouspercentDone != progress_printing) {
+					// Progress bar solid part
+					progressbar.setValue(progress_printing,"printer");
+					// Estimate End Time
+					ZERO(bufferson);
+					char buffer1[10];
+					uint8_t digit;
+					duration_t Time = print_job_timer.duration();
+					digit = Time.toDigital(buffer1, true);
+					strcat(bufferson, "S");
+					strcat(bufferson, buffer1);
+					Time = (print_job_timer.duration() * (100 - progress_printing)) / (progress_printing + 0.1);
+					digit += Time.toDigital(buffer1, true);
+					if (digit > 14)
+						strcat(bufferson, "E");
+					else
+						strcat(bufferson, " E");
+					strcat(bufferson, buffer1);
+					LcdTime.setText(bufferson,"printer");
+					PreviouspercentDone = progress_printing;
+				}
 
-		#if ENABLED(SDSUPPORT)
-		if (card.isFileOpen()) {
-			if (IS_SD_PRINTING && SDstatus != SD_PRINTING) {
-				SDstatus = SD_PRINTING;
-				SD.setValue(SDstatus,"printer");
-			}
-			else if (!IS_SD_PRINTING && SDstatus != SD_PAUSE) {
-				SDstatus = SD_PAUSE;
-				SD.setValue(SDstatus,"printer");
-			}
-		}
-		else if (card.cardOK && SDstatus != SD_INSERT) {
-			SDstatus = SD_INSERT;
-			SD.setValue(SDstatus,"printer");
-		}
-		else if (card.cardOK && SDstatus != SD_NO_INSERT) {
-			SDstatus = SD_NO_INSERT;
-			SD.setValue(SDstatus,"printer");
-		}
-		#endif // HAS_SD_SUPPORT
+				#if ENABLED(SDSUPPORT)
+				if (card.isFileOpen()) {
+					if (IS_SD_PRINTING && SDstatus != SD_PRINTING) {
+						SDstatus = SD_PRINTING;
+						SD.setValue(SDstatus,"printer");
+					}
+					else if (!IS_SD_PRINTING && SDstatus != SD_PAUSE) {
+						SDstatus = SD_PAUSE;
+						SD.setValue(SDstatus,"printer");
+					}
+				}
+				else if (card.cardOK && SDstatus != SD_INSERT) {
+					SDstatus = SD_INSERT;
+					SD.setValue(SDstatus,"printer");
+				}
+				else if (card.cardOK && SDstatus != SD_NO_INSERT) {
+					SDstatus = SD_NO_INSERT;
+					SD.setValue(SDstatus,"printer");
+				}
+				#endif // HAS_SD_SUPPORT
 
-		#if HAS_SD_RESTART
+				#if HAS_SD_RESTART
           if (restart.count && restart.job_phase == RESTART_IDLE) {
             restart.job_phase = RESTART_MAYBE; // Waiting for a response
             lcd_yesno(3, MSG_RESTART_PRINT, "", MSG_USERWAIT);
@@ -1680,17 +1679,17 @@
 	
   void lcd_setstatus(const char* message, bool persist) {
     UNUSED(persist);
-    //if (lcd_status_message_level > 0 || !NextionON) return;
-    //strncpy(lcd_status_message, message, 30);
-    //if (PageID == 2) LcdStatus.setText(lcd_status_message);
+    if (lcd_status_message_level > 0 || !NextionON) return;
+    strncpy(lcd_status_message, message, 30);
+    if (PageID == 2) LcdStatus.setText(lcd_status_message);
   }
 
   void lcd_setstatusPGM(const char* message, int8_t level) {
-    //if (level < 0) level = lcd_status_message_level = 0;
-    //if (level < lcd_status_message_level || !NextionON) return;
-    //strncpy_P(lcd_status_message, message, 30);
-    //lcd_status_message_level = level;
-    //if (PageID == 2) LcdStatus.setText(lcd_status_message);
+    if (level < 0) level = lcd_status_message_level = 0;
+    if (level < lcd_status_message_level || !NextionON) return;
+    strncpy_P(lcd_status_message, message, 30);
+    lcd_status_message_level = level;
+    if (PageID == 2) LcdStatus.setText(lcd_status_message);
   }
 
   void lcd_status_printf_P(const uint8_t level, const char * const fmt, ...) {
@@ -1704,18 +1703,11 @@
   }
 
   void lcd_setalertstatusPGM(const char * const message) {
-    //lcd_setstatusPGM(message, 1);
+    lcd_setstatusPGM(message, 1);
   }
 
   void lcd_reset_alert_level() { lcd_status_message_level = 0; }
-	
-	/*
-  void lcd_scrollinfo(const char* titolo, const char* message) {
-    Pinfo.show();
-    InfoText.setText(titolo);
-    ScrollText.setText(message);
-  }
-	*/
+
 
   void lcd_yesno(const uint8_t val, const char* msg1, const char* msg2, const char* msg3) {
     Vyes.setValue(val, "yesno");
