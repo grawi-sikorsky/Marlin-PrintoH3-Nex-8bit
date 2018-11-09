@@ -13615,7 +13615,7 @@ void setup() {
 	#ifdef PLOSS_SUPPORT
 	if (eeprom_read_byte((uint8_t*)EEPROM_PANIC_POWER_FAIL) == 1) { //Sprawdz czy poprzedni wydruk zakonczyl sie porazka
 
-	#if ENABLED(PLOSS_MANUAL_RECOVERY) && ENABLED(ULTRA_LCD) //do zmiany jak ma dzialac vlcs pod tft
+	#if ENABLED(PLOSS_MANUAL_RECOVERY) && ENABLED(ULTRA_LCD) // || ENABLED(NEXTION_DISPLAY)//do zmiany jak ma dzialac vlcs pod tft
 		// MANUAL
 		KEEPALIVE_STATE(PAUSED_FOR_USER);
 		wait_for_user = false;

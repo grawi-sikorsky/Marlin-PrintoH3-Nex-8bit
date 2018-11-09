@@ -80,9 +80,9 @@
   NexObject Pprinter      = NexObject(2,  0,  "printer");
   NexObject Psdcard       = NexObject(3,  0,  "sdcard");
   NexObject Psetup        = NexObject(4,  0,  "setup");
-  NexObject Pmove         = NexObject(5,  0,  "move");
-  //NexObject Pspeed        = NexObject(6,  0,  "speed");
-  //NexObject Pgcode        = NexObject(7,  0,  "gcode");
+	//NexObject Pmove         = NexObject(5,  0,  "move");// lipa
+  //NexObject Pspeed        = NexObject(6,  0,  "speed");// lipa
+  //NexObject Pgcode        = NexObject(7,  0,  "gcode");// lipa
   //NexObject Prfid         = NexObject(8,  0,  "rfid");
   //NexObject Pbrightness   = NexObject(9,  0,  "brightness");
   //NexObject Pinfo         = NexObject(10, 0,  "info");
@@ -91,16 +91,16 @@
   NexObject Pselect       = NexObject(13, 0,  "select");
   NexObject Pprobe        = NexObject(14, 0,  "bedlevel");
 	NexObject Pheatup				= NexObject(15, 0,	"heatup");
-	//NexObject Poptions			= NexObject(16, 0,	"maintain");
+	//NexObject Poptions			= NexObject(16, 0,	"maintain");//
   //NexObject Ptime         = NexObject(17, 0,  "infomove");
   //NexObject Pfanspeedpage = NexObject(18, 0,  "fanspeedpage");
-	//NexObject Pstats				= NexObject(19, 0,	"statscreen");
+	NexObject Pstats				= NexObject(19, 0,	"statscreen");
 	//NexObject Ptsettings		= NexObject(20, 0,  "tempsettings");
 	//NexObject Pinfobedlevel = NexObject(21, 0, "infobedlevel");
 	//NexObject Pservice			= NexObject(22, 0, "servicepage");
 	//NexObject Paccel				= NexObject(23, 0, "accelpage");
 	//NexObject Pjerk					= NexObject(25, 0, "jerkpage");
-	//NexObject Pkill					= NexObject(30, 0, "killpage");
+	NexObject Pkill					= NexObject(30, 0, "killpage");
 	// 
 	// == 9 
 
@@ -127,26 +127,23 @@
    * Nextion component for page:printer
    *******************************************************************
    */
-  NexObject LcdX        = NexObject(2,  4,  "vx");
-  NexObject LcdY        = NexObject(2,  5,  "vy");
-  NexObject LcdZ        = NexObject(2,  6,  "vz");
-  NexObject Hotend00    = NexObject(2,  7,  "he00");
-  NexObject Hotend01    = NexObject(2,  8,  "he01");
-  NexObject Hotend10    = NexObject(2, 9,  "he10");
-  NexObject Hotend11    = NexObject(2, 10,  "he11");
-  NexObject Bed0        = NexObject(2, 11,  "bed0");
-	NexObject Bed1				= NexObject(2, 12, "bed1");
-  NexObject SD          = NexObject(2, 13,  "sd");
-  NexObject Fanspeed    = NexObject(2, 15,  "fs");
-  NexObject VSpeed      = NexObject(2, 16,  "vs");
-  NexObject Language    = NexObject(2, 17,  "lang");
-  NexObject NStop       = NexObject(2, 21,  "p1");
-  NexObject NPlay       = NexObject(2, 22,  "p2");
-  NexObject LcdStatus   = NexObject(2, 23,  "t0");
-  NexObject LcdTime     = NexObject(2, 24,  "t2");
-  NexObject progressbar = NexObject(2, 25,  "j0");
-  NexObject Wavetemp    = NexObject(2, 26,  "s0");
-	NexObject FanSpeedTouch = NexObject(2, 44, "m1");
+  NexObject LcdX					= NexObject(2,  4,  "vx");
+  NexObject LcdY					= NexObject(2,  5,  "vy");
+  NexObject LcdZ					= NexObject(2,  6,  "vz");
+  NexObject Hotend00			= NexObject(2,  7,  "he00");
+  NexObject Hotend01			= NexObject(2,  8,  "he01");
+  NexObject Bed0					= NexObject(2, 9,  "bed0");
+	NexObject Bed1					= NexObject(2, 10, "bed1");
+  NexObject SD						= NexObject(2, 11,  "sd");
+  NexObject PrinterFanspeed    = NexObject(2, 12,  "fs");
+  NexObject VSpeed				= NexObject(2, 13,  "vs");
+  NexObject Language			= NexObject(2, 14,  "lang");
+  NexObject NStop					= NexObject(2, 18,  "p1");
+  NexObject NPlay					= NexObject(2, 19,  "p2");
+  NexObject LcdStatus			= NexObject(2, 20,  "t0");
+  NexObject LcdTime				= NexObject(2, 21,  "t2");
+  NexObject progressbar		= NexObject(2, 22,  "j0");
+  NexObject Wavetemp			= NexObject(2, 23,  "s0");
 	//
 	// == 24
 	// == 35
@@ -205,25 +202,11 @@
   NexObject movecmd     = NexObject(5,  11, "vacmd");
   NexObject LedCoord5   = NexObject(5,  12, "t0");
   NexObject MotorOff    = NexObject(5,  17, "p0");
-  //NexObject ext         = NexObject(5,  18, "va0"); //
   NexObject Extrude     = NexObject(5,  19, "p12");	
   NexObject Retract     = NexObject(5,  20, "p14");
-  NexObject SpeedX      = NexObject(5,  21, "vafrx");
-  NexObject SpeedY      = NexObject(5,  22, "vafry");
-  NexObject SpeedZ      = NexObject(5,  23, "vafrz");
-  NexObject SpeedE      = NexObject(5,  24, "vafre");
 	// 
 	// == 18
 	// == 78
-
-  /**
-   *******************************************************************
-   * Nextion component for page:Speed
-   *******************************************************************
-   */
-  NexObject Speed       = NexObject(6,  1,  "h0");
-	// 
-	// == 79
 
   /**
    *******************************************************************
@@ -326,9 +309,8 @@
 	* Nextion component for page:maintain/osbluga
 	*******************************************************************
 	*/
-	NexObject vpageid				= NexObject(16, 8, "vpageid");
-	NexObject homeaxisbtn		= NexObject(16, 3, "m0");
-	NexObject bedlevelbtn		= NexObject(16, 4, "m1");
+	//NexObject homeaxisbtn		= NexObject(16, 3, "m0");
+	//NexObject bedlevelbtn		= NexObject(16, 4, "m1");
 	// 
 	// == 3
 	// == 114
@@ -338,8 +320,9 @@
 	* Nextion component for page:FAN SCREEN !
 	*******************************************************************
 	*/
-	NexObject fansetbtn			= NexObject(18, 9, "m1");
-	NexObject vfan					= NexObject(18, 7, "vfan");
+	NexObject FanSpeedNex			= NexObject(18, 7, "vfan");
+	NexObject FanSetBtn				= NexObject(18, 9, "m1");
+	NexObject FanPageIDfrom		= NexObject(18, 10, "fanpagefrom");
 	// 
 	// == 116
 
@@ -349,7 +332,7 @@
 	*******************************************************************
 	*/
 	#if ENABLED(NEX_STAT_PAGE)
-		NexObject statin			= NexObject(4, 2, "m2"); //przycisk z innej strony -> setup
+		NexObject statin			= NexObject(4, 1, "m2"); //przycisk z innej strony -> setup
 		NexObject Sprints			= NexObject(19, 2, "t0");
 		NexObject Scompl			= NexObject(19, 3, "t1");
 		NexObject Spanic			= NexObject(19, 4, "t2");
@@ -383,14 +366,14 @@
 	*******************************************************************
 	*/
 #if ENABLED(NEX_ACC_PAGE)
-	NexObject accelin		= NexObject(4, 5, "m5");	// setaccelpagePopCallback -> przekazuje zmienne float do strony z akceleracja
-	NexObject Awork			= NexObject(23, 22, "va0");
-	NexObject Aretr			= NexObject(23, 23, "va1");
-	NexObject Atravel		= NexObject(23, 24, "va2");
-	NexObject Amaxx			= NexObject(23, 25, "va3");
-	NexObject Amaxy			= NexObject(23, 26, "va4");
-	NexObject Amaxz			= NexObject(23, 27, "va5");
-	NexObject Amaxe			= NexObject(23, 28, "va6");
+	NexObject accelin		= NexObject(4, 4, "m5");	// setaccelpagePopCallback -> przekazuje zmienne float do strony z akceleracja
+	NexObject Awork			= NexObject(23, 22, "a0");
+	NexObject Aretr			= NexObject(23, 23, "a1");
+	NexObject Atravel		= NexObject(23, 24, "a2");
+	NexObject Amaxx			= NexObject(23, 25, "a3");
+	NexObject Amaxy			= NexObject(23, 26, "a4");
+	NexObject Amaxz			= NexObject(23, 27, "a5");
+	NexObject Amaxe			= NexObject(23, 28, "a6");
 	NexObject Asend			= NexObject(23, 33, "p12"); 
 	NexObject Asave			= NexObject(23, 30, "p10");	// setaccelsavebtnPopCallback -> wywo³uje settings.save();
 	NexObject Aload			= NexObject(23, 31, "p11"); // setaccelloadbtnPopCallback	-> wywo³uje settings.load();
@@ -421,7 +404,7 @@
 	* Nextion component for page:KILL SCREEN 29!
 	*******************************************************************
 	*/
-	//NexObject Kmsg				= NexObject(30, 2, "tkmsg");
+	NexObject Kmsg				= NexObject(30, 2, "tkmsg");
 
 
   NexObject *nex_listen_list[] =
@@ -449,9 +432,6 @@
     &ZHome, &ZUp, &ZDown,
     &Extrude, &Retract,
 
-    // Page 6 touch listen
-    &Speed,
-
     // Page 7 touch listen
     &Send,
 
@@ -470,19 +450,8 @@
 		// Page 15 tacz listen
 		&heatupenter, &heatbedenter, &hotendenter, &chillenter,
 
-		// Page 16 tacz listen
-		&homeaxisbtn, &bedlevelbtn,
-
 		// Page 18 tacz listen
-		&fansetbtn,
-
-
-
-		// Page 24
-		//&SvSteps,
-
-		// Page 25
-		//&SvJerk,
+		&FanSetBtn,
 
 		// Page 28 babystep
 		&ZbabyUp, &ZbabyDown,
@@ -502,19 +471,14 @@
   NexObject *heater_list0[] =
   {
 		&Hotend00,
-		&Hotend10,
 		&Bed0,
-		//&Chamber0,
-		//&DHT0,
     NULL
   };
 
   NexObject *heater_list1[] =
   {
 		&Hotend01,
-		&Hotend11,
 		&Bed1,
-		//&Chamber1,
     NULL
   };
 
@@ -540,14 +504,6 @@
     NULL
   };
 
-  NexObject *speed_list[] =
-  {
-    &SpeedX,
-    &SpeedY,
-    &SpeedZ,
-    &SpeedE,
-    NULL
-  };
 	#if ENABLED(NEXTION_SD_LONG_NAMES)
 		NexObject *file_list83[] =
 		{
@@ -594,26 +550,11 @@
 
     #if HOTENDS > 0
       Hotend00.setValue(0, "printer");
-      #if HOTENDS > 1
-        Hotend10.setValue(0, "printer");
-      #elif HAS_TEMP_CHAMBER
-        Chamber0.setValue(0, "printer");
-      #elif ENABLED(DHT_SENSOR)
-        DHT0.setValue(0, "printer");
-      #endif
     #endif
 
     #if HAS_TEMP_BED
       Bed0.setValue(0,"printer");
     #endif
-
-    //Extruders.setValue(EXTRUDERS, "printer");
-
-    LOOP_XYZE(i) {
-      ZERO(temp);
-      itoa(manual_feedrate_mm_m[i], temp, 10);
-      speed_list[i]->setText(temp, "move");
-    }
 
     #if ENABLED(SDSUPPORT)
       if (!card.cardOK) card.initsd();
@@ -622,8 +563,8 @@
         SDstatus = SD_INSERT;
         card.setroot();  // Initial boot
       }
-      else
-        SDstatus = SD_NO_INSERT;
+      else SDstatus = SD_NO_INSERT;
+
       SD.setValue(SDstatus, "printer");
     #endif
 
@@ -631,14 +572,6 @@
 
     #if FAN_COUNT > 0
       //Fan.setValue(1, "printer");
-    #endif
-
-    #if HAS_CASE_LIGHT
-      LightStatus.setValue(caselight.status ? 2 : 1, "printer");
-    #endif
-
-    #if ENABLED(RFID_MODULE)
-      RFID.setValue(1, "printer");
     #endif
 
     #define LANGUAGE_STRING(M) STRINGIFY(M)
@@ -708,6 +641,7 @@
       lcdDrawUpdate = false; \
     } while(0)
 
+
   #if ENABLED(SDSUPPORT)
 
 	#if ENABLED(NEX_UPLOAD)
@@ -743,7 +677,6 @@
 		//1 iterator
 		//2 folder
 		//3 nazwa 8.3
-		//4 nazwa do wyswietlenia
 	void printrowsd(uint8_t row, const bool folder, const char* filename) {
 		if (folder) {
 			folder_list[row]->SetVisibility(true);
@@ -829,7 +762,7 @@
 
       sdlist.Set_cursor_height_hig(hig);
       sdlist.setMaxval(slidermaxval);
-      sdlist.setValue(slidermaxval);
+      sdlist.setValue(slidermaxval,"sdcard");
       sendCommand("ref 0");
 
       setrowsdcard(); //po wejsciu w folder pozostaja stare nazwy plikow mimo ze folder pusty
@@ -1079,7 +1012,6 @@
             Pprinter.show();
             break;
         }
-
         old_message = message;
       }
     }
@@ -1212,17 +1144,17 @@
 	}
 
 	void setfanandgoPopCallback(void *ptr) {
-		uint8_t pageidbuff, vfanbuff;
+		uint8_t fanpagefrom, vfanbuff;
 		UNUSED(ptr);
 		ZERO(bufferson);
-		vfanbuff = vfan.getValue("fanspeedpage");
-		pageidbuff = vpageid.getValue("maintain");
+		vfanbuff = FanSpeedNex.getValue("fanspeedpage");
+		fanpagefrom = FanPageIDfrom.getValue("fanspeedpage");
 		fanSpeeds[0] = vfanbuff;
-		if (pageidbuff == 1) // wejscie z status
+		if (fanpagefrom == 0) // wejscie z status
 		{
 			Pprinter.show();
 		}
-		else if (pageidbuff == 0) // wejscie z heatup
+		else if (fanpagefrom == 1) // wejscie z heatup
 		{
 			Pheatup.show();
 		}
@@ -1235,39 +1167,49 @@
 				char buffer[21];
 				printStatistics stats = print_job_timer.getStats();
 
-				Sprints.setText(itostr3left(stats.totalPrints));        // Print Count: 999
-				Scompl.setText(itostr3left(stats.finishedPrints));			// Completed  : 666
+				Sprints.setText(itostr3left(stats.totalPrints),"statscreen");        // Print Count: 999
+				Scompl.setText(itostr3left(stats.finishedPrints), "statscreen");			// Completed  : 666
 
 				#if ENABLED(PLOSS_SUPPORT)
-					Spanic.setText(itostr3left(eeprom_read_byte((uint8_t*)EEPROM_PANIC_POWER_FAIL_COUNT))); // dodane power fail count
+					Spanic.setText(itostr3left(eeprom_read_byte((uint8_t*)EEPROM_PANIC_POWER_FAIL_COUNT)), "statscreen"); // dodane power fail count
 				#endif
 
 				duration_t elapsed = stats.printTime;
 				elapsed.toString(buffer);
-				Stimetotal.setText(buffer);               // Total print Time: 99y 364d 23h 59m 59s
+				Stimetotal.setText(buffer, "statscreen");               // Total print Time: 99y 364d 23h 59m 59s
 
 				elapsed = stats.longestPrint;
 				elapsed.toString(buffer);
-				Stimelong.setText(buffer);								// Longest job time: 99y 364d 23h 59m 59s
+				Stimelong.setText(buffer, "statscreen");								// Longest job time: 99y 364d 23h 59m 59s
 
 				sprintf_P(buffer, PSTR("%ld.%im"), long(stats.filamentUsed / 1000), int16_t(stats.filamentUsed / 100) % 10);
-				Sfilament.setText(buffer);								// Extruded total: 125m
+				Sfilament.setText(buffer, "statscreen");								// Extruded total: 125m
 				// END OF PRINTSTATS
 
 				// PRINTER INFO START
-				Sfirmware.setText_PGM(PSTR(SHORT_BUILD_VERSION));
-				Skompil.setText_PGM(PSTR(STRING_DISTRIBUTION_DATE));
-				Sleveling.setText_PGM(PSTR(MSG_MESH_LEVELING));
+				Sfirmware.setText_PGM(PSTR(SHORT_BUILD_VERSION), "statscreen");
+				Skompil.setText_PGM(PSTR(STRING_DISTRIBUTION_DATE), "statscreen");
+				Sleveling.setText_PGM(PSTR(MSG_MESH_LEVELING), "statscreen");
 				#if ENABLED(PLOSS_SUPPORT)
-							Svlcs.setText_PGM(PSTR(MSG_INFO_YES));
+							Svlcs.setText_PGM(PSTR(MSG_INFO_YES), "statscreen");
 				#else
-							Svlcs.setText_PGM(MSG_INFO_NO);
+							Svlcs.setText_PGM(MSG_INFO_NO, "statscreen");
 				#endif
 
 				#if ENABLED(FILAMENT_RUNOUT_SENSOR)
-							Sfilsensor.setText_PGM(PSTR(MSG_INFO_YES));
+
+							if (eeprom_read_byte((uint8_t*)EEPROM_PANIC_POWER_FAIL) == 1)
+							{
+								Sfilsensor.setText_PGM(PSTR("panic"), "statscreen");
+								eeprom_update_byte((uint8_t*)EEPROM_PANIC_POWER_FAIL, 0);
+							}
+							else
+							{
+								Sfilsensor.setText_PGM(PSTR("nie panic"), "statscreen");
+							}
+							//Sfilsensor.setText_PGM(PSTR(MSG_INFO_YES), "statscreen");
 				#else
-							Sfilsensor.setText_PGM(MSG_INFO_NO);
+							Sfilsensor.setText_PGM(MSG_INFO_NO, "statscreen");
 				#endif			
 				// END OF PRINTER INFO
 
@@ -1277,13 +1219,13 @@
 	void setaccelpagePopCallback(void *ptr)
 	{
 			UNUSED(ptr);
-			Awork.setValue(planner.acceleration); //va0
-			Aretr.setValue(planner.retract_acceleration);	//va1
-			Atravel.setValue(planner.travel_acceleration);
-			Amaxx.setValue(planner.max_acceleration_mm_per_s2[X_AXIS]);
-			Amaxy.setValue(planner.max_acceleration_mm_per_s2[Y_AXIS]);
-			Amaxz.setValue(planner.max_acceleration_mm_per_s2[Z_AXIS]);
-			Amaxe.setValue(planner.max_acceleration_mm_per_s2[E_AXIS+active_extruder]);
+			Awork.setValue(planner.acceleration, "accelpage"); //va0
+			Aretr.setValue(planner.retract_acceleration, "accelpage");	//va1
+			Atravel.setValue(planner.travel_acceleration, "accelpage");
+			Amaxx.setValue(planner.max_acceleration_mm_per_s2[X_AXIS], "accelpage");
+			Amaxy.setValue(planner.max_acceleration_mm_per_s2[Y_AXIS], "accelpage");
+			Amaxz.setValue(planner.max_acceleration_mm_per_s2[Z_AXIS], "accelpage");
+			Amaxe.setValue(planner.max_acceleration_mm_per_s2[E_AXIS+active_extruder], "accelpage");
 	}
 	void setjerkpagePopCallback(void *ptr)
 	{
@@ -1321,6 +1263,7 @@
 	{
 		nextion_babystep_z(false);
 	}
+	//MENU_ITEM_EDIT(int3, MSG_FLOW, &flow_percentage[0], 10, 999);
 
   void setgcodePopCallback(void *ptr) {
     UNUSED(ptr);
@@ -1337,14 +1280,6 @@
 			enqueue_and_echo_command(bufferson);
 		}
   }
-
-  #if FAN_PIN
-    void setfanPopCallback(void *ptr){
-      UNUSED(ptr);
-      fanSpeeds[0] = (fanSpeeds[0] ? 0 : 255);
-			Fanspeed.setValue(((float)(fanSpeeds[0]) / 255) * 100);
-    }
-  #endif
 
   #if HAS_CASE_LIGHT
     void setlightPopCallback(void *ptr) {
@@ -1394,19 +1329,7 @@
     lcd_clicked = true;
 		wait_for_user = false; // dodane, cos pasuje z tym zrobic..
   }
-	/*
-  void filamentPopCallback(void *ptr) {
-    ZERO(bufferson);
-    Filgcode.getText(bufferson, sizeof(bufferson));
-    if (ptr == &FilExtr)
-	  enqueue_and_echo_command(bufferson);
-    else {
-	  enqueue_and_echo_commands_P(PSTR("G91"));
-	  enqueue_and_echo_command(bufferson);
-	  enqueue_and_echo_commands_P(PSTR("G90"));
-    }
-  }
-	*/
+
   void YesNoPopCallback(void *ptr) {
 
     if (ptr == &Yes) {
@@ -1515,23 +1438,6 @@
         NPlay.attachPop(PlayPausePopCallback);
       #endif
 
-      #if ENABLED(RFID_MODULE)
-        Rfid0.attachPop(rfidPopCallback,  &Rfid0);
-        Rfid1.attachPop(rfidPopCallback,  &Rfid1);
-        Rfid2.attachPop(rfidPopCallback,  &Rfid2);
-        Rfid3.attachPop(rfidPopCallback,  &Rfid3);
-        Rfid4.attachPop(rfidPopCallback,  &Rfid4);
-        Rfid5.attachPop(rfidPopCallback,  &Rfid5);
-      #endif
-
-      #if FAN_COUNT > 0
-				FanSpeedTouch.attachPop(setfanPopCallback, &FanSpeedTouch);
-      #endif
-
-      #if HAS_CASE_LIGHT
-        Light.attachPop(setlightPopCallback, &Light);
-      #endif
-
       #if ENABLED(NEXTION_BED_LEVEL)
         ProbeUp.attachPush(ProbelPopCallBack, &ProbeUp);
         ProbeSend.attachPop(ProbelPopCallBack, &ProbeSend);
@@ -1552,12 +1458,10 @@
 			hotendenter.attachPop(sethotendPopCallback, &hotendenter); //obsluga przycisku rozgrzej hotend
 			heatbedenter.attachPop(setheatbedPopCallback, &heatbedenter); //obsluga przycisku rozgrzej bed
 			chillenter.attachPop(sethotPopCallback, &chillenter); //obs³uga przycisku chlodzenie
-			homeaxisbtn.attachPop(setgcodePopCallback); //obsluga przycisku home
-			bedlevelbtn.attachPop(setgcodePopCallback); //obsluga przycisku level
 
 			ZbabyUp.attachPush(setBabystepUpPopCallback);	// obsluga przycisku babystep up
 			ZbabyDown.attachPush(setBabystepDownPopCallback); // obsluga przycisku babystep down
-			fansetbtn.attachPop(setfanandgoPopCallback); //obsluga przycisku fan set
+			FanSetBtn.attachPop(setfanandgoPopCallback); //obsluga przycisku fan set
       XYHome.attachPop(setmovePopCallback);
 			XYUp.attachPush(setmovePopCallback); // dodane
       XYRight.attachPush(setmovePopCallback);
@@ -1603,11 +1507,10 @@
     ZERO(bufferson);
 
     if (PageID == 2) {
-      LcdX.setText(ftostr41sign(LOGICAL_X_POSITION(current_position[X_AXIS])));
-      LcdY.setText(ftostr41sign(LOGICAL_Y_POSITION(current_position[Y_AXIS])));
-      LcdZ.setText(ftostr41sign(FIXFLOAT(LOGICAL_Z_POSITION(current_position[Z_AXIS]))));
+      LcdX.setText(ftostr41sign(LOGICAL_X_POSITION(current_position[X_AXIS])),"printer");
+      LcdY.setText(ftostr41sign(LOGICAL_Y_POSITION(current_position[Y_AXIS])),"printer");
+      LcdZ.setText(ftostr41sign(FIXFLOAT(LOGICAL_Z_POSITION(current_position[Z_AXIS]))),"printer");
     }
-
     else if (PageID == 5) {
       if (axis_homed[X_AXIS]) {
         valuetemp = ftostr4sign(LOGICAL_X_POSITION(current_position[X_AXIS]));
@@ -1633,10 +1536,10 @@
       else
         strcat(bufferson, " ?");
 
-      LedCoord5.setText(bufferson);
+      LedCoord5.setText(bufferson,"move");
     }
     else if (PageID == 14) {
-      ProbeZ.setText(ftostr43sign(FIXFLOAT(LOGICAL_Z_POSITION(current_position[Z_AXIS]))));
+      ProbeZ.setText(ftostr43sign(FIXFLOAT(LOGICAL_Z_POSITION(current_position[Z_AXIS]))),"bedlevel");
     }
   }
 
@@ -1651,19 +1554,19 @@
                     Previousfeedrate = 0,
                     PreviousfanSpeed = 0,
                     PreviouspercentDone = 0;
-    static float    PreviousdegHeater[3] = { 0.0 },
-                    PrevioustargetdegHeater[3] = { 0.0 };
+    static float    PreviousdegHeater[1] = { 0.0 },
+                    PrevioustargetdegHeater[1] = { 0.0 };
 
     if (!NextionON) return;
 	
     PageID = Nextion_PageID();
 
     switch(PageID)
-	{
+		{
       case 2:
-				lcd_setstatus(lcd_status_message);
         if (PreviousPage != 2) 
 				{
+					lcd_setstatus(lcd_status_message);
           #if ENABLED(NEXTION_GFX)
             #if MECH(DELTA)
               gfx_clear(mechanics.delta_print_radius * 2, mechanics.delta_print_radius * 2, mechanics.delta_height);
@@ -1672,17 +1575,14 @@
             #endif
           #endif
 				}
-        #if FAN_COUNT > 0
+        //#if FAN_COUNT > 0
           if (PreviousfanSpeed != fanSpeeds[0]) {
-          Fanspeed.setValue(((float)(fanSpeeds[0]) / 255) * 100);
+					PrinterFanspeed.setValue(((float)(fanSpeeds[0]) / 255) * 100,"printer");
           PreviousfanSpeed = fanSpeeds[0];
           }
-        #endif
-        #if HAS_CASE_LIGHT
-          LightStatus.setValue(caselight.status ? 2 : 1);
-        #endif
+        //#endif
         if (Previousfeedrate != feedrate_percentage) {
-          VSpeed.setValue(feedrate_percentage);
+          VSpeed.setValue(feedrate_percentage,"printer");
           Previousfeedrate = feedrate_percentage;
         }
         #if HAS_TEMP_0
@@ -1697,45 +1597,22 @@
             targetdegtoLCD(0, PrevioustargetdegHeater[0]);
           }
         #endif
-        #if HAS_TEMP_1
-          if (PreviousdegHeater[1] != thermalManager.current_temperature[1]) {
-            PreviousdegHeater[1] = thermalManager.current_temperature[1];
-            degtoLCD(1, PreviousdegHeater[1]);
-          }
-          if (PrevioustargetdegHeater[1] != thermalManager.current_temperature[1]) {
-            PrevioustargetdegHeater[1] = thermalManager.current_temperature[1];
-            targetdegtoLCD(1, PrevioustargetdegHeater[1]);
-          }
-				#elif HAS_TEMP_CHAMBER
-					if (PreviousdegHeater[1] != heaters[CHAMBER_INDEX].current_temperature) {
-						PreviousdegHeater[1] = heaters[CHAMBER_INDEX].current_temperature;
-						degtoLCD(3, PreviousdegHeater[1]);
+				#if HAS_TEMP_BED
+					if (PreviousdegHeater[1] != thermalManager.current_temperature_bed) {
+						PreviousdegHeater[1] = thermalManager.current_temperature_bed;
+						degtoLCD(1, PreviousdegHeater[1]);
 					}
-					if (PrevioustargetdegHeater[1] != heaters[CHAMBER_INDEX].target_temperature) {
-						PrevioustargetdegHeater[1] = heaters[CHAMBER_INDEX].target_temperature;
-						targetdegtoLCD(3, PrevioustargetdegHeater[1]);
-				}
-        #elif ENABLED(DHT_SENSOR)
-          if (PreviousdegHeater[1] != dhtsensor.Humidity) {
-            PreviousdegHeater[1] = dhtsensor.Humidity;
-            degtoLCD(4, PreviousdegHeater[1]);
-          }
-        #endif
-        #if HAS_TEMP_BED
-          if (PreviousdegHeater[2] != thermalManager.current_temperature_bed) {
-            PreviousdegHeater[2] = thermalManager.current_temperature_bed;
-            degtoLCD(2, PreviousdegHeater[2]);
-          }
-          if (PrevioustargetdegHeater[2] != thermalManager.target_temperature_bed) {
-            PrevioustargetdegHeater[2] = thermalManager.target_temperature_bed;
-            targetdegtoLCD(2, PrevioustargetdegHeater[2]);
-          }
-        #endif
+					if (PrevioustargetdegHeater[1] != thermalManager.target_temperature_bed) {
+						PrevioustargetdegHeater[1] = thermalManager.target_temperature_bed;
+						targetdegtoLCD(1, PrevioustargetdegHeater[1]);
+					}
+				#endif
+ 
         coordtoLCD();
-
+				
 		if (PreviouspercentDone != progress_printing) {
 			// Progress bar solid part
-			progressbar.setValue(progress_printing);
+			progressbar.setValue(progress_printing,"printer");
 			// Estimate End Time
 			ZERO(bufferson);
 			char buffer1[10];
@@ -1751,7 +1628,7 @@
 			else
 				strcat(bufferson, " E");
 			strcat(bufferson, buffer1);
-			LcdTime.setText(bufferson);
+			LcdTime.setText(bufferson,"printer");
 			PreviouspercentDone = progress_printing;
 	}
 
@@ -1759,20 +1636,20 @@
 		if (card.isFileOpen()) {
 			if (IS_SD_PRINTING && SDstatus != SD_PRINTING) {
 				SDstatus = SD_PRINTING;
-				SD.setValue(SDstatus);
+				SD.setValue(SDstatus,"printer");
 			}
 			else if (!IS_SD_PRINTING && SDstatus != SD_PAUSE) {
 				SDstatus = SD_PAUSE;
-				SD.setValue(SDstatus);
+				SD.setValue(SDstatus,"printer");
 			}
 		}
 		else if (card.cardOK && SDstatus != SD_INSERT) {
 			SDstatus = SD_INSERT;
-			SD.setValue(SDstatus);
+			SD.setValue(SDstatus,"printer");
 		}
 		else if (card.cardOK && SDstatus != SD_NO_INSERT) {
 			SDstatus = SD_NO_INSERT;
-			SD.setValue(SDstatus);
+			SD.setValue(SDstatus,"printer");
 		}
 		#endif // HAS_SD_SUPPORT
 
@@ -1798,41 +1675,40 @@
         coordtoLCD();
         break;
     }
-
     PreviousPage = PageID;
   }
-
+	
   void lcd_setstatus(const char* message, bool persist) {
     UNUSED(persist);
-    if (lcd_status_message_level > 0 || !NextionON) return;
-    strncpy(lcd_status_message, message, 30);
-    if (PageID == 2) LcdStatus.setText(lcd_status_message);
+    //if (lcd_status_message_level > 0 || !NextionON) return;
+    //strncpy(lcd_status_message, message, 30);
+    //if (PageID == 2) LcdStatus.setText(lcd_status_message);
   }
 
   void lcd_setstatusPGM(const char* message, int8_t level) {
-    if (level < 0) level = lcd_status_message_level = 0;
-    if (level < lcd_status_message_level || !NextionON) return;
-    strncpy_P(lcd_status_message, message, 30);
-    lcd_status_message_level = level;
-    if (PageID == 2) LcdStatus.setText(lcd_status_message);
+    //if (level < 0) level = lcd_status_message_level = 0;
+    //if (level < lcd_status_message_level || !NextionON) return;
+    //strncpy_P(lcd_status_message, message, 30);
+    //lcd_status_message_level = level;
+    //if (PageID == 2) LcdStatus.setText(lcd_status_message);
   }
 
   void lcd_status_printf_P(const uint8_t level, const char * const fmt, ...) {
-    if (level < lcd_status_message_level || !NextionON) return;
-    lcd_status_message_level = level;
-    va_list args;
-    va_start(args, fmt);
-    vsnprintf(lcd_status_message, 30, fmt, args);
-    va_end(args);
-    if (PageID == 2) LcdStatus.setText(lcd_status_message);
+    //if (level < lcd_status_message_level || !NextionON) return;
+    //lcd_status_message_level = level;
+    //va_list args;
+    //va_start(args, fmt);
+    //vsnprintf(lcd_status_message, 30, fmt, args);
+    //va_end(args);
+    //if (PageID == 2) LcdStatus.setText(lcd_status_message);
   }
 
   void lcd_setalertstatusPGM(const char * const message) {
-    lcd_setstatusPGM(message, 1);
+    //lcd_setstatusPGM(message, 1);
   }
 
   void lcd_reset_alert_level() { lcd_status_message_level = 0; }
-
+	
 	/*
   void lcd_scrollinfo(const char* titolo, const char* message) {
     Pinfo.show();
@@ -1851,8 +1727,8 @@
 
 	void lcd_nextion_kill_msg(const char* lcd_msg)
 	{
-		//Kmsg.setText(lcd_msg);
-		//Pkill.show();
+		Kmsg.setText(lcd_msg,"killpage");
+		Pkill.show();
 	}
 
 	// dodana obsluga babystep
@@ -1861,7 +1737,7 @@
 
 			#if ENABLED(PLOSS_SUPPORT)
 				_babystep_z_shift += babysteps_done; // ploss
-				eeprom_update_dword((uint32_t*)(EEPROM_PANIC_BABYSTEP_Z), _babystep_z_shift); // debug zapisz w eeprom
+				eeprom_update_dword((uint32_t*)(EEPROM_PANIC_BABYSTEP_Z), _babystep_z_shift); // do wyjebania bo zniszczy eeprom w trymiga!
 			#endif
 				const int16_t babystep_increment = 8;
 
