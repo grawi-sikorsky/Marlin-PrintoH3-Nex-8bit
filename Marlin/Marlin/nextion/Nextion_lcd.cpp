@@ -41,7 +41,7 @@
               lcd_status_message_level  = 0;
   uint16_t    slidermaxval              = 20;
   char        bufferson[70]             = { 0 };
-  char        lcd_status_message[18]    = WELCOME_MSG;
+  char        lcd_status_message[30]    = WELCOME_MSG;
   const float manual_feedrate_mm_m[]    = MANUAL_FEEDRATE;
 
   extern uint8_t progress_printing; // dodane nex
@@ -588,6 +588,15 @@
     lcdDrawUpdate = true;
     lcd_clicked = !push;
   }
+	void start_screen(const bool encoder = false, const bool push = false)
+	{
+		Pselect.show();
+		LcdUp.SetVisibility(encoder);
+		LcdDown.SetVisibility(encoder);
+		LcdSend.SetVisibility(push);
+		lcdDrawUpdate = true;
+		lcd_clicked = !push;
+	}
 
   /**
    * START_SCREEN  Opening code for a screen having only static items.s
@@ -596,8 +605,14 @@
    * START_MENU    Opening code for a screen with menu items.
    *               Scroll as-needed to keep the selected line in view.
    */
-  #define START_SCREEN() \
+	/*
+#define START_SCREEN() \
     start_menu(false, true); \
+    do { \
+      uint8_t _lcdLineNr = 0; \*/
+
+  #define START_SCREEN() \
+    start_screen(false, true); \
     do { \
       uint8_t _lcdLineNr = 0; \
 
@@ -740,11 +755,32 @@
     }
 
     static void menu_action_sdfile(const char* filename) {
+
+			#if ENABLED(PLOSS_SUPPORT) // jezeli VLCS wlaczony
+			for (int i = 0; i < 8; i++) {
+				eeprom_write_byte((uint8_t*)EEPROM_SD_FILENAME + i, filename[i]);
+			}
+
+			uint8_t depth = (uint8_t)card.getWorkDirDepth();
+			eeprom_write_byte((uint8_t*)EEPROM_SD_FILE_DIR_DEPTH, depth);
+
+			for (uint8_t i = 0; i < depth; i++) {
+				for (int j = 0; j < 8; j++) {
+					eeprom_write_byte((uint8_t*)EEPROM_SD_DIRS + j + 8 * i, dir_names[i][j]);
+				}
+			}
+			#endif // jezeli VLCS wlaczone
+
       card.openAndPrintFile(filename);
       Pprinter.show();
     }
 
     static void menu_action_sddirectory(const char* filename) {
+			#if ENABLED(PLOSS_SUPPORT)
+			uint8_t depth = (uint8_t)card.getWorkDirDepth(); // dodane	
+			strcpy(dir_names[depth], filename);				// dodane
+			#endif	
+
       card.chdir(filename);
       setpageSD();
     }
@@ -887,7 +923,7 @@
 
   #if ENABLED(ADVANCED_PAUSE_FEATURE)
 
-    static AdvancedPauseMenuResponse advanced_pause_mode = ADVANCED_PAUSE_RESPONSE_WAIT_FOR; // tutaj jest bagno!
+    static AdvancedPauseMenuResponse advanced_pause_mode = ADVANCED_PAUSE_RESPONSE_WAIT_FOR;
 
     static void lcd_advanced_pause_resume_print() {
       advanced_pause_menu_response = ADVANCED_PAUSE_RESPONSE_RESUME_PRINT;
@@ -1017,6 +1053,92 @@
     }
 
   #endif // ADVANCED_PAUSE_FEATURE
+
+#ifdef PLOSS_SUPPORT
+		// ODPOWIEDZI
+		void lcd_ploss_menu_response_yes() {
+			lcd_ploss_menu_response = PLOSS_LCD_RESPONSE_YES;
+		}
+		void lcd_ploss_menu_response_no() {
+			lcd_ploss_menu_response = PLOSS_LCD_RESPONSE_NO;
+		}
+
+		//MENU
+		void ploss_recovery_menu() {
+			START_MENU();
+			STATIC_ITEM("Wykryto zanik napiecia");
+			STATIC_ITEM("Czy wznowic wydruk?");
+			MENU_ITEM(function, "Tak", lcd_ploss_menu_response_yes);
+			MENU_ITEM(function, "Nie", lcd_ploss_menu_response_no);
+			END_MENU();
+			SERIAL_ECHO(lcd_clicked);
+		}
+		void ploss_recovery_menu_resuming() {
+			START_SCREEN();
+			STATIC_ITEM("Wznawianie wydruku");
+			STATIC_ITEM("po zaniku zasilania");
+			END_SCREEN();
+			SERIAL_ECHO(lcd_clicked);
+			//if (lcd_clicked) {
+			//	Pprinter.show();
+			//}
+	}
+		void ploss_recovery_menu_last_confirm() {
+
+			if (lcd_clicked) {
+				SERIAL_ECHOPGM("kliked");
+				lcd_ploss_menu_response = PLOSS_LCD_RESPONSE_YES;
+			}
+
+			SERIAL_ECHOPGM("przed startscreen:");
+			SERIAL_ECHO(lcd_clicked);
+			START_SCREEN();
+			STATIC_ITEM("Usun nadmiar");
+			STATIC_ITEM("filamentu i kliknij");
+			STATIC_ITEM("aby wznowic wydruk");
+			END_SCREEN();
+			SERIAL_ECHOPGM("za endscreen:");
+			SERIAL_ECHO(lcd_clicked);
+
+			SERIAL_ECHOPGM("if-lcdclicked-false");
+		}
+		void ploss_recovery_menu_no_resume() {
+			START_SCREEN();
+			STATIC_ITEM("Uruchamianie");
+			STATIC_ITEM("po zaniku zasilania");
+			STATIC_ITEM("Bazowanie osi");
+			END_SCREEN();
+			if (lcd_clicked) {
+				Pprinter.show();
+			}
+		}
+#endif
+
+		// PLOSS
+#ifdef PLOSS_SUPPORT
+		void lcd_ploss_recovery_menu(const PlossMenuMessage message) {
+			switch (message) {
+			case PLOSS_LCD_MANUAL_RECOVERY:
+				lcd_ploss_menu_response = PLOSS_LCD_RESPONSE_WAIT_FOR_USER;
+				ploss_recovery_menu();
+				break;
+			case PLOSS_LCD_RECOVERY_RESUMING:
+				ploss_recovery_menu_resuming();
+				break;
+			case PLOSS_LCD_MENU_NO_RESUME:
+				ploss_recovery_menu_no_resume();
+				enqueue_and_echo_commands_P(PSTR("G28"));
+				break;
+			case PLOSS_LCD_MENU_LAST_CONFIRM:
+				lcd_ploss_menu_response = PLOSS_LCD_RESPONSE_WAIT_FOR_LAST_CONFIRMATION;
+				ploss_recovery_menu_last_confirm();
+				break;
+			case PLOSS_LCD_AUTO_RECOVERY:
+				break;
+			}
+		}
+#endif //PLOSS
+
 
   #if ENABLED(RFID_MODULE)
     void rfidPopCallback(void *ptr) {
@@ -1201,7 +1323,7 @@
 							if (eeprom_read_byte((uint8_t*)EEPROM_PANIC_POWER_FAIL) == 1)
 							{
 								Sfilsensor.setText_PGM(PSTR("panic"), "statscreen");
-								eeprom_update_byte((uint8_t*)EEPROM_PANIC_POWER_FAIL, 0);
+								//eeprom_update_byte((uint8_t*)EEPROM_PANIC_POWER_FAIL, 0);
 							}
 							else
 							{
@@ -1328,6 +1450,8 @@
     UNUSED(ptr);
     lcd_clicked = true;
 		wait_for_user = false; // dodane, cos pasuje z tym zrobic..
+		SERIAL_ECHOPGM("pop lcd_clicked:");
+		SERIAL_ECHO(lcd_clicked);
   }
 
   void YesNoPopCallback(void *ptr) {
@@ -1565,7 +1689,7 @@
       case 2:
         if (PreviousPage != 2) 
 				{
-					//lcd_setstatus(lcd_status_message);
+					lcd_setstatus(lcd_status_message);
           #if ENABLED(NEXTION_GFX)
             #if MECH(DELTA)
               gfx_clear(mechanics.delta_print_radius * 2, mechanics.delta_print_radius * 2, mechanics.delta_height);

@@ -9372,14 +9372,17 @@ inline void gcode_M811(){ //Printo M811
 inline void gcode_M812() {
 	// 3. Confirm menu
 	// Dodajemy ekran menu pauzy pozwalający na dodatkową ekstruzję
-	KEEPALIVE_STATE(PAUSED_FOR_USER);
+		KEEPALIVE_STATE(PAUSED_FOR_USER);
 	wait_for_user = false;
-	//lcd_ploss_recovery_menu(PLOSS_LCD_MENU_LAST_CONFIRM); // Uruchom confirm-extrude menu..
+	SERIAL_ECHOPGM("waitforuser");
+	lcd_ploss_recovery_menu(PLOSS_LCD_MENU_LAST_CONFIRM); // Uruchom confirm-extrude menu..
 	while (lcd_ploss_menu_response == PLOSS_LCD_RESPONSE_WAIT_FOR_LAST_CONFIRMATION) idle(true); //Czekaj na decyzje
+	SERIAL_ECHOPGM("za while");
 	KEEPALIVE_STATE(IN_HANDLER);
 
 	if (lcd_ploss_menu_response == PLOSS_LCD_RESPONSE_YES) { // jezeli tak
-	//	lcd_ploss_recovery_menu(PLOSS_LCD_RECOVERY_RESUMING);
+		SERIAL_ECHOPGM("response-yes");
+		lcd_ploss_recovery_menu(PLOSS_LCD_RECOVERY_RESUMING);
 	}
 }
 #endif
@@ -13179,14 +13182,15 @@ void ploss_recover(uint8_t automatic) {
 	#if ENABLED(PRINTO3D_OLED_I2C_242)
 	lcd_setstatusPGM(MSG_PRINT_RECOVERING);
 	#else
+	lcd_setstatusPGM(MSG_PRINT_RECOVERING);
 	// jakas inna czynnosc wyswietlajaca mesydz wazny na tft
 	#endif
 
 	recover_machine_state_after_power_panic(); // przywraca stan urzadzenia po zaniku
 	
 	// Ustaw temperatury dla glowicy bez oczekiwania
-	sprintf_P(cmd, PSTR("M104 S%d"), thermalManager.target_temperature[0]);
-	enqueue_and_echo_command(cmd); //2 zamiast enqueue command są dwie opcje ponizej: do sprawdzenia:
+	//sprintf_P(cmd, PSTR("M104 S%d"), thermalManager.target_temperature[0]);
+	//enqueue_and_echo_command(cmd); //2 zamiast enqueue command są dwie opcje ponizej: do sprawdzenia:
 	//thermalManager.setTargetHotend(thermalManager.target_temperature[0], 0);
 	//thermalManager.setTargetHotend(eeprom_read_word((uint16_t*)EEPROM_PANIC_TARGET_HOTEND), 0);
 	
@@ -13204,7 +13208,7 @@ void ploss_recover(uint8_t automatic) {
 	enqueue_and_echo_command(cmd); //4
 
 	// Oznacz flage Power Safe na nieaktywna
-	eeprom_update_byte((uint8_t*)EEPROM_PANIC_POWER_FAIL, 0);
+	//eeprom_update_byte((uint8_t*)EEPROM_PANIC_POWER_FAIL, 0);
 
 	// Rozpocznik wydruk z eeprom po zaniku
 	restore_print_from_eeprom();
@@ -13241,30 +13245,20 @@ void recover_machine_state_after_power_panic()
 }
 
 void restore_print_from_eeprom() {
-	uint8_t _axis_rel_modes;
 	uint32_t _sdpos;
 	//float _e;
 	//float _x;
 	//float _y;
 	//float _z;
 	uint16_t _fan;
-	uint16_t _hotend;
-	uint16_t _bed;
-	uint8_t _power_fail_flag;
-	uint8_t _power_fail_count;
 	int feedrate_restore;
 	
-	_axis_rel_modes = eeprom_read_byte((uint8_t*)EEPROM_PANIC_AXIS_REL_MODES);
 	_sdpos = eeprom_read_dword((uint32_t*)EEPROM_PANIC_SD_FILE_POSITION); //+
 	//_e = eeprom_read_float((float*)EEPROM_PANIC_CURRENT_EPOS);
 	//_x = eeprom_read_float((float*)EEPROM_PANIC_CURRENT_XPOS);
 	//_y = eeprom_read_float((float*)EEPROM_PANIC_CURRENT_YPOS);
 	//_z = eeprom_read_float((float*)EEPROM_PANIC_CURRENT_ZPOS);
 	_fan = eeprom_read_word((uint16_t*)EEPROM_PANIC_FAN_SPEED); // +
-	_hotend = eeprom_read_word((uint16_t*)EEPROM_PANIC_TARGET_HOTEND);
-	_bed = eeprom_read_word((uint16_t*)EEPROM_PANIC_TARGET_BED);
-	_power_fail_flag = eeprom_read_byte((uint8_t*)EEPROM_PANIC_POWER_FAIL);
-	_power_fail_count = eeprom_read_byte((uint8_t*)EEPROM_PANIC_POWER_FAIL_COUNT);
 	EEPROM_read_FR(EEPROM_PANIC_FEEDRATE, &feedrate_restore); // +
 
 	char cmd_buff[30];
@@ -13273,14 +13267,15 @@ void restore_print_from_eeprom() {
 	uint8_t depth = 0;
 	char dir_name[9];
 	
+	/*****************************************************/
+	/*** 1. Skladanie nazwy pliku i folderu do kupy  *****/
+	/*****************************************************/
 	depth = eeprom_read_byte((uint8_t*)EEPROM_SD_FILE_DIR_DEPTH);
 	for (int i = 0; i < depth; i++) {
 		for (int j = 0; j < 8; j++) {
 			dir_name[j] = eeprom_read_byte((uint8_t*)EEPROM_SD_DIRS + j + 8 * i);
-
 		}
 		dir_name[8] = '\0';
-		//MYSERIAL.println(dir_name);
 		#if ENABLED(SDSUPPORT)
 		card.chdir(dir_name);
 		#endif	
@@ -13288,33 +13283,40 @@ void restore_print_from_eeprom() {
 
 	for (int i = 0; i < 8; i++) {
 		filename[i] = eeprom_read_byte((uint8_t*)EEPROM_SD_FILENAME + i);
-
 	}
 	filename[8] = '\0';
 	
-	strcat_P(filename, PSTR(".gco"));
+	strcat_P(filename, PSTR("gco")); // usunieta kropka sprzed gco
 	sprintf_P(cmd_buff, PSTR("M23 %s"), filename);
 	for (c = &cmd_buff[4]; *c; c++)
 		*c = tolower(*c);
-	enqueue_and_echo_command(cmd_buff); //5
 
-	//MYSERIAL.print("Pozycja pliku SD: ");
-	//MYSERIAL.println(_sdpos);
+	//enqueue_and_echo_command(cmd_buff); //5
+	card.openFile(filename, true); // zamiast enqueue M23
 
-	// Ekstruder tryb relative
-	enqueue_and_echo_commands_P(PSTR("M83")); //6 (5+1PGM)
 
+	/******************************************************/
+	/*** 2. Ekstruder tryb relative									  *****/
+	/******************************************************/
+	//enqueue_and_echo_commands_P(PSTR("M83")); //6 (5+1PGM)
+	axis_relative_modes[E_AXIS] = true;
+
+
+	/******************************************************/
+	/*** 3. Pozycja gotowosci												  *****/
+	/******************************************************/
 	// 1. XY na poz zmiany filamentu, Z na pol drogi do wydruku
 	//float _z_half = (Z_MAX_POS - _z) / 2 + _z; //problem bo pojawiaja sie liczby niewymierne i powoduja pręgi na zetce
 
 	strcpy_P(cmd_buff, PSTR("G1 X")); strcat(cmd_buff, ftostr32(PAUSE_PARK_X_POS));
 	strcat_P(cmd_buff, PSTR(" Y"));   strcat(cmd_buff, ftostr32(PAUSE_PARK_Y_POS));
 	//strcat_P(cmd_buff, PSTR(" Z"));   strcat(cmd_buff, ftostr32(_z_half));
+	strcat_P(cmd_buff, PSTR(" E15"));
 	strcat_P(cmd_buff, PSTR(" F3000"));
 	enqueue_and_echo_command(cmd_buff); //7 (6+1PGM)
 
 	// 2. Extruzja
-	enqueue_and_echo_commands_P(PSTR("G1 E10 F1500")); //8 (6+2PGM)
+	//enqueue_and_echo_commands_P(PSTR("G1 E10 F1500")); //8 (6+2PGM)
 
 	// 3. Confirm Menu 
 	// Do poprawienia. Niestety umieszone w Mcode bo musi się wykonac w tym konkretym miejscu
@@ -13336,9 +13338,15 @@ void restore_print_from_eeprom() {
 	strcat_P(cmd_buff, PSTR(" F3000"));
 	enqueue_and_echo_command(cmd_buff); //11 (8+3PGM)
 
+	/******************************************************/
+	/*** 4. Ekstruder tryb absolute //12 (8+4PGM)		  *****/
+	/******************************************************/
+	//enqueue_and_echo_commands_P(PSTR("M82"));
+	axis_relative_modes[E_AXIS] = false;
 
-	enqueue_and_echo_commands_P(PSTR("M82")); //Ekstruder tryb absolute //12 (8+4PGM)
-
+	/******************************************************/
+	/*** 5. Ustaw poz ekstrudera na ta sprzed zaniku  *****/
+	/******************************************************/
 	current_position[E_AXIS] = eeprom_read_float((float*)EEPROM_PANIC_CURRENT_EPOS); // do uzycia zmienna z poczatku funkcji
 	sprintf_P(cmd_buff, PSTR("G92 E"));
 	dtostrf(current_position[E_AXIS], 6, 3, cmd_buff + strlen(cmd_buff));
@@ -13347,12 +13355,19 @@ void restore_print_from_eeprom() {
 	// Ustaw obroty wentylatora na te sprzed zaniku
 	fanSpeeds[0] = _fan;
 
+	/******************************************************/
+	/*** 6. Ustaw poz pliku na karcie SD						  *****/
+	/******************************************************/
 	// Ustaw pozycje wybranego pliku na karcie sd
-	sprintf_P(cmd_buff, PSTR("M26 S%lu"), _sdpos);
-	enqueue_and_echo_command(cmd_buff); //14 (10+4PGM)
+	//sprintf_P(cmd_buff, PSTR("M26 S%lu"), _sdpos);
+	//enqueue_and_echo_command(cmd_buff); //14 (10+4PGM)
+
+	if (card.cardOK) card.setIndex(_sdpos);
 
 	// Rozpocznik wydruk
-	enqueue_and_echo_commands_P(PSTR("M24")); //15 (10+5PGM)
+	//enqueue_and_echo_commands_P(PSTR("M24")); //15 (10+5PGM)
+	card.startFileprint();
+
 	enqueue_and_echo_commands_P(PSTR("M117 Drukowanie.."));//16 (10+6PGM)
 }
 
@@ -13615,7 +13630,7 @@ void setup() {
 	#ifdef PLOSS_SUPPORT
 	if (eeprom_read_byte((uint8_t*)EEPROM_PANIC_POWER_FAIL) == 1) { //Sprawdz czy poprzedni wydruk zakonczyl sie porazka
 
-	#if ENABLED(PLOSS_MANUAL_RECOVERY) && ENABLED(ULTRA_LCD) // || ENABLED(NEXTION_DISPLAY)//do zmiany jak ma dzialac vlcs pod tft
+	#if ENABLED(PLOSS_MANUAL_RECOVERY) && ENABLED(ULTRA_LCD) || ENABLED(NEXTION_DISPLAY)//do zmiany jak ma dzialac vlcs pod tft
 		// MANUAL
 		KEEPALIVE_STATE(PAUSED_FOR_USER);
 		wait_for_user = false;
@@ -13628,7 +13643,7 @@ void setup() {
 			ploss_recover(1);
 		}
 		if (lcd_ploss_menu_response == PLOSS_LCD_RESPONSE_NO) { //jezeli nie, wypad do menu glownego
-			eeprom_update_byte((uint8_t*)EEPROM_PANIC_POWER_FAIL, 0);
+			//eeprom_update_byte((uint8_t*)EEPROM_PANIC_POWER_FAIL, 0);
 			lcd_ploss_recovery_menu(PLOSS_LCD_MENU_NO_RESUME);
 		}
 	#else
