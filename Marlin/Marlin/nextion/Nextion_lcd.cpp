@@ -43,6 +43,7 @@
   char        bufferson[70]             = { 0 };
   char        lcd_status_message[30]    = WELCOME_MSG;
   const float manual_feedrate_mm_m[]    = MANUAL_FEEDRATE;
+	millis_t		screen_timeout_millis;
 
   extern uint8_t progress_printing; // dodane nex
 
@@ -78,10 +79,10 @@
   //NexObject Pstart        = NexObject(0,  0,  "start");
   //NexObject Pmenu         = NexObject(1,  0,  "menu");
   NexObject Pprinter      = NexObject(2,  0,  "printer");
-  NexObject Psdcard       = NexObject(3,  0,  "sdcard");
+  //NexObject Psdcard       = NexObject(3,  0,  "sdcard");
   NexObject Psetup        = NexObject(4,  0,  "setup");
 	//NexObject Pmove         = NexObject(5,  0,  "move");// lipa
-  NexObject Pspeed        = NexObject(6,  0,  "speed");// lipa
+  //NexObject Pspeed        = NexObject(6,  0,  "speed");// lipa
   //NexObject Pgcode        = NexObject(7,  0,  "gcode");// lipa
   //NexObject Prfid         = NexObject(8,  0,  "rfid");
   //NexObject Pbrightness   = NexObject(9,  0,  "brightness");
@@ -91,14 +92,14 @@
   NexObject Pselect       = NexObject(13, 0,  "select");
   NexObject Pprobe        = NexObject(14, 0,  "bedlevel");
 	NexObject Pheatup				= NexObject(15, 0,	"heatup");
-	NexObject Poptions			= NexObject(16, 0,	"maintain");//
+	//NexObject Poptions			= NexObject(16, 0,	"maintain");//
   //NexObject Ptime         = NexObject(17, 0,  "infomove");
   //NexObject Pfanspeedpage = NexObject(18, 0,  "fanspeedpage");
-	NexObject Pstats				= NexObject(19, 0,	"statscreen");
+	//NexObject Pstats				= NexObject(19, 0,	"statscreen");
 	//NexObject Ptsettings		= NexObject(20, 0,  "tempsettings");
 	//NexObject Pinfobedlevel = NexObject(21, 0, "infobedlevel");
 	//NexObject Pservice			= NexObject(22, 0, "servicepage");
-	NexObject Paccel				= NexObject(23, 0, "accelpage");
+	//NexObject Paccel				= NexObject(23, 0, "accelpage");
 	//NexObject Pjerk					= NexObject(25, 0, "jerkpage");
 	NexObject Pkill					= NexObject(30, 0, "killpage");
 	// 
@@ -396,16 +397,23 @@
 	*/
 	NexObject ZbabyUp			= NexObject(28, 1, "m0");
 	NexObject ZbabyDown		= NexObject(28, 2, "m1");
+	NexObject ZbabyBack_Save = NexObject(28, 3, "m2");
 	// 
 	// == 143 == 1859 bajtów! (1.8kb) == 19,68%+ !!!!!!!!!!!!!!!!!!!
 
 	/**
 	*******************************************************************
-	* Nextion component for page:KILL SCREEN 29!
+	* Nextion component for page:KILL SCREEN 30!
 	*******************************************************************
 	*/
 	NexObject Kmsg				= NexObject(30, 2, "tkmsg");
 
+	/**
+	*******************************************************************
+	* Nextion component for page:KILL SCREEN 31!
+	*******************************************************************
+	*/
+	NexObject SetFlowBtn				= NexObject(31, 10, "m0");
 
   NexObject *nex_listen_list[] =
   {
@@ -454,7 +462,7 @@
 		&FanSetBtn,
 
 		// Page 28 babystep
-		&ZbabyUp, &ZbabyDown,
+		&ZbabyUp, &ZbabyDown, &ZbabyBack_Save,
 
     NULL
   };
@@ -588,15 +596,6 @@
     lcdDrawUpdate = true;
     lcd_clicked = !push;
   }
-	void start_screen(const bool encoder = false, const bool push = false)
-	{
-		Pselect.show();
-		LcdUp.SetVisibility(encoder);
-		LcdDown.SetVisibility(encoder);
-		LcdSend.SetVisibility(push);
-		lcdDrawUpdate = true;
-		lcd_clicked = !push;
-	}
 
   /**
    * START_SCREEN  Opening code for a screen having only static items.s
@@ -605,14 +604,18 @@
    * START_MENU    Opening code for a screen with menu items.
    *               Scroll as-needed to keep the selected line in view.
    */
-	/*
-#define START_SCREEN() \
-    start_menu(false, true); \
-    do { \
-      uint8_t _lcdLineNr = 0; \*/
+
+#define WAIT_FOR_CLICK_F(TYPE, ...) \
+    if (lcd_clicked){ \
+		menu_action_ ## TYPE(__VA_ARGS__); \
+    return; }\
+
+#define WAIT_FOR_CLICK() \
+    if (lcd_clicked){ \
+    return; }\
 
   #define START_SCREEN() \
-    start_screen(false, true); \
+    start_menu(false, true); \
     do { \
       uint8_t _lcdLineNr = 0; \
 
@@ -655,6 +658,11 @@
   #define END_SCREEN() \
       lcdDrawUpdate = false; \
     } while(0)
+
+	#define END_SCREEN_WFC() \
+			idle(); \
+      lcdDrawUpdate = false; \
+    } while(1)
 
 
   #if ENABLED(SDSUPPORT)
@@ -1071,46 +1079,40 @@
 			MENU_ITEM(function, "Tak", lcd_ploss_menu_response_yes);
 			MENU_ITEM(function, "Nie", lcd_ploss_menu_response_no);
 			END_MENU();
-			SERIAL_ECHO(lcd_clicked);
 		}
+
 		void ploss_recovery_menu_resuming() {
 			START_SCREEN();
+			LcdSend.SetVisibility(false);
 			STATIC_ITEM("Wznawianie wydruku");
 			STATIC_ITEM("po zaniku zasilania");
 			END_SCREEN();
-			SERIAL_ECHO(lcd_clicked);
-			//if (lcd_clicked) {
-			//	Pprinter.show();
-			//}
 	}
+
 		void ploss_recovery_menu_last_confirm() {
-
-			if (lcd_clicked) {
-				SERIAL_ECHOPGM("kliked");
-				lcd_ploss_menu_response = PLOSS_LCD_RESPONSE_YES;
-			}
-
-			SERIAL_ECHOPGM("przed startscreen:");
-			SERIAL_ECHO(lcd_clicked);
 			START_SCREEN();
 			STATIC_ITEM("Usun nadmiar");
 			STATIC_ITEM("filamentu i kliknij");
 			STATIC_ITEM("aby wznowic wydruk");
-			END_SCREEN();
-			SERIAL_ECHOPGM("za endscreen:");
-			SERIAL_ECHO(lcd_clicked);
-
-			SERIAL_ECHOPGM("if-lcdclicked-false");
+			WAIT_FOR_CLICK_F(function, lcd_ploss_menu_response_yes); // return response if clicked
+			END_MENU();
 		}
+
+		void lcd_ploss_menu_last_info() {
+			START_SCREEN();
+			STATIC_ITEM("Wznawianie wydruku");
+			STATIC_ITEM("");
+			END_SCREEN();
+			screen_timeout_millis = millis();
+		}
+
 		void ploss_recovery_menu_no_resume() {
+			screen_timeout_millis = millis();
 			START_SCREEN();
 			STATIC_ITEM("Uruchamianie");
 			STATIC_ITEM("po zaniku zasilania");
 			STATIC_ITEM("Bazowanie osi");
 			END_SCREEN();
-			if (lcd_clicked) {
-				Pprinter.show();
-			}
 		}
 #endif
 
@@ -1132,6 +1134,9 @@
 			case PLOSS_LCD_MENU_LAST_CONFIRM:
 				lcd_ploss_menu_response = PLOSS_LCD_RESPONSE_WAIT_FOR_LAST_CONFIRMATION;
 				ploss_recovery_menu_last_confirm();
+				break;
+			case PLOSS_LAST_INFO:
+				lcd_ploss_menu_last_info();
 				break;
 			case PLOSS_LCD_AUTO_RECOVERY:
 				break;
@@ -1377,6 +1382,7 @@
 		settings.load();
 		SERIAL_ECHOPGM("zaladowane");
 	}
+
 	void setBabystepUpPopCallback(void *ptr)
 	{
 		nextion_babystep_z(true);
@@ -1385,7 +1391,15 @@
 	{
 		nextion_babystep_z(false);
 	}
-	//MENU_ITEM_EDIT(int3, MSG_FLOW, &flow_percentage[0], 10, 999);
+	void setBabystepEEPROMPopCallback(void *ptr)
+	{
+		eeprom_update_dword((uint32_t*)(EEPROM_PANIC_BABYSTEP_Z), _babystep_z_shift);
+	}
+	void setflowPopCallback(void *ptr)
+	{
+		flow_percentage[0] = 100;
+	}
+
 
   void setgcodePopCallback(void *ptr) {
     UNUSED(ptr);
@@ -1396,6 +1410,7 @@
 		if (strcmp(bufferson,"M600") == 0)
 		{
 			enqueue_and_echo_commands_P(PSTR("M600 B0"));
+			Pselect.show();
 		}
 		else
 		{
@@ -1449,9 +1464,14 @@
   void sendPopCallback(void *ptr) {
     UNUSED(ptr);
     lcd_clicked = true;
-		wait_for_user = false; // dodane, cos pasuje z tym zrobic..
-		SERIAL_ECHOPGM("pop lcd_clicked:");
-		SERIAL_ECHO(lcd_clicked);
+		wait_for_user = false;
+
+		// dodane aby wyjsc kliknieciem z ostatniego ekranu vlcs
+		if (screen_timeout_millis != 0)
+		{
+			screen_timeout_millis = 0;
+			Pprinter.show();
+		}
   }
 
   void YesNoPopCallback(void *ptr) {
@@ -1585,6 +1605,8 @@
 
 			ZbabyUp.attachPush(setBabystepUpPopCallback);	// obsluga przycisku babystep up
 			ZbabyDown.attachPush(setBabystepDownPopCallback); // obsluga przycisku babystep down
+			ZbabyBack_Save.attachPop(setBabystepEEPROMPopCallback);
+			
 			FanSetBtn.attachPop(setfanandgoPopCallback); //obsluga przycisku fan set
       XYHome.attachPop(setmovePopCallback);
 			XYUp.attachPush(setmovePopCallback); // dodane
@@ -1669,6 +1691,15 @@
   void lcd_update() {
     if (!NextionON) return;
     nexLoop(nex_listen_list); // odswieza sie z delayem 5 ms
+
+		//sprawdzamy timeout ekranu
+		millis_t timeout_check;
+		timeout_check = millis();
+		if (timeout_check > screen_timeout_millis + NEX_SCREEN_TIME && screen_timeout_millis != 0)
+		{
+			Pprinter.show();
+			screen_timeout_millis = 0;
+		}
   }
 
   void nextion_draw_update() {
@@ -1843,8 +1874,8 @@
 
 	void lcd_nextion_kill_msg(const char* lcd_msg)
 	{
-		Kmsg.setText(lcd_msg,"killpage");
 		Pkill.show();
+		Kmsg.setText_PGM(lcd_msg,"killpage");
 	}
 
 	// dodana obsluga babystep
@@ -1853,7 +1884,6 @@
 
 			#if ENABLED(PLOSS_SUPPORT)
 				_babystep_z_shift += babysteps_done; // ploss
-				eeprom_update_dword((uint32_t*)(EEPROM_PANIC_BABYSTEP_Z), _babystep_z_shift); // do wyjebania bo zniszczy eeprom w trymiga!
 			#endif
 				const int16_t babystep_increment = 8;
 
