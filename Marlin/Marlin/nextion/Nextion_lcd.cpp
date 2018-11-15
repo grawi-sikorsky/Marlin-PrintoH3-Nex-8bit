@@ -92,7 +92,7 @@
   NexObject Pselect       = NexObject(13, 0,  "select");
   NexObject Pprobe        = NexObject(14, 0,  "bedlevel");
 	NexObject Pheatup				= NexObject(15, 0,	"heatup");
-	//NexObject Poptions			= NexObject(16, 0,	"maintain");//
+	NexObject Poptions			= NexObject(16, 0,	"maintain");//
   //NexObject Ptime         = NexObject(17, 0,  "infomove");
   //NexObject Pfanspeedpage = NexObject(18, 0,  "fanspeedpage");
 	//NexObject Pstats				= NexObject(19, 0,	"statscreen");
@@ -145,6 +145,8 @@
   NexObject LcdTime				= NexObject(2, 21,  "t2");
   NexObject progressbar		= NexObject(2, 22,  "j0");
   NexObject Wavetemp			= NexObject(2, 23,  "s0");
+	NexObject percentdone		= NexObject(2, 49,	"t4");
+	
 	//
 	// == 24
 	// == 35
@@ -209,6 +211,11 @@
 	// == 18
 	// == 78
 
+	NexObject speedsetbtn	= NexObject(6, 9, "m0");
+	NexObject SpeedNex		= NexObject(6, 7, "vspeed");
+	
+
+		
   /**
    *******************************************************************
    * Nextion component for page:GCode
@@ -413,7 +420,9 @@
 	* Nextion component for page:KILL SCREEN 31!
 	*******************************************************************
 	*/
-	NexObject SetFlowBtn				= NexObject(31, 10, "m0");
+	NexObject vFlowNex					= NexObject(31, 7, "vflow");
+	NexObject SetFlowBtn				= NexObject(31, 9, "m0");
+	NexObject FlowPageFrom			= NexObject(31, 10, "flowfrom");
 
   NexObject *nex_listen_list[] =
   {
@@ -440,6 +449,8 @@
     &ZHome, &ZUp, &ZDown,
     &Extrude, &Retract,
 
+		&speedsetbtn,
+
     // Page 7 touch listen
     &Send,
 
@@ -463,6 +474,9 @@
 
 		// Page 28 babystep
 		&ZbabyUp, &ZbabyDown, &ZbabyBack_Save,
+
+		// Page 31 Flow
+		&SetFlowBtn,
 
     NULL
   };
@@ -911,7 +925,6 @@
 
     void PlayPausePopCallback(void *ptr) {
       UNUSED(ptr);
-
       if (card.cardOK && card.isFileOpen()) {
         if (IS_SD_PRINTING) {
           card.pauseSDPrint();
@@ -1082,6 +1095,7 @@
 		}
 
 		void ploss_recovery_menu_resuming() {
+			//screen_timeout_millis = millis();
 			START_SCREEN();
 			LcdSend.SetVisibility(false);
 			STATIC_ITEM("Wznawianie wydruku");
@@ -1395,9 +1409,33 @@
 	{
 		eeprom_update_dword((uint32_t*)(EEPROM_PANIC_BABYSTEP_Z), _babystep_z_shift);
 	}
+	void setspeedPopCallback(void *ptr) 
+	{
+		int vspeedbuff;
+		UNUSED(ptr);
+		vspeedbuff = (int)SpeedNex.getValue("speed");
+
+		feedrate_percentage = vspeedbuff;
+		Pprinter.show();
+	}
 	void setflowPopCallback(void *ptr)
 	{
-		flow_percentage[0] = 100;
+		uint8_t flowfrom;
+		int vflowbuff;
+		UNUSED(ptr);
+		vflowbuff = (int)vFlowNex.getValue("flowpage");
+		flowfrom = FlowPageFrom.getValue("flowpage");
+
+		flow_percentage[0] = vflowbuff;
+
+		if (flowfrom == 0) // wejscie z status
+		{
+			Pprinter.show();
+		}
+		else if (flowfrom == 1) // wejscie z heatup
+		{
+			Poptions.show();
+		}
 	}
 
 
@@ -1608,6 +1646,11 @@
 			ZbabyBack_Save.attachPop(setBabystepEEPROMPopCallback);
 			
 			FanSetBtn.attachPop(setfanandgoPopCallback); //obsluga przycisku fan set
+
+			speedsetbtn.attachPop(setspeedPopCallback); //obsluga przycisku speed set
+
+			SetFlowBtn.attachPop(setflowPopCallback); //obsluga przycisku set flow
+
       XYHome.attachPop(setmovePopCallback);
 			XYUp.attachPush(setmovePopCallback); // dodane
       XYRight.attachPush(setmovePopCallback);
@@ -1707,6 +1750,7 @@
     static uint8_t  PreviousPage = 0,
                     Previousfeedrate = 0,
                     PreviousfanSpeed = 0,
+										Previousflow = 0,
                     PreviouspercentDone = 0;
     static float    PreviousdegHeater[1] = { 0.0 },
                     PrevioustargetdegHeater[1] = { 0.0 };
@@ -1739,6 +1783,10 @@
           VSpeed.setValue(feedrate_percentage,"printer");
           Previousfeedrate = feedrate_percentage;
         }
+				if (Previousflow != flow_percentage[0]) {
+					vFlowNex.setValue(flow_percentage[0], "flowpage");
+					Previousflow = flow_percentage[0];
+				}
         #if HAS_TEMP_0
           if (PreviousdegHeater[0] != thermalManager.current_temperature[0]) 
 					{
@@ -1784,6 +1832,19 @@
 					strcat(bufferson, buffer1);
 					LcdTime.setText(bufferson,"printer");
 					PreviouspercentDone = progress_printing;
+
+					// procenty t4
+					ZERO(bufferson);
+					strcat(bufferson, itostr3(progress_printing));
+					strcat(bufferson, " %");
+					percentdone.setText(bufferson, "printer");
+				}
+				else
+				{
+					ZERO(bufferson);
+					strcat(bufferson, itostr3(progress_printing));
+					strcat(bufferson, " %");
+					percentdone.setText(bufferson, "printer");
 				}
 
 				#if ENABLED(SDSUPPORT)
@@ -1823,11 +1884,14 @@
         coordtoLCD();
         break;
       case 6:
-        Previousfeedrate = feedrate_percentage = (int)VSpeed.getValue("printer");
+        //Previousfeedrate = feedrate_percentage = (int)VSpeed.getValue("printer");
         break;
       case 14:
         coordtoLCD();
         break;
+			case 31:
+				vFlowNex.setValue(flow_percentage[0], "flowpage");
+				break;
     }
     PreviousPage = PageID;
   }

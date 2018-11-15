@@ -348,7 +348,6 @@
 
 #if ENABLED (NEXTION_DISPLAY)
   #include "nextion/Nextion_lcd.h"
-  //extern uint8_t progress;
   uint8_t progress_printing; // dodane nex
 #endif
 
