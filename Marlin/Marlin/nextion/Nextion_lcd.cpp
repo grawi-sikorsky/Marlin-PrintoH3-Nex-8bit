@@ -1095,7 +1095,8 @@
 		}
 
 		void ploss_recovery_menu_resuming() {
-			//screen_timeout_millis = millis();
+			Pselect.show();
+			screen_timeout_millis = millis();
 			START_SCREEN();
 			LcdSend.SetVisibility(false);
 			STATIC_ITEM("Wznawianie wydruku");
@@ -1104,6 +1105,8 @@
 	}
 
 		void ploss_recovery_menu_last_confirm() {
+			Pselect.show();
+			screen_timeout_millis = 0; // wylaczamy screen timeout
 			START_SCREEN();
 			STATIC_ITEM("Usun nadmiar");
 			STATIC_ITEM("filamentu i kliknij");
@@ -1338,17 +1341,7 @@
 				#endif
 
 				#if ENABLED(FILAMENT_RUNOUT_SENSOR)
-
-							if (eeprom_read_byte((uint8_t*)EEPROM_PANIC_POWER_FAIL) == 1)
-							{
-								Sfilsensor.setText_PGM(PSTR("panic"), "statscreen");
-								//eeprom_update_byte((uint8_t*)EEPROM_PANIC_POWER_FAIL, 0);
-							}
-							else
-							{
-								Sfilsensor.setText_PGM(PSTR("nie panic"), "statscreen");
-							}
-							//Sfilsensor.setText_PGM(PSTR(MSG_INFO_YES), "statscreen");
+							Sfilsensor.setText_PGM(PSTR(MSG_INFO_YES), "statscreen");
 				#else
 							Sfilsensor.setText_PGM(MSG_INFO_NO, "statscreen");
 				#endif			

@@ -13204,7 +13204,7 @@ void ploss_recover(uint8_t automatic) {
 	enqueue_and_echo_command(cmd); //2
 
 	// Oznacz flage Power Safe na nieaktywna
-	//eeprom_update_byte((uint8_t*)EEPROM_PANIC_POWER_FAIL, 0);
+	eeprom_update_byte((uint8_t*)EEPROM_PANIC_POWER_FAIL, 0); //panic debug
 
 	// Rozpocznik wydruk z eeprom po zaniku
 	restore_print_from_eeprom();
@@ -13640,7 +13640,7 @@ void setup() {
 			ploss_recover(1);
 		}
 		if (lcd_ploss_menu_response == PLOSS_LCD_RESPONSE_NO) { //jezeli nie, wypad do menu glownego
-			//eeprom_update_byte((uint8_t*)EEPROM_PANIC_POWER_FAIL, 0);
+			eeprom_update_byte((uint8_t*)EEPROM_PANIC_POWER_FAIL, 0); //panic debug
 			lcd_ploss_recovery_menu(PLOSS_LCD_MENU_NO_RESUME);
 		}
 	#else
