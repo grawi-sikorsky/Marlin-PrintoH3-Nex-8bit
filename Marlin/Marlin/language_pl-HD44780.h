@@ -213,6 +213,7 @@
 #define MSG_FILAMENT_CHANGE_OPTION_HEADER			_UxGT("ZMIEN OPCJE:")
 #define MSG_FILAMENT_CHANGE_OPTION_EXTRUDE		_UxGT("Ekstruduj wiecej")
 #define MSG_FILAMENT_CHANGE_OPTION_RESUME			_UxGT("Wznow drukowanie")
+#define MSG_PRINT_PAUSED										_UxGT("Wydruk wstrzymany")
 
 #if LCD_HEIGHT >= 4
   // Up to 3 lines allowed

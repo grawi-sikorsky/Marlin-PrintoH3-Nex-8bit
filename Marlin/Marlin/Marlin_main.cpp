@@ -349,6 +349,7 @@
 #if ENABLED (NEXTION_DISPLAY)
   #include "nextion/Nextion_lcd.h"
   uint8_t progress_printing; // dodane nex
+	bool nex_filament_runout_sensor_flag;
 #endif
 
 bool Running = true;
@@ -1814,7 +1815,7 @@ static void clean_up_after_endstop_or_probe_move() {
 
 #endif // HAS_BED_PROBE
 
-#if HAS_PROBING_PROCEDURE || HOTENDS > 1 || ENABLED(Z_PROBE_ALLEN_KEY) || ENABLED(Z_PROBE_SLED) || ENABLED(NOZZLE_CLEAN_FEATURE) || ENABLED(NOZZLE_PARK_FEATURE) || ENABLED(DELTA_AUTO_CALIBRATION)
+#if HAS_PROBING_PROCEDURE || HOTENDS > 1 || ENABLED(Z_PROBE_ALLEN_KEY) || ENABLED(Z_PROBE_SLED) || ENABLED(NOZZLE_CLEAN_FEATURE) || ENABLED(NOZZLE_PARK_FEATURE) || ENABLED(DELTA_AUTO_CALIBRATION) || ENABLED(HOME_BEFORE_FILAMENT_CHANGE)
 
   bool axis_unhomed_error(const bool x/*=true*/, const bool y/*=true*/, const bool z/*=true*/) {
     #if ENABLED(HOME_AFTER_DEACTIVATE)
@@ -3967,8 +3968,7 @@ inline void gcode_G28(const bool always_home_all) {
 #endif
 
   report_current_position();
-//  enqueue_and_echo_commands_P(PSTR("M420 S1")); //dodane z podobnych powodow
-  set_bed_leveling_enabled(true);
+  set_bed_leveling_enabled(true); // dodane aby ustawic macierz
   #if ENABLED(DEBUG_LEVELING_FEATURE)
     if (DEBUGGING(LEVELING)) SERIAL_ECHOLNPGM("<<< gcode_G28");
   #endif
@@ -4038,6 +4038,7 @@ void home_all_axes() { gcode_G28(true); }
 
   void mesh_probing_done() {
     mbl.set_has_mesh(true);
+		nex_return_after_leveling(true); //dodane, powrot do status
     home_all_axes();
     set_bed_leveling_enabled(true);
 	enqueue_and_echo_commands_P(PSTR("M500"));  // dodane aby zapisywało poziomowanie podczas trwania funkcji
@@ -6267,7 +6268,7 @@ inline void gcode_M17() {
       filament_ran_out = false;
     #endif
 
-    #if ENABLED(ULTIPANEL) || ENABLED(NEXTION_DISPLAY)
+    #if ENABLED(ULTIPANEL) || ENABLED(NEXTION_DISPLAY) // przy wznawianiu wrzuca do ekranu ekstruzji
       // Show status screen
       lcd_advanced_pause_show_message(ADVANCED_PAUSE_MESSAGE_STATUS);
     #endif
@@ -12722,7 +12723,7 @@ void disable_all_steppers() {
 void manage_inactivity(bool ignore_stepper_queue/*=false*/) {
 
   #if ENABLED(FILAMENT_RUNOUT_SENSOR)
-    if ((IS_SD_PRINTING || print_job_timer.isRunning()) && (READ(FIL_RUNOUT_PIN) == FIL_RUNOUT_INVERTING))
+    if ((IS_SD_PRINTING || print_job_timer.isRunning()) && (READ(FIL_RUNOUT_PIN) == FIL_RUNOUT_INVERTING) && nex_filament_runout_sensor_flag==1)
       handle_filament_runout();
   #endif
 
@@ -13563,7 +13564,7 @@ void setup() {
   #endif
 
   lcd_init();
-  SERIAL_ECHOPGM("za lcd init");
+	
 
   #ifndef CUSTOM_BOOTSCREEN_TIMEOUT
     #define CUSTOM_BOOTSCREEN_TIMEOUT 100 // 2500

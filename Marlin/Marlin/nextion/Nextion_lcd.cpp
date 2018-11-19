@@ -46,6 +46,7 @@
 	millis_t		screen_timeout_millis;
 
   extern uint8_t progress_printing; // dodane nex
+	extern bool nex_filament_runout_sensor_flag;
 
 	extern float destination[XYZE];// = { 0.0 };
 	extern bool g29_in_progress;// = false;
@@ -164,18 +165,18 @@
   NexObject sdrow3      = NexObject(3,   5, "t3");
   NexObject sdrow4      = NexObject(3,   6, "t4");
   NexObject sdrow5      = NexObject(3,   7, "t5");
-  NexObject Folder0     = NexObject(3,   8, "p0");
-  NexObject Folder1     = NexObject(3,   9, "p1");
-  NexObject Folder2     = NexObject(3,  10, "p2");
-  NexObject Folder3     = NexObject(3,  11, "p3");
-  NexObject Folder4     = NexObject(3,  12, "p4");
-  NexObject Folder5     = NexObject(3,  13, "p5");
-  NexObject Folderup    = NexObject(3,  14, "p6");
-  NexObject sdfolder    = NexObject(3,  16, "t6");
-  NexObject ScrollUp    = NexObject(3,  17, "p7");
-  NexObject ScrollDown  = NexObject(3,  18, "p8");
-  NexObject sd_mount    = NexObject(3,  19, "p12");
-  NexObject sd_dismount = NexObject(3,  20, "p13");
+  NexObject Folder0     = NexObject(3,  21, "p0");
+  NexObject Folder1     = NexObject(3,  22, "p1");
+  NexObject Folder2     = NexObject(3,  23, "p2");
+  NexObject Folder3     = NexObject(3,  24, "p3");
+  NexObject Folder4     = NexObject(3,  25, "p4");
+  NexObject Folder5     = NexObject(3,  26, "p5");
+  NexObject Folderup    = NexObject(3,  27, "p6");
+  NexObject sdfolder    = NexObject(3,	 9, "t6");
+  NexObject ScrollUp    = NexObject(3,  10, "p7");
+  NexObject ScrollDown  = NexObject(3,  11, "p8");
+  NexObject sd_mount    = NexObject(3,  12, "p12");
+  NexObject sd_dismount = NexObject(3,  13, "p13");
 #if ENABLED(NEXTION_SD_LONG_NAMES)
 	NexObject file0				= NexObject(3, 21, "nam1");
 	NexObject file1				= NexObject(3, 22, "nam2");
@@ -747,7 +748,7 @@
         sdfolder.setText("");
       }
 
-      if (fileCnt) {
+      if (fileCnt >= 0) {
         for (uint8_t row = 0; row < 6; row++) {
           i = row + number;
           if (i < fileCnt) {
@@ -782,7 +783,6 @@
 			for (int i = 0; i < 8; i++) {
 				eeprom_write_byte((uint8_t*)EEPROM_SD_FILENAME + i, filename[i]);
 			}
-
 			uint8_t depth = (uint8_t)card.getWorkDirDepth();
 			eeprom_write_byte((uint8_t*)EEPROM_SD_FILE_DIR_DEPTH, depth);
 
@@ -791,6 +791,8 @@
 					eeprom_write_byte((uint8_t*)EEPROM_SD_DIRS + j + 8 * i, dir_names[i][j]);
 				}
 			}
+			_babystep_z_shift = 0; // dodane - zeruje babystep po uruchomieniu wydruku
+			eeprom_update_dword((uint32_t*)(EEPROM_PANIC_BABYSTEP_Z), _babystep_z_shift);	// zeruj babystepping w eeprom
 			#endif // jezeli VLCS wlaczone
 
       card.openAndPrintFile(filename);
@@ -823,7 +825,7 @@
       sdlist.setValue(slidermaxval,"sdcard");
       sendCommand("ref 0");
 
-      setrowsdcard(); //po wejsciu w folder pozostaja stare nazwy plikow mimo ze folder pusty
+      setrowsdcard();
     }
 
     void sdmountdismountPopCallback(void *ptr) {
@@ -926,16 +928,22 @@
     void PlayPausePopCallback(void *ptr) {
       UNUSED(ptr);
       if (card.cardOK && card.isFileOpen()) {
-        if (IS_SD_PRINTING) {
+        if (IS_SD_PRINTING) {//pause
           card.pauseSDPrint();
           print_job_timer.pause();
           #if ENABLED(PARK_HEAD_ON_PAUSE)
-            commands.enqueue_and_echo_P(PSTR("M125"));
+            enqueue_and_echo_commands_P(PSTR("M125"));
           #endif
+					lcd_setstatusPGM(PSTR(MSG_PRINT_PAUSED));
         }
-        else {
-          card.startFileprint();
-          print_job_timer.start();
+        else { //resume
+					#if ENABLED(PARK_HEAD_ON_PAUSE)
+						enqueue_and_echo_commands_P(PSTR("M24"));
+					#else
+						card.startFileprint();
+						print_job_timer.start();
+					#endif
+					lcd_setstatusPGM(PSTR(MSG_RESUME_PRINT));
         }
       }
     }
@@ -945,6 +953,30 @@
   #if ENABLED(ADVANCED_PAUSE_FEATURE)
 
     static AdvancedPauseMenuResponse advanced_pause_mode = ADVANCED_PAUSE_RESPONSE_WAIT_FOR;
+
+		void nex_enqueue_filament_change() {
+			#if ENABLED(PREVENT_COLD_EXTRUSION)
+			if (!DEBUGGING(DRYRUN) && !thermalManager.allow_cold_extrude &&
+				thermalManager.degTargetHotend(active_extruder) < thermalManager.extrude_min_temp) {
+				lcd_save_previous_screen();
+				lcd_goto_screen(lcd_advanced_pause_toocold_menu);
+				lcd_buzz(120, 700); // dodane beeper too cold
+				lcd_buzz(120, 000);
+				lcd_buzz(120, 700);
+				return;
+			}
+			#endif
+			lcd_advanced_pause_show_message(ADVANCED_PAUSE_MESSAGE_INIT);
+			enqueue_and_echo_commands_P(PSTR("M600 B0"));
+		}
+
+		void lcd_advanced_pause_toocold_menu() {
+			screen_timeout_millis = millis(); // wlaczamy timer
+			START_SCREEN();
+			STATIC_ITEM(MSG_HEATING_FAILED_LCD);
+			STATIC_ITEM(MSG_FILAMENT_CHANGE_MINTEMP STRINGIFY(EXTRUDE_MINTEMP));
+			END_SCREEN();
+		}
 
     static void lcd_advanced_pause_resume_print() {
       advanced_pause_menu_response = ADVANCED_PAUSE_RESPONSE_RESUME_PRINT;
@@ -1014,7 +1046,7 @@
 
     static void lcd_advanced_pause_purge_message() {
       START_SCREEN();
-			STATIC_ITEM(MSG_NEX_FILAMENT_CHANGE_HEADER);
+			//STATIC_ITEM(MSG_NEX_FILAMENT_CHANGE_HEADER); usuniete bo przy pauzie rowniez bylo wyswietlane
       STATIC_ITEM(MSG_FILAMENT_CHANGE_EXTRUDE_1);
       STATIC_ITEM(MSG_FILAMENT_CHANGE_EXTRUDE_2);
       END_SCREEN();
@@ -1022,7 +1054,7 @@
 
     static void lcd_advanced_pause_resume_message() {
       START_SCREEN();
-			STATIC_ITEM(MSG_NEX_FILAMENT_CHANGE_HEADER);
+			//STATIC_ITEM(MSG_NEX_FILAMENT_CHANGE_HEADER); jw.
       STATIC_ITEM(MSG_FILAMENT_CHANGE_RESUME_1);
       STATIC_ITEM(MSG_FILAMENT_CHANGE_RESUME_2);
       END_SCREEN();
@@ -1096,7 +1128,7 @@
 
 		void ploss_recovery_menu_resuming() {
 			Pselect.show();
-			screen_timeout_millis = millis();
+			screen_timeout_millis = millis(); //wlaczamy screen timeout
 			START_SCREEN();
 			LcdSend.SetVisibility(false);
 			STATIC_ITEM("Wznawianie wydruku");
@@ -1232,6 +1264,14 @@
       }
     }
 
+		void nex_return_after_leveling(bool finish)
+		{
+			if (finish == true)
+			{
+				Pprinter.show();
+			}
+		}
+		/*
     float lcd_probe_pt(const float &lx, const float &ly) {
 
       #if HAS_LEVELING
@@ -1257,7 +1297,7 @@
       //void Nextion_ProbeOn()  { Pprobe.show(); }
       //void Nextion_ProbeOff() { Pprinter.show(); }
     #endif
-
+		*/
 #endif
 
 
@@ -1392,11 +1432,11 @@
 
 	void setBabystepUpPopCallback(void *ptr)
 	{
-		nextion_babystep_z(true);
+		nextion_babystep_z(false);
 	}
 	void setBabystepDownPopCallback(void *ptr)
 	{
-		nextion_babystep_z(false);
+		nextion_babystep_z(true);
 	}
 	void setBabystepEEPROMPopCallback(void *ptr)
 	{
@@ -1440,8 +1480,18 @@
 
 		if (strcmp(bufferson,"M600") == 0)
 		{
-			enqueue_and_echo_commands_P(PSTR("M600 B0"));
+			nex_enqueue_filament_change();
 			Pselect.show();
+		}
+		else if (strcmp(bufferson, "M204") == 0)
+		{
+			// nex_set_M204
+			SERIAL_ECHOPGM("M204pyk");
+		}
+		else if (strcmp(bufferson, "M201") == 0)
+		{
+			// nex_set_M204
+			SERIAL_ECHOPGM("M201pyk");
 		}
 		else
 		{
@@ -1497,7 +1547,7 @@
     lcd_clicked = true;
 		wait_for_user = false;
 
-		// dodane aby wyjsc kliknieciem z ostatniego ekranu vlcs
+		// dodane aby wyjsc kliknieciem z ostatniego ekranu vlcs / oraz z ekranu too cold for extrude m600
 		if (screen_timeout_millis != 0)
 		{
 			screen_timeout_millis = 0;
@@ -1515,10 +1565,10 @@
             Pprinter.show();
             break;
           case 2: // Upload Firmware
-			#if ENABLED(NEX_UPLOAD)
+						#if ENABLED(NEX_UPLOAD)
             UploadNewFirmware(); 
-			#endif
-			break;
+						#endif
+						break;
         #endif
         #if HAS_SD_RESTART
           case 3: // Restart file
@@ -1530,6 +1580,11 @@
           //printer.setWaitForUser(false);
           Pprinter.show();
           break;
+				case 5: // ustaw czujnik filamentu
+					nex_filament_runout_sensor_flag = 1;
+					eeprom_update_byte((uint8_t*)EEPROM_NEX_FILAMENT_SENSOR,1);
+					Psetup.show();
+					break;
         default: break;
       }
     }
@@ -1545,6 +1600,11 @@
             Pprinter.show();
             break;
         #endif
+					case 5: // ustaw czujnik filamentu
+						nex_filament_runout_sensor_flag = 0;
+						eeprom_update_byte((uint8_t*)EEPROM_NEX_FILAMENT_SENSOR, 0);
+						Psetup.show();
+						break;
         default:
           Pprinter.show(); break;
       }
@@ -1558,6 +1618,11 @@
       if (NextionON) break;
       delay(20);
     }
+
+		#if ENABLED(FSENSOR_ONOFF)
+			nex_filament_runout_sensor_flag = eeprom_read_byte((uint8_t*)EEPROM_NEX_FILAMENT_SENSOR);
+			SERIAL_ECHO(nex_filament_runout_sensor_flag);
+		#endif
 
     if (!NextionON) {
 	  SERIAL_ECHOPGM("Nextion not connected!");

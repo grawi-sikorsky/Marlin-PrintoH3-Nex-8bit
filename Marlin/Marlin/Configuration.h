@@ -1665,24 +1665,18 @@
   #define EEPROM_SD_FILE_DIR_DEPTH		(EEPROM_SD_FILENAME-1)				// 1 - zagniezdzenie pliku
   #define EEPROM_SD_DIRS				(EEPROM_SD_FILE_DIR_DEPTH-80)		// 8x10 @_@
   #define EEPROM_PANIC_BABYSTEP_Z		(EEPROM_SD_DIRS-4)					// 4 - long 4 bajty
+	
+	#define EEPROM_NEX_FILAMENT_SENSOR (EEPROM_PANIC_BABYSTEP_Z-1) // 1bajt bool
 
-//1 Bazowanie przed zmiana filamentu - done
-
-//2 Obama Blob Care - Pauza/Stop->Z move
-//#define PAUSE_STOP_ZLIFT_FEATURE 
-//#define PAUSE_STOP_ZLIFT_SCRIPT "M150 B0 R255 U0\nG92 Z0\nG1 Z10 F2000\nG28 X0 F6000\nM84"
 
 //3 Obama SD Care - reakcja po wyjęciu karty SD
 
   //
   // Nextion
   //
-
 //#define NEX_UPLOAD
-
   #define NEXTION
   #define NEXTION_DISPLAY
-  // Define Serial it use
   #define NEXTION_SERIAL 2
 
   // For GFX preview visualization enable NEXTION GFX
@@ -1703,5 +1697,7 @@
 	#define NEXTION_BED_LEVEL
 	#define LCD_Z_STEP 0.04
 	#define PROBE_MANUALLY
+// FSENSOR ONOFF
+	#define FSENSOR_ONOFF
 
 #endif // CONFIGURATION_H

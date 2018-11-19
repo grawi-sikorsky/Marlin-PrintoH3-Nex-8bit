@@ -32,8 +32,7 @@
 extern float feedrate_mm_s;
 
   #if ENABLED(ADVANCED_PAUSE_FEATURE)
-    //#include "../../feature/advanced_pause/advanced_pause.h"
-	#include "../enum.h"
+		#include "../enum.h"
   #endif
 
   void sethotPopCallback(void *ptr);
@@ -56,6 +55,7 @@ extern float feedrate_mm_s;
 
 	void nextion_babystep_z(bool dir);
 	void lcd_nextion_kill_msg(const char* lcd_msg);
+	void nex_return_after_leveling(bool finish);
 
   #if ENABLED(NEXTION_GFX)
     void gfx_origin(const float x, const float y, const float z);

@@ -235,9 +235,9 @@
 #define	MSG_FILAMENT_CHANGE_MINTEMP			_UxGT("Min. Temp. to: ")
 #define	MSG_BACK							_UxGT("Wstecz")
 #define	MSG_FILAMENT_CHANGE_HEATING_1		_UxGT("Rozgrzewanie dyszy")
-#define	MSG_FILAMENT_CHANGE_HEATING_2		_UxGT("Proszê czekaæ")
-#define	MSG_FILAMENT_CHANGE_HEAT_1			_UxGT("Wciœnij przycisk")
-#define	MSG_FILAMENT_CHANGE_HEAT_2			_UxGT("aby rozgrzaæ dyszê")
+#define	MSG_FILAMENT_CHANGE_HEATING_2		_UxGT("Prosze czekac")
+#define	MSG_FILAMENT_CHANGE_HEAT_1			_UxGT("Wcisnij przycisk")
+#define	MSG_FILAMENT_CHANGE_HEAT_2			_UxGT("aby rozgrzac dysze")
 
 // printo3d info menu
 #define	MSG_INFO_P3D_1						_UxGT("W razie problemów")
@@ -251,6 +251,7 @@
 #define	MSG_INFO_NO												_UxGT("NIE")
 
 #define MSG_MESH_LEVELING                   _UxGT("M B L")
+#define MSG_PRINT_PAUSED										_UxGT("Wydruk wstrzymany")
 
 
 //#define									_UxGT("O nas")
