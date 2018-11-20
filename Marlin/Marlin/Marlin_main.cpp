@@ -5988,7 +5988,7 @@ inline void gcode_M17() {
       HOTEND_LOOP() {
         if (thermalManager.degTargetHotend(e) && abs(thermalManager.degHotend(e) - thermalManager.degTargetHotend(e)) > TEMP_HYSTERESIS) {
           heaters_heating = true;
-          #if ENABLED(ULTIPANEL)
+          #if ENABLED(ULTIPANEL) || ENABLED(NEXTION_DISPLAY)
             lcd_advanced_pause_show_message(ADVANCED_PAUSE_MESSAGE_WAIT_FOR_NOZZLES_TO_HEAT);
           #endif
           break;
@@ -6013,6 +6013,7 @@ inline void gcode_M17() {
       #endif
 
       ensure_safe_temperature(); // wait for extruder to heat up before unloading
+
     }
 
     // Indicate that the printer is paused

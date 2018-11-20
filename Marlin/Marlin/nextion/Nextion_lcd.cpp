@@ -51,6 +51,7 @@
 
   extern uint8_t progress_printing; // dodane nex
 	extern bool nex_filament_runout_sensor_flag;
+	bool nex_m600_heatingup = 0;
 
 	extern float destination[XYZE];// = { 0.0 };
 	extern bool g29_in_progress;// = false;
@@ -77,15 +78,16 @@
   #endif
 	
 	#if ENABLED(ADVANCED_PAUSE_FEATURE)
-			void lcd_advanced_pause_toocold_menu();
-			void lcd_advanced_pause_option_menu();
-			void lcd_advanced_pause_init_message();
-			void lcd_advanced_pause_unload_message();
-			void lcd_advanced_pause_insert_message();
-			void lcd_advanced_pause_load_message();
-			void lcd_advanced_pause_heat_nozzle();
-			void lcd_advanced_pause_extrude_message();
-			void lcd_advanced_pause_resume_message();
+		void lcd_advanced_pause_wait_for_nozzles_to_heat();
+		void lcd_advanced_pause_toocold_menu();
+		void lcd_advanced_pause_option_menu();
+		void lcd_advanced_pause_init_message();
+		void lcd_advanced_pause_unload_message();
+		void lcd_advanced_pause_insert_message();
+		void lcd_advanced_pause_load_message();
+		void lcd_advanced_pause_heat_nozzle();
+		void lcd_advanced_pause_extrude_message();
+		void lcd_advanced_pause_resume_message();
 	#endif
 
   /**
@@ -643,6 +645,7 @@
 
 #define WAIT_FOR_CLICK() \
     if (lcd_clicked){ \
+			nex_m600_heatingup = 0;\
 			Pprinter.show();\
     return; }\
 
@@ -691,6 +694,14 @@
       lcdDrawUpdate = false; \
     } while(0)
 
+	 // Portions from STATIC_ITEM...
+	#define HOTEND_STATUS_ITEM() do { \
+        if (lcdDrawUpdate) { \
+          lcd_row_list[_lcdLineNr]->setText(itostr3(thermalManager.degHotend)); \
+        } \
+				lcdDrawUpdate = true; \
+				++_lcdLineNr; \
+    }while(0)
 
   #if ENABLED(SDSUPPORT)
 
@@ -967,10 +978,11 @@
     static AdvancedPauseMenuResponse advanced_pause_mode = ADVANCED_PAUSE_RESPONSE_WAIT_FOR;
 
 		void lcd_advanced_pause_toocold_menu() {
+			nex_m600_heatingup = 1; // wlacz wyswietlanie temperatury
 			//screen_timeout_millis = millis(); // wlaczamy timer
 			START_SCREEN();
 			STATIC_ITEM(MSG_TOO_COLD_FOR_M600_1);
-			STATIC_ITEM(MSG_TOO_COLD_FOR_M600_2);// STRINGIFY(EXTRUDE_MINTEMP));
+			STATIC_ITEM(MSG_TOO_COLD_FOR_M600_2);
 			STATIC_ITEM(MSG_TOO_COLD_FOR_M600_3);
 			STATIC_ITEM(MSG_TOO_COLD_FOR_M600_4);
 			WAIT_FOR_CLICK();
@@ -988,9 +1000,8 @@
 					return;
 				}
 			#endif
-			lcd_advanced_pause_show_message(ADVANCED_PAUSE_MESSAGE_INIT);
-			enqueue_and_echo_commands_P(PSTR("M600 B0"));
 			Pselect.show();
+			enqueue_and_echo_commands_P(PSTR("M600 B0"));
 		}
 
     static void lcd_advanced_pause_resume_print() {
@@ -1082,6 +1093,7 @@
       advanced_pause_mode = mode;
 
       if (old_message != message) {
+				nex_m600_heatingup = 0;//zmiana jesli wyjdzie poza heatingup 
         switch (message) {
           case ADVANCED_PAUSE_MESSAGE_INIT:
             lcd_advanced_pause_init_message();
@@ -1105,6 +1117,7 @@
             lcd_advanced_pause_heat_nozzle();
             break;
           case ADVANCED_PAUSE_MESSAGE_WAIT_FOR_NOZZLES_TO_HEAT:
+						nex_m600_heatingup = 1;
             lcd_advanced_pause_wait_for_nozzles_to_heat();
             break;
           case ADVANCED_PAUSE_MESSAGE_OPTION:
@@ -1396,7 +1409,14 @@
 				#endif
 
 				#if ENABLED(FILAMENT_RUNOUT_SENSOR)
-							Sfilsensor.setText_PGM(PSTR(MSG_INFO_YES), "statscreen");
+							if (eeprom_read_byte((uint8_t*)EEPROM_NEX_FILAMENT_SENSOR) == 1)
+							{
+								Sfilsensor.setText_PGM(PSTR(MSG_INFO_YES), "statscreen");
+							}
+							else
+							{
+								Sfilsensor.setText_PGM(PSTR(MSG_INFO_NO), "statscreen");
+							}
 				#else
 							Sfilsensor.setText_PGM(MSG_INFO_NO, "statscreen");
 				#endif			
@@ -1635,7 +1655,6 @@
 
 		#if ENABLED(FSENSOR_ONOFF)
 			nex_filament_runout_sensor_flag = eeprom_read_byte((uint8_t*)EEPROM_NEX_FILAMENT_SENSOR);
-			SERIAL_ECHO(nex_filament_runout_sensor_flag);
 		#endif
 
     if (!NextionON) {
@@ -1958,6 +1977,22 @@
       case 6:
         //Previousfeedrate = feedrate_percentage = (int)VSpeed.getValue("printer");
         break;
+			case 13:
+				// odswiez temp glowicy podczas nagrzewania m600 na stronie select
+				if (nex_m600_heatingup == 1)
+				{
+					char *temp_he;
+					char *temp_te;
+					char temptemp[14];
+
+					temp_te = itostr3(thermalManager.target_temperature[0]);
+					temp_he = itostr3(thermalManager.current_temperature[0]);
+					strlcpy(temptemp,temp_he,4);
+					strcat_P(temptemp, PSTR(" / "));
+					strcat(temptemp, itostr3(thermalManager.target_temperature[0]));
+					LcdRiga4.setText(temptemp);
+				}
+				break;
       case 14:
         coordtoLCD();
         break;
