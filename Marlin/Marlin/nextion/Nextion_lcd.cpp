@@ -1401,6 +1401,29 @@
 			Amaxz.setValue(planner.max_acceleration_mm_per_s2[Z_AXIS], "accelpage");
 			Amaxe.setValue(planner.max_acceleration_mm_per_s2[E_AXIS+active_extruder], "accelpage");
 	}
+	void getaccelPagePopCallback(void *ptr)
+	{
+		planner.acceleration = Awork.getValue("accelpage");
+		SERIAL_ECHOLN(Awork.getValue("accelpage"));
+
+		planner.retract_acceleration = Aretr.getValue("accelpage");
+		SERIAL_ECHOLN(Aretr.getValue("accelpage"));
+
+		planner.travel_acceleration = Atravel.getValue("accelpage");
+		SERIAL_ECHOLN(Atravel.getValue("accelpage"));
+
+		planner.max_acceleration_mm_per_s2[X_AXIS] = Amaxx.getValue("accelpage");
+		SERIAL_ECHOLN(Amaxx.getValue("accelpage"));
+
+		planner.max_acceleration_mm_per_s2[Y_AXIS] = Amaxy.getValue("accelpage");
+		SERIAL_ECHOLN(Amaxy.getValue("accelpage"));
+
+		planner.max_acceleration_mm_per_s2[Z_AXIS] = Amaxz.getValue("accelpage");
+		SERIAL_ECHOLN(Amaxz.getValue("accelpage"));
+
+		planner.max_acceleration_mm_per_s2[E_AXIS + active_extruder] = Amaxe.getValue("accelpage");
+		SERIAL_ECHOLN(Amaxe.getValue("accelpage"));
+	}
 	void setjerkpagePopCallback(void *ptr)
 	{
 			UNUSED(ptr);
@@ -1471,10 +1494,10 @@
 		}
 	}
 
-
   void setgcodePopCallback(void *ptr) {
     UNUSED(ptr);
     ZERO(bufferson);
+		
     Tgcode.getText(bufferson, sizeof(bufferson), "gcode");
     Tgcode.setText("", "gcode");
 
@@ -1483,18 +1506,8 @@
 			nex_enqueue_filament_change();
 			Pselect.show();
 		}
-		else if (strcmp(bufferson, "M204") == 0)
-		{
-			// nex_set_M204
-			SERIAL_ECHOPGM("M204pyk");
-		}
-		else if (strcmp(bufferson, "M201") == 0)
-		{
-			// nex_set_M204
-			SERIAL_ECHOPGM("M201pyk");
-		}
 		else
-		{
+		{ 
 			enqueue_and_echo_command(bufferson);
 		}
   }
@@ -1689,7 +1702,7 @@
 			#endif
 			#if ENABLED(NEX_ACC_PAGE)
 				accelin.attachPop(setaccelpagePopCallback); //setaccelpagePopCallback
-				Asend.attachPop(setgcodePopCallback);
+				Asend.attachPop(getaccelPagePopCallback);
 				Asave.attachPop(setaccelsavebtnPopCallback);
 				Aload.attachPop(setaccelloadbtnPopCallback);
 			#endif
