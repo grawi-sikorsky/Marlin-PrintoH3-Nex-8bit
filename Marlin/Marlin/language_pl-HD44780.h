@@ -24,7 +24,7 @@
  * Polish for HD44780 display - no accented characters
  */
 
-#define WELCOME_MSG                         MACHINE_NAME _UxGT(" gotowy.")
+#define WELCOME_MSG                         MACHINE_NAME _UxGT(" gotowa.")
 #define MSG_SD_INSERTED                     _UxGT("Karta wlozona")
 #define MSG_SD_REMOVED                      _UxGT("Karta usunieta")
 #define MSG_LCD_ENDSTOPS                    _UxGT("Krancow.") // Max length 8 characters
