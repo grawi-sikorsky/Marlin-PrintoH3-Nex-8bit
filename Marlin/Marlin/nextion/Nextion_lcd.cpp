@@ -27,6 +27,10 @@
 	#include "../configuration_store.h"
 #endif
 
+#if ENABLED(SPEAKER)
+	#include "../buzzer.h"
+#endif
+
 #if ENABLED(NEXTION)
 
   #include "Nextion_lcd.h"
@@ -72,6 +76,18 @@
     GFX gfx = GFX(1, 1, 1, 1);
   #endif
 	
+	#if ENABLED(ADVANCED_PAUSE_FEATURE)
+			void lcd_advanced_pause_toocold_menu();
+			void lcd_advanced_pause_option_menu();
+			void lcd_advanced_pause_init_message();
+			void lcd_advanced_pause_unload_message();
+			void lcd_advanced_pause_insert_message();
+			void lcd_advanced_pause_load_message();
+			void lcd_advanced_pause_heat_nozzle();
+			void lcd_advanced_pause_extrude_message();
+			void lcd_advanced_pause_resume_message();
+	#endif
+
   /**
    *******************************************************************
    * Nextion component all page
@@ -610,15 +626,15 @@
     LcdSend.SetVisibility(push);
     lcdDrawUpdate = true;
     lcd_clicked = !push;
-  }
+	}
 
-  /**
-   * START_SCREEN  Opening code for a screen having only static items.s
-   *               Do simplified scrolling of the entire screen.
-   *
-   * START_MENU    Opening code for a screen with menu items.
-   *               Scroll as-needed to keep the selected line in view.
-   */
+	/**
+	 * START_SCREEN  Opening code for a screen having only static items.s
+	 *               Do simplified scrolling of the entire screen.
+	 *
+	 * START_MENU    Opening code for a screen with menu items.
+	 *               Scroll as-needed to keep the selected line in view.
+	 */
 
 #define WAIT_FOR_CLICK_F(TYPE, ...) \
     if (lcd_clicked){ \
@@ -627,6 +643,7 @@
 
 #define WAIT_FOR_CLICK() \
     if (lcd_clicked){ \
+			Pprinter.show();\
     return; }\
 
   #define START_SCREEN() \
@@ -673,11 +690,6 @@
   #define END_SCREEN() \
       lcdDrawUpdate = false; \
     } while(0)
-
-	#define END_SCREEN_WFC() \
-			idle(); \
-      lcdDrawUpdate = false; \
-    } while(1)
 
 
   #if ENABLED(SDSUPPORT)
@@ -954,28 +966,31 @@
 
     static AdvancedPauseMenuResponse advanced_pause_mode = ADVANCED_PAUSE_RESPONSE_WAIT_FOR;
 
+		void lcd_advanced_pause_toocold_menu() {
+			//screen_timeout_millis = millis(); // wlaczamy timer
+			START_SCREEN();
+			STATIC_ITEM(MSG_TOO_COLD_FOR_M600_1);
+			STATIC_ITEM(MSG_TOO_COLD_FOR_M600_2);// STRINGIFY(EXTRUDE_MINTEMP));
+			STATIC_ITEM(MSG_TOO_COLD_FOR_M600_3);
+			STATIC_ITEM(MSG_TOO_COLD_FOR_M600_4);
+			WAIT_FOR_CLICK();
+			END_MENU();
+		}
+
 		void nex_enqueue_filament_change() {
 			#if ENABLED(PREVENT_COLD_EXTRUSION)
-			if (!DEBUGGING(DRYRUN) && !thermalManager.allow_cold_extrude &&
-				thermalManager.degTargetHotend(active_extruder) < thermalManager.extrude_min_temp) {
-				lcd_save_previous_screen();
-				lcd_goto_screen(lcd_advanced_pause_toocold_menu);
-				lcd_buzz(120, 700); // dodane beeper too cold
-				lcd_buzz(120, 000);
-				lcd_buzz(120, 700);
-				return;
-			}
+				if (!DEBUGGING(DRYRUN) && !thermalManager.allow_cold_extrude &&
+					thermalManager.degTargetHotend(active_extruder) < thermalManager.extrude_min_temp) {
+					lcd_advanced_pause_toocold_menu();
+					buzzer.tone(120, 700);// dodane beeper too cold
+					buzzer.tone(120, 000);
+					buzzer.tone(120, 700);
+					return;
+				}
 			#endif
 			lcd_advanced_pause_show_message(ADVANCED_PAUSE_MESSAGE_INIT);
 			enqueue_and_echo_commands_P(PSTR("M600 B0"));
-		}
-
-		void lcd_advanced_pause_toocold_menu() {
-			screen_timeout_millis = millis(); // wlaczamy timer
-			START_SCREEN();
-			STATIC_ITEM(MSG_HEATING_FAILED_LCD);
-			STATIC_ITEM(MSG_FILAMENT_CHANGE_MINTEMP STRINGIFY(EXTRUDE_MINTEMP));
-			END_SCREEN();
+			Pselect.show();
 		}
 
     static void lcd_advanced_pause_resume_print() {
@@ -1404,25 +1419,12 @@
 	void getaccelPagePopCallback(void *ptr)
 	{
 		planner.acceleration = Awork.getValue("accelpage");
-		SERIAL_ECHOLN(Awork.getValue("accelpage"));
-
 		planner.retract_acceleration = Aretr.getValue("accelpage");
-		SERIAL_ECHOLN(Aretr.getValue("accelpage"));
-
 		planner.travel_acceleration = Atravel.getValue("accelpage");
-		SERIAL_ECHOLN(Atravel.getValue("accelpage"));
-
 		planner.max_acceleration_mm_per_s2[X_AXIS] = Amaxx.getValue("accelpage");
-		SERIAL_ECHOLN(Amaxx.getValue("accelpage"));
-
 		planner.max_acceleration_mm_per_s2[Y_AXIS] = Amaxy.getValue("accelpage");
-		SERIAL_ECHOLN(Amaxy.getValue("accelpage"));
-
 		planner.max_acceleration_mm_per_s2[Z_AXIS] = Amaxz.getValue("accelpage");
-		SERIAL_ECHOLN(Amaxz.getValue("accelpage"));
-
 		planner.max_acceleration_mm_per_s2[E_AXIS + active_extruder] = Amaxe.getValue("accelpage");
-		SERIAL_ECHOLN(Amaxe.getValue("accelpage"));
 	}
 	void setjerkpagePopCallback(void *ptr)
 	{
@@ -1504,7 +1506,6 @@
 		if (strcmp(bufferson,"M600") == 0)
 		{
 			nex_enqueue_filament_change();
-			Pselect.show();
 		}
 		else
 		{ 

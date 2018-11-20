@@ -271,6 +271,10 @@
 	#define MSG_FILAMENT_CHANGE_EXTRUDE_2       _UxGT("nowego materialu")
 	#define MSG_FILAMENT_CHANGE_RESUME_1        _UxGT("Trwa wznawianie")
 	#define MSG_FILAMENT_CHANGE_RESUME_2        _UxGT("wydruku")
+	#define MSG_TOO_COLD_FOR_M600_1							_UxGT("Glowica jest zimna,")
+	#define MSG_TOO_COLD_FOR_M600_2							_UxGT("rozgrzej aby")
+	#define MSG_TOO_COLD_FOR_M600_3							_UxGT("kontynuowac")	
+	#define MSG_TOO_COLD_FOR_M600_4							_UxGT("Temp. min: 170")
 #else // LCD_HEIGHT < 4
   // Up to 2 lines allowed
   #define MSG_FILAMENT_CHANGE_INIT_1          _UxGT("Prosze czekac...")
