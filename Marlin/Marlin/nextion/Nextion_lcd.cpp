@@ -1769,7 +1769,7 @@
 
     NOMORE(temp, 300);//999
 
-    heater_list0[h]->setValue(temp);
+    heater_list0[h]->setValue(temp,"printer");
 
     #if ENABLED(NEXTION_GFX)
       if (!(print_job_counter.isRunning() || IS_SD_PRINTING) && !Wavetemp.getObjVis() && show_Wave) {
@@ -1977,8 +1977,13 @@
       case 6:
         //Previousfeedrate = feedrate_percentage = (int)VSpeed.getValue("printer");
         break;
+			case 12:
+				// odswiez temp glowicy na ekranie filament [przyciski]
+
+					degtoLCD(0, thermalManager.current_temperature[0]);
+				break;
 			case 13:
-				// odswiez temp glowicy podczas nagrzewania m600 na stronie select
+				// pokaz temp glowicy podczas nagrzewania m600 na stronie select
 				if (nex_m600_heatingup == 1)
 				{
 					char *temp_he;
