@@ -5997,12 +5997,15 @@ inline void gcode_M17() {
     }
   }
   // DODANE pluj filamentem przed cofaniem
+	// show_lcd jest rowniez flaga dla wejscia w pauze bez zmiany filamentu
+	// jezeli show_lcd = true - M600
+	// jezeli Show_lcd = false - M125 - bez nozzle timeout, bez wyswietlania ekranu WAIT_FOR_NOZZLES_TO_HEAT
   static bool pause_print(const float &retract, const float &z_lift, const float &x_pos, const float &y_pos, const float &pluj,
                           const float &unload_length = 0 , const int8_t max_beep_count = 0, const bool show_lcd = false
   ) {
     if (move_away_flag) return false; // already paused
 
-    if (!DEBUGGING(DRYRUN) && (unload_length != 0 || retract != 0)) {
+    if (!DEBUGGING(DRYRUN) && (unload_length != 0 || retract != 0) && show_lcd == true) {
       #if ENABLED(PREVENT_COLD_EXTRUSION)
         if (!thermalManager.allow_cold_extrude &&
             thermalManager.degTargetHotend(active_extruder) < thermalManager.extrude_min_temp) {
@@ -6011,8 +6014,11 @@ inline void gcode_M17() {
           return false;
         }
       #endif
-
-      ensure_safe_temperature(); // wait for extruder to heat up before unloading
+			if (show_lcd == true) // np w przypadku M125 czyli pauzy [nie robimy tam nozzle timeout]
+			{
+				ensure_safe_temperature(); // wait for extruder to heat up before unloading
+			}
+      
 
     }
 
@@ -6100,11 +6106,15 @@ inline void gcode_M17() {
       safe_delay(100);
     #endif
 
-    // Start the heater idle timers
-    const millis_t nozzle_timeout = (millis_t)(PAUSE_PARK_NOZZLE_TIMEOUT) * 1000UL;
+			if (show_lcd == true) // na wypadek M125 brak nozzle timeout przy pauzie
+			{
 
-    HOTEND_LOOP()
-      thermalManager.start_heater_idle_timer(e, nozzle_timeout);
+				// Start the heater idle timers
+				const millis_t nozzle_timeout = (millis_t)(PAUSE_PARK_NOZZLE_TIMEOUT) * 1000UL;
+
+				HOTEND_LOOP()
+					thermalManager.start_heater_idle_timer(e, nozzle_timeout);
+			}
 
     return true;
   }

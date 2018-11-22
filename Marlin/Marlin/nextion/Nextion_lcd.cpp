@@ -383,7 +383,7 @@
 	*******************************************************************
 	*/
 	//NexObject SvJerk				= NexObject(22, 4, "m2"); //wejscie w jerk -> przekazuje zmienne float na nuber nextion (brak dziesietnych)
-	//NexObject SvSteps				= NexObject(22, 5, "m3");	//wejscie w steps -> przekazuje zmienne float na nuber nextion (brak dziesietnych)
+	NexObject SvSteps				= NexObject(22, 5, "m3");	//wejscie w steps -> przekazuje zmienne float na nuber nextion (brak dziesietnych)
 	// 
 	// == 130
 
@@ -491,6 +491,9 @@
 		// Page 18 tacz listen
 		&FanSetBtn,
 
+		//Page 22 service
+		&SvSteps,
+
 		// Page 28 babystep
 		&ZbabyUp, &ZbabyDown, &ZbabyBack_Save,
 
@@ -567,6 +570,7 @@
    *
    */
   void lcd_sdcard_stop() {
+		//enqueue_and_echo_commands_P(PSTR("M24")); // na wypadek gdyby drukarka byla w stanie pauzy @_@
 	  card.stopSDPrint();
 	  clear_command_queue();
 	  quickstop_stepper();
@@ -1726,6 +1730,8 @@
 				Asave.attachPop(setaccelsavebtnPopCallback);
 				Aload.attachPop(setaccelloadbtnPopCallback);
 			#endif
+
+			SvSteps.attachPop(setstepspagePopCallback);
 
 			heatupenter.attachPop(sethotPopCallback, &heatupenter); // obsluga przycisku rozgrzej oba
 			hotendenter.attachPop(sethotendPopCallback, &hotendenter); //obsluga przycisku rozgrzej hotend
