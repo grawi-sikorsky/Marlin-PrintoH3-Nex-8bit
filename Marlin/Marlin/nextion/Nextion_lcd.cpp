@@ -45,7 +45,7 @@
               lcd_status_message_level  = 0;
   uint16_t    slidermaxval              = 20;
   char        bufferson[70]             = { 0 };
-  char        lcd_status_message[30]    = WELCOME_MSG;
+  char        lcd_status_message[20]    = WELCOME_MSG;
   const float manual_feedrate_mm_m[]    = MANUAL_FEEDRATE;
 	millis_t		screen_timeout_millis;
 
@@ -95,6 +95,17 @@
    * Nextion component all page
    *******************************************************************
    */
+		const char PROGMEM printerP[] = "printer";
+		const char PROGMEM setupP[] = "setup";
+		const char PROGMEM yesnoP[] = "yesno";
+		const char PROGMEM filamentP[] = "filament";
+		const char PROGMEM selectP[] = "select";
+		const char PROGMEM bedlevelP[] = "bedlevel";
+		const char PROGMEM heatupP[] = "heatup";
+		const char PROGMEM maintainP[] = "maintain";
+		const char PROGMEM killpageP[] = "killpage";
+#define FILAMENT_P "filament"
+
   //NexObject Pstart        = NexObject(0,  0,  "start");
   //NexObject Pmenu         = NexObject(1,  0,  "menu");
   NexObject Pprinter      = NexObject(2,  0,  "printer");
@@ -107,7 +118,7 @@
   //NexObject Pbrightness   = NexObject(9,  0,  "brightness");
   //NexObject Pinfo         = NexObject(10, 0,  "info");
   NexObject Pyesno        = NexObject(11, 0,  "yesno");
-  //NexObject Pfilament     = NexObject(12, 0,  "filament");
+  NexObject Pfilament     = NexObject(12, 0, "filament");
   NexObject Pselect       = NexObject(13, 0,  "select");
   NexObject Pprobe        = NexObject(14, 0,  "bedlevel");
 	NexObject Pheatup				= NexObject(15, 0,	"heatup");
@@ -290,7 +301,6 @@
   NexObject LcdRiga2    = NexObject(13,  3, "t1");
   NexObject LcdRiga3    = NexObject(13,  4, "t2");
   NexObject LcdRiga4    = NexObject(13,  5, "t3");
-  NexObject LcdValor    = NexObject(13,  6, "t4");
   NexObject LcdUp       = NexObject(13,  15, "p4");
   NexObject LcdSend     = NexObject(13,  14, "p1");
   NexObject LcdDown     = NexObject(13,  16, "p5");
@@ -650,7 +660,7 @@
 #define WAIT_FOR_CLICK() \
     if (lcd_clicked){ \
 			nex_m600_heatingup = 0;\
-			Pprinter.show();\
+			Pfilament.show();\
     return; }\
 
   #define START_SCREEN() \
@@ -1559,9 +1569,7 @@
     #endif
 
     ZERO(bufferson);
-		SERIAL_ECHO(bufferson);
     movecmd.getText(bufferson, sizeof(bufferson));
-		SERIAL_ECHOLN(bufferson);
 		enqueue_and_echo_commands_P(PSTR("G91"));
 		enqueue_and_echo_command(bufferson);
 		enqueue_and_echo_commands_P(PSTR("G90"));
@@ -1656,7 +1664,6 @@
       if (NextionON) break;
       delay(20);
     }
-
 		#if ENABLED(FSENSOR_ONOFF)
 			nex_filament_runout_sensor_flag = eeprom_read_byte((uint8_t*)EEPROM_NEX_FILAMENT_SENSOR);
 		#endif
@@ -2017,14 +2024,14 @@
   void lcd_setstatus(const char* message, bool persist) {
     UNUSED(persist);
     if (lcd_status_message_level > 0 || !NextionON) return;
-    strncpy(lcd_status_message, message, 30);
+    strncpy(lcd_status_message, message, 20);
     if (PageID == 2) LcdStatus.setText(lcd_status_message);
   }
 
   void lcd_setstatusPGM(const char* message, int8_t level) {
     if (level < 0) level = lcd_status_message_level = 0;
     if (level < lcd_status_message_level || !NextionON) return;
-    strncpy_P(lcd_status_message, message, 30);
+    strncpy_P(lcd_status_message, message, 20);
     lcd_status_message_level = level;
     if (PageID == 2) LcdStatus.setText(lcd_status_message);
   }
@@ -2034,7 +2041,7 @@
     //lcd_status_message_level = level;
     //va_list args;
     //va_start(args, fmt);
-    //vsnprintf(lcd_status_message, 30, fmt, args);
+    //vsnprintf(lcd_status_message, 20, fmt, args);
     //va_end(args);
     //if (PageID == 2) LcdStatus.setText(lcd_status_message);
   }

@@ -8873,11 +8873,13 @@ inline void gcode_M303() {
     if (WITHIN(e, 0, HOTENDS - 1))
       target_extruder = e;
 
-    KEEPALIVE_STATE(NOT_BUSY); // don't send "busy: processing" messages during autotune output
+			KEEPALIVE_STATE(NOT_BUSY); // don't send "busy: processing" messages during autotune output
 
     thermalManager.PID_autotune(temp, e, c, u);
 
-    KEEPALIVE_STATE(IN_HANDLER);
+			KEEPALIVE_STATE(IN_HANDLER); 
+
+    
   #else
     SERIAL_ERROR_START();
     SERIAL_ERRORLNPGM(MSG_ERR_M303_DISABLED);

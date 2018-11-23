@@ -222,10 +222,10 @@
 #define MSG_FILAMENT_CHANGE_OPTION_RESUME   _UxGT("Wznów drukowanie")
 
 //dodane Printo H3
-#define MSG_PID_AUTOTUNE_START				_UxGT("PID rozpoczêto")
-#define MSG_PID_AUTOTUNE_DONE				_UxGT("PID ukoñczono")
-#define MSG_PID_AUTOTUNE_FAIL				_UxGT("PID b³¹d kalibracji")
-#define MSG_PID_AUTOTUNE_OVERSHOT			_UxGT("PID b³¹d: overshot")
+#define MSG_PID_AUTOTUNE_START				_UxGT("PID rozpoczeto")
+#define MSG_PID_AUTOTUNE_DONE				_UxGT("PID ukonczono")
+#define MSG_PID_AUTOTUNE_FAIL				_UxGT("PID blad kalibracji")
+#define MSG_PID_AUTOTUNE_OVERSHOT			_UxGT("PID blad: overshot")
 
 #define MSG_PRINT_RECOVERING				_UxGT("Przywracanie wydruku")
 #define MSG_INFO_VLCS_FAILED_PRINTS			_UxGT("Utraty zasilania")

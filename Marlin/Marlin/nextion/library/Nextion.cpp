@@ -34,13 +34,27 @@
   NexObject::NexObject(uint8_t pid, uint8_t cid, const char *name) {
     this->__pid = pid;
     this->__cid = cid;
-    this->__name = name;
+		this->__name = name;
     this->__vis = true;
     this->__cb_push = NULL;
     this->__cb_pop = NULL;
     this->__cbpop_ptr = NULL;
     this->__cbpush_ptr = NULL;
   }
+
+	NexObject::NexObject(uint8_t pid, uint8_t cid, const char *name, bool pgm) {
+		this->__pid = pid;
+		this->__cid = cid;
+		while (pgm_read_byte(name) != 0x00)
+		{
+			this->__name += (char)pgm_read_byte(name++); // zczytuje narazie jedna komorke pamieci i nie przeksztalca na ascii eg. D=68, U=85 ascii
+		}
+		this->__vis = true;
+		this->__cb_push = NULL;
+		this->__cb_pop = NULL;
+		this->__cbpop_ptr = NULL;
+		this->__cbpush_ptr = NULL;
+	}
 
   bool NexObject::getObjVis(void) { return __vis; }
 

@@ -90,6 +90,7 @@ class NexObject {
      * @param name - pointer to an unique name in range of all components.
      */
     NexObject(uint8_t pid, uint8_t cid, const char *name);
+		NexObject(uint8_t pid, uint8_t cid, const char *name, bool pgm);
 
     /**
      * iterate search pid, cid or event in list
