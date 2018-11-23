@@ -461,6 +461,8 @@ uint8_t Temperature::soft_pwm_amount[HOTENDS],
       lcd_update();
     }
     if (!wait_for_heatup) disable_all_heaters();
+		wait_for_heatup = false; // tak jakby troche pozniej pojawia sie paused for user po skonczeniu m303
+		wait_for_user = false;
   }
 
 #endif // HAS_PID_HEATING

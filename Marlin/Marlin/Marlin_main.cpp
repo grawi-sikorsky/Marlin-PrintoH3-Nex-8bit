@@ -8877,7 +8877,7 @@ inline void gcode_M303() {
 
     thermalManager.PID_autotune(temp, e, c, u);
 
-			KEEPALIVE_STATE(IN_HANDLER); 
+			KEEPALIVE_STATE(IN_HANDLER);
 
     
   #else
