@@ -45,7 +45,7 @@
               lcd_status_message_level  = 0;
   uint16_t    slidermaxval              = 20;
   char        bufferson[70]             = { 0 };
-  char        lcd_status_message[20]    = WELCOME_MSG;
+  char        lcd_status_message[24]    = WELCOME_MSG;
   const float manual_feedrate_mm_m[]    = MANUAL_FEEDRATE;
 	millis_t		screen_timeout_millis;
 
@@ -1007,10 +1007,10 @@
 			#if ENABLED(PREVENT_COLD_EXTRUSION)
 				if (!DEBUGGING(DRYRUN) && !thermalManager.allow_cold_extrude &&
 					thermalManager.degTargetHotend(active_extruder) < thermalManager.extrude_min_temp) {
-					lcd_advanced_pause_toocold_menu();
-					buzzer.tone(120, 700);// dodane beeper too cold
+					buzzer.tone(120, 700); // dodane beeper too cold
 					buzzer.tone(120, 000);
 					buzzer.tone(120, 700);
+					lcd_advanced_pause_toocold_menu();
 					return;
 				}
 			#endif
@@ -1773,6 +1773,10 @@
 
       setpagePrinter();
       startimer.enable();
+
+			buzzer.tone(100, 2300); // dodane - wejsciowy brzeczyk
+			buzzer.tone(100, 2600);
+			buzzer.tone(100, 3100);
     }
   }
 
@@ -2024,14 +2028,14 @@
   void lcd_setstatus(const char* message, bool persist) {
     UNUSED(persist);
     if (lcd_status_message_level > 0 || !NextionON) return;
-    strncpy(lcd_status_message, message, 20);
+    strncpy(lcd_status_message, message, 24);
     if (PageID == 2) LcdStatus.setText(lcd_status_message);
   }
 
   void lcd_setstatusPGM(const char* message, int8_t level) {
     if (level < 0) level = lcd_status_message_level = 0;
     if (level < lcd_status_message_level || !NextionON) return;
-    strncpy_P(lcd_status_message, message, 20);
+    strncpy_P(lcd_status_message, message, 24);
     lcd_status_message_level = level;
     if (PageID == 2) LcdStatus.setText(lcd_status_message);
   }
@@ -2041,7 +2045,7 @@
     //lcd_status_message_level = level;
     //va_list args;
     //va_start(args, fmt);
-    //vsnprintf(lcd_status_message, 20, fmt, args);
+    //vsnprintf(lcd_status_message, 24, fmt, args);
     //va_end(args);
     //if (PageID == 2) LcdStatus.setText(lcd_status_message);
   }

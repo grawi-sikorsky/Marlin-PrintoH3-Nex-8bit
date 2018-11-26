@@ -5765,7 +5765,7 @@ inline void gcode_G92() {
    * M1: Conditional stop   - Wait for user button press on LCD
    */
   inline void gcode_M0_M1() {
-		SERIAL_ECHOPGM("M0 M1");
+		SERIAL_ECHOPGM("M0");
     const char * const args = parser.string_arg;
 
     millis_t ms = 0;
@@ -8870,6 +8870,11 @@ inline void gcode_M226() {
  *       U<bool> with a non-zero value will apply the result to current settings
  */
 inline void gcode_M303() {
+	#if ENABLED(NEXTION_DISPLAY)
+		BUZZ(70, 2300);//dodane
+		BUZZ(70, 3100);//dodane
+	#endif
+
   #if HAS_PID_HEATING
 	
     const int e = parser.intval('E'), c = parser.intval('C', 5);
@@ -8890,6 +8895,12 @@ inline void gcode_M303() {
     SERIAL_ERROR_START();
     SERIAL_ERRORLNPGM(MSG_ERR_M303_DISABLED);
   #endif
+
+	#if ENABLED(NEXTION_DISPLAY)
+			settings.save(); // zapisujemy eeprom po zakonczeniu
+			BUZZ(70, 2300);//dodane
+			BUZZ(70, 3100);//dodane
+	#endif
 }
 
 #if ENABLED(MORGAN_SCARA)
@@ -9348,6 +9359,8 @@ void quickstop_stepper() {
  */
 inline void gcode_M500() {
   (void)settings.save();
+	BUZZ(70, 2300); // dodane beeper git
+	BUZZ(70, 2900); // dodane beeper git
 }
 
 /**
@@ -9355,6 +9368,8 @@ inline void gcode_M500() {
  */
 inline void gcode_M501() {
   (void)settings.load();
+	BUZZ(70, 2300); // dodane beeper git
+	BUZZ(70, 2900); // dodane beeper git
 }
 
 /**
@@ -9362,6 +9377,8 @@ inline void gcode_M501() {
  */
 inline void gcode_M502() {
   (void)settings.reset();
+	BUZZ(70, 2900); // dodane beeper git	
+	BUZZ(70, 2300); // dodane beeper git
 }
 
 #if DISABLED(DISABLE_M503)

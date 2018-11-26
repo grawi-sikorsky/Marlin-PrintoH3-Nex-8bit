@@ -176,7 +176,7 @@
 #define MSG_SHORT_MINUTE                    _UxGT("m") // One character only
 #define MSG_HEATING                         _UxGT("Rozgrzewanie...")
 #define MSG_HEATING_COMPLETE                _UxGT("Rozgrzano")
-#define MSG_BED_HEATING                     _UxGT("Rozgrzewanie sto³u...")
+#define MSG_BED_HEATING                     _UxGT("Rozgrzewanie stolu...")
 #define MSG_BED_DONE                        _UxGT("Rozgrzano stó³")
 #define MSG_DELTA_CALIBRATE                 _UxGT("Kalibrowanie Delty")
 #define MSG_DELTA_CALIBRATE_X               _UxGT("Kalibruj X")
