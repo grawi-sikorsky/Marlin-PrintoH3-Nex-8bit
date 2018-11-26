@@ -1877,16 +1877,17 @@
             #endif
           #endif
 				}
-        //#if FAN_COUNT > 0
-          if (PreviousfanSpeed != fanSpeeds[0]) {
+				//fan
+         if (PreviousfanSpeed != fanSpeeds[0]) {
 					PrinterFanspeed.setValue(((float)(fanSpeeds[0]) / 255) * 100,"printer");
           PreviousfanSpeed = fanSpeeds[0];
-          }
-        //#endif
+         }
+				//feedrate
         if (Previousfeedrate != feedrate_percentage) {
           VSpeed.setValue(feedrate_percentage,"printer");
           Previousfeedrate = feedrate_percentage;
         }
+				//flow
 				if (Previousflow != flow_percentage[0]) {
 					vFlowNex.setValue(flow_percentage[0], "flowpage");
 					Previousflow = flow_percentage[0];
@@ -1992,7 +1993,6 @@
         break;
 			case 12:
 				// odswiez temp glowicy na ekranie filament [przyciski]
-
 					degtoLCD(0, thermalManager.current_temperature[0]);
 				break;
 			case 13:

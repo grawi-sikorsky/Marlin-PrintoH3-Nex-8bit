@@ -1678,6 +1678,7 @@
   #define NEXTION
   #define NEXTION_DISPLAY
   #define NEXTION_SERIAL 2
+	//#define NEXTION_DEBUG
 
   // For GFX preview visualization enable NEXTION GFX
   //#define NEXTION_GFX

@@ -5765,6 +5765,7 @@ inline void gcode_G92() {
    * M1: Conditional stop   - Wait for user button press on LCD
    */
   inline void gcode_M0_M1() {
+		SERIAL_ECHOPGM("M0 M1");
     const char * const args = parser.string_arg;
 
     millis_t ms = 0;
@@ -5778,7 +5779,7 @@ inline void gcode_G92() {
       hasS = ms > 0;
     }
 
-    #if ENABLED(ULTIPANEL)
+    #if ENABLED(ULTIPANEL) || ENABLED(NEXTION_DISPLAY)
 
       if (!hasP && !hasS && args && *args)
         lcd_setstatus(args, true);
@@ -5814,7 +5815,11 @@ inline void gcode_G92() {
           while (wait_for_user) idle();
           IS_SD_PRINTING ? LCD_MESSAGEPGM(MSG_RESUMING) : LCD_MESSAGEPGM(WELCOME_MSG);
         }
-      #else
+      #elif ENABLED(NEXTION_DISPLAY)	// dodatkowy warunek, w skrocie: M303 po zakonczeniu wrzuca w M0_M1 [wait for click],
+				wait_for_user = false;				// jednak na nexie nie sprawdzamy kazdego przycisku czy jest "clicked" - szalenstwo
+				KEEPALIVE_STATE(IN_HANDLER);	// wiec trzeba sie bylo wydostac z tej petli. M0 w dalszym ciagu dziala poprawnie!
+				return;												// do obserwacji z innymi funkcjami korzystajacymi z wait_for_user
+			#else	
         while (wait_for_user) idle();
       #endif
     }
@@ -6120,6 +6125,7 @@ inline void gcode_M17() {
   }
 
   static void wait_for_filament_reload(const int8_t max_beep_count = 0) {
+
     bool nozzle_timed_out = false;
 
     // Wait for filament insert by user and press button
@@ -8865,6 +8871,7 @@ inline void gcode_M226() {
  */
 inline void gcode_M303() {
   #if HAS_PID_HEATING
+	
     const int e = parser.intval('E'), c = parser.intval('C', 5);
     const bool u = parser.boolval('U');
 
@@ -8873,12 +8880,11 @@ inline void gcode_M303() {
     if (WITHIN(e, 0, HOTENDS - 1))
       target_extruder = e;
 
-			KEEPALIVE_STATE(NOT_BUSY); // don't send "busy: processing" messages during autotune output
+		KEEPALIVE_STATE(NOT_BUSY); // don't send "busy: processing" messages during autotune output
 
     thermalManager.PID_autotune(temp, e, c, u);
 
-			KEEPALIVE_STATE(IN_HANDLER);
-
+		KEEPALIVE_STATE(IN_HANDLER);
     
   #else
     SERIAL_ERROR_START();
@@ -9378,6 +9384,7 @@ inline void gcode_M811(){ //Printo M811
 }
 
 inline void gcode_M812() {
+	SERIAL_ECHOPGM("M812");
 	// 3. Confirm menu
 	// Dodajemy ekran menu pauzy pozwalający na dodatkową ekstruzję
 	KEEPALIVE_STATE(PAUSED_FOR_USER);
@@ -12907,6 +12914,12 @@ void check_periodical_actions()
 
 		#if ENABLED(NEXTION)
 			nextion_draw_update();
+
+		#if ENABLED(NEXTION_DEBUG)
+				SERIAL_ECHOPGM("busystate:");
+				SERIAL_ECHOLN(busy_state);
+		#endif
+		
 		#endif
 	}
 }
@@ -13659,9 +13672,7 @@ void setup() {
 	}
 	#endif // PLOSS_SUPPORT
 
-
-
-}
+} // END SETUP
 
 /**
  * The main Marlin program loop

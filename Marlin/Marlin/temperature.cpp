@@ -413,7 +413,7 @@ uint8_t Temperature::soft_pwm_amount[HOTENDS],
         return;
       }
       if (cycles > ncycles) {
-        SERIAL_PROTOCOLLNPGM(MSG_PID_AUTOTUNE_FINISHED);
+        //SERIAL_PROTOCOLLNPGM(MSG_PID_AUTOTUNE_FINISHED);
 				LCD_MESSAGEPGM(MSG_PID_AUTOTUNE_DONE);
 
         #if HAS_PID_FOR_BOTH
@@ -458,11 +458,12 @@ uint8_t Temperature::soft_pwm_amount[HOTENDS],
         }
         return;
       }
-      lcd_update();
+      //lcd_update();
     }
     if (!wait_for_heatup) disable_all_heaters();
-		wait_for_heatup = false; // tak jakby troche pozniej pojawia sie paused for user po skonczeniu m303
-		wait_for_user = false;
+		//wait_for_heatup = false; // tak jakby troche pozniej pojawia sie paused for user po skonczeniu m303
+		//wait_for_user = false;
+		//KEEPALIVE_STATE(NOT_BUSY);
   }
 
 #endif // HAS_PID_HEATING
