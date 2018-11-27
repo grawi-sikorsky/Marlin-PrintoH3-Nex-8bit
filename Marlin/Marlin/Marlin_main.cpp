@@ -3973,6 +3973,8 @@ inline void gcode_G28(const bool always_home_all) {
   #if ENABLED(DEBUG_LEVELING_FEATURE)
     if (DEBUGGING(LEVELING)) SERIAL_ECHOLNPGM("<<< gcode_G28");
   #endif
+	BUZZ(100, 2300);
+	BUZZ(80, 2900);
 } // G28
 
 void home_all_axes() { gcode_G28(true); }

@@ -913,6 +913,8 @@
 					file4.getText(bufferson, sizeof(bufferson));
 				else if (ptr == &sdrow5)
 					file5.getText(bufferson, sizeof(bufferson));
+
+				buzzer.tone(100, 2300);
 			#else
 				if (ptr == &sdrow0)
 					sdrow0.getText(bufferson, sizeof(bufferson));
@@ -926,6 +928,8 @@
 					sdrow4.getText(bufferson, sizeof(bufferson));
 				else if (ptr == &sdrow5)
 					sdrow5.getText(bufferson, sizeof(bufferson));
+
+				buzzer.tone(100, 2300);
 			#endif
 				
       menu_action_sdfile(bufferson);
@@ -1707,6 +1711,12 @@
           gfx.set_position(1, 24, 250, 155);
         #endif
       }
+			else if (strstr(bufferson, "4832")) {  // Model 3.2" Normal or Enhanced
+				SERIAL_ECHOPGM(" 3.5");
+				#if ENABLED(NEXTION_GFX)
+				gfx.set_position(1, 24, 250, 155);
+				#endif
+			}
       else if (strstr(bufferson, "4827")) {  // Model 4.3" Normal or Enhanced
 		SERIAL_ECHOPGM(" 4.3");
         #if ENABLED(NEXTION_GFX)
