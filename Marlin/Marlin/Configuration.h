@@ -1700,5 +1700,7 @@
 	#define PROBE_MANUALLY
 // FSENSOR ONOFF
 	#define FSENSOR_ONOFF
+//G28 after print stop
+	#define STOP_PRINT_G28
 
 #endif // CONFIGURATION_H

@@ -57,6 +57,7 @@
 	extern bool g29_in_progress;// = false;
 	extern inline void set_current_to_destination() { COPY(current_position, destination); }
 	extern inline void set_destination_to_current() { COPY(destination, current_position); }
+	extern void home_all_axes();
 
   #if ENABLED(SDSUPPORT)
     // 0 card not present, 1 SD not insert, 2 SD insert, 3 SD printing
@@ -580,21 +581,29 @@
    *
    */
   void lcd_sdcard_stop() {
-		//enqueue_and_echo_commands_P(PSTR("M24")); // na wypadek gdyby drukarka byla w stanie pauzy @_@
-	  card.stopSDPrint();
-	  clear_command_queue();
-	  quickstop_stepper();
-	  print_job_timer.stop();
-	  thermalManager.disable_all_heaters();
+		move_away_flag = false;									// flaga pause_print na false, na wypadek gdyby drukarka byla w stanie pauzy @_@
+	  card.stopSDPrint();											// wstrzymaj wydruk z kartysd
+		clear_command_queue();									// czysc kolejke komend
+		stepper.quick_stop_panic();							// pomocne z panic'a, trzeba to zaserwowac aby mozna bylo ponownie wykonac jakakolwiek komende
+		thermalManager.disable_all_heaters();		// wylacz grzalki
+
 		#if ENABLED(PLOSS_SUPPORT)
-	  _babystep_z_shift = 0; // dodane - zeruje babystep po zatrzymaniu wydruku
-	  eeprom_update_dword((uint32_t*)(EEPROM_PANIC_BABYSTEP_Z), _babystep_z_shift);	// zeruj babystepping w eeprom
+			_babystep_z_shift = 0;								// dodane - zeruje babystep po zatrzymaniu wydruku
+			eeprom_update_dword((uint32_t*)(EEPROM_PANIC_BABYSTEP_Z), _babystep_z_shift);	// zeruj babystepping w eeprom
 		#endif
 		#if FAN_COUNT > 0
-	  for (uint8_t i = 0; i < FAN_COUNT; i++) fanSpeeds[i] = 0;
+			for (uint8_t i = 0; i < FAN_COUNT; i++) fanSpeeds[i] = 0;
 		#endif
-	  wait_for_heatup = false;
-	  lcd_setstatusPGM(PSTR(MSG_PRINT_ABORTED), -1);
+
+		wait_for_heatup = false;												// flaga false
+		lcd_setstatusPGM(PSTR(MSG_PRINT_ABORTED), -1);	// status info
+
+		//G28 on stop print
+		#if ENABLED(STOP_PRINT_G28)
+		home_all_axes();						// bazujemy osie
+		#endif
+		print_job_timer.stop();			// wstrzymujemy timer
+		quickstop_stepper();				// calkowicie czyscimy planner blokujac ewentualne kolejne ruchy!wazne
 }
 
   void menu_action_back() { Pprinter.show(); }
@@ -1353,6 +1362,7 @@
 		thermalManager.setTargetBed(temp_bed);
 
     Pprinter.show();
+		buzzer.tone(100,2300);
   }
 
 	void sethotendPopCallback(void *ptr) {
@@ -1360,6 +1370,7 @@
 		uint16_t	temp_hotend = temphe.getValue();
 		thermalManager.setTargetHotend(temp_hotend, 0);
 		Pprinter.show();
+		buzzer.tone(100, 2300);
 	}
 
 	void setheatbedPopCallback(void *ptr) {
@@ -1367,6 +1378,7 @@
 		uint16_t temp_bed = tempbe.getValue();    //dodane
 		thermalManager.setTargetBed(temp_bed);
 		Pprinter.show();
+		buzzer.tone(100, 2300);
 	}
 
 	void setfanandgoPopCallback(void *ptr) {
@@ -1541,6 +1553,11 @@
 		{
 			nex_enqueue_filament_change();
 		}
+		else if (strcmp(bufferson, "M78 S78") == 0)
+		{
+			enqueue_and_echo_command(bufferson);
+			buzzer.tone(100, 2300);
+		}
 		else
 		{ 
 			enqueue_and_echo_command(bufferson);
@@ -1603,12 +1620,13 @@
 
   void YesNoPopCallback(void *ptr) {
 
+
     if (ptr == &Yes) {
       switch(Vyes.getValue()) {
         #if ENABLED(SDSUPPORT)
           case 1: // Stop Print
+						Pprinter.show();
 						lcd_sdcard_stop();
-            Pprinter.show();
             break;
           case 2: // Upload Firmware
 						#if ENABLED(NEX_UPLOAD)

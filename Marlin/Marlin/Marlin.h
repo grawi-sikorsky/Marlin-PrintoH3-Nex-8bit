@@ -205,6 +205,7 @@ inline bool IsStopped() { return !Running; }
 
 bool enqueue_and_echo_command(const char* cmd, bool say_ok=false); // Add a single command to the end of the buffer. Return false on failure.
 void enqueue_and_echo_commands_P(const char * const cmd);          // Set one or more commands to be prioritized over the next Serial/SD command.
+void enqueue_and_echo_commands_now_P(const char * const cmd); //dodane ze niby now
 void clear_command_queue();
 
 extern millis_t previous_cmd_ms;
@@ -231,6 +232,7 @@ extern float volumetric_multiplier[EXTRUDERS]; // reciprocal of cross-sectional 
 extern bool axis_known_position[XYZ];
 extern bool axis_homed[XYZ];
 extern volatile bool wait_for_heatup;
+extern bool move_away_flag;
 
 #if HAS_RESUME_CONTINUE
   extern volatile bool wait_for_user;

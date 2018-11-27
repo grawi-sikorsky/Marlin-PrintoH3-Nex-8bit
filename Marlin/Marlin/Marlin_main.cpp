@@ -865,6 +865,12 @@ void enqueue_and_echo_commands_P(const char * const pgcode) {
   drain_injected_commands_P(); // first command executed asap (when possible)
 }
 
+// dodane ze niby now
+void enqueue_and_echo_commands_now_P(const char * const pgcode) {
+	enqueue_and_echo_commands_P(pgcode);
+	while (drain_injected_commands_P()) idle();
+}
+
 /**
  * Clear the Marlin command queue
  */
@@ -5962,7 +5968,7 @@ inline void gcode_M17() {
 #if ENABLED(ADVANCED_PAUSE_FEATURE)
 
   static float resume_position[XYZE];
-  static bool move_away_flag = false;
+  bool move_away_flag = false;
   #if ENABLED(SDSUPPORT)
     static bool sd_print_paused = false;
   #endif
@@ -6023,8 +6029,6 @@ inline void gcode_M17() {
 			{
 				ensure_safe_temperature(); // wait for extruder to heat up before unloading
 			}
-      
-
     }
 
     // Indicate that the printer is paused
@@ -6113,7 +6117,6 @@ inline void gcode_M17() {
 
 			if (show_lcd == true) // na wypadek M125 brak nozzle timeout przy pauzie
 			{
-
 				// Start the heater idle timers
 				const millis_t nozzle_timeout = (millis_t)(PAUSE_PARK_NOZZLE_TIMEOUT) * 1000UL;
 
