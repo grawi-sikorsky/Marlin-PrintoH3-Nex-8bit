@@ -52,6 +52,9 @@
   extern uint8_t progress_printing; // dodane nex
 	extern bool nex_filament_runout_sensor_flag;
 	bool nex_m600_heatingup = 0;
+	#if PIN_EXISTS(SD_DETECT)
+	uint8_t lcd_sd_status;
+	#endif
 
 	extern float destination[XYZE];// = { 0.0 };
 	extern bool g29_in_progress;// = false;
@@ -96,16 +99,6 @@
    * Nextion component all page
    *******************************************************************
    */
-		const char PROGMEM printerP[] = "printer";
-		const char PROGMEM setupP[] = "setup";
-		const char PROGMEM yesnoP[] = "yesno";
-		const char PROGMEM filamentP[] = "filament";
-		const char PROGMEM selectP[] = "select";
-		const char PROGMEM bedlevelP[] = "bedlevel";
-		const char PROGMEM heatupP[] = "heatup";
-		const char PROGMEM maintainP[] = "maintain";
-		const char PROGMEM killpageP[] = "killpage";
-#define FILAMENT_P "filament"
 
   //NexObject Pstart        = NexObject(0,  0,  "start");
   //NexObject Pmenu         = NexObject(1,  0,  "menu");
@@ -1867,6 +1860,26 @@
     }
   }
 
+	void nex_check_sdcard_present()
+	{
+	#if ENABLED(SDSUPPORT) && PIN_EXISTS(SD_DETECT)
+		const bool sd_status = IS_SD_INSERTED;
+		if (sd_status != lcd_sd_status && lcd_detected()) {
+			if (sd_status) //if true or 1 - card in
+			{
+				card.initsd();
+				if (lcd_sd_status != 2) LCD_MESSAGEPGM(MSG_SD_INSERTED);
+			}
+		else //if false or 0 - no card
+			{
+				card.release();
+				if (lcd_sd_status != 2) LCD_MESSAGEPGM(MSG_SD_REMOVED);
+			}
+			lcd_sd_status = sd_status;
+		}
+	#endif
+	}
+
   void lcd_update() {
     if (!NextionON) return;
     nexLoop(nex_listen_list); // odswieza sie z delayem 5 ms
@@ -1879,6 +1892,7 @@
 			Pprinter.show();
 			screen_timeout_millis = 0;
 		}
+		nex_check_sdcard_present();
   }
 
   void nextion_draw_update() {
@@ -2014,7 +2028,18 @@
         break;
 	#if ENABLED(SDSUPPORT)
       case 3:
-          if (PreviousPage != 3) setpageSD();
+					if (PreviousPage != 3) {
+						nex_check_sdcard_present();
+						setpageSD();
+					}
+					if (!IS_SD_INSERTED) {
+						nex_check_sdcard_present(); // stale sprawdzaj czy karta jest zamontowana, jesli nie to sprawdz sddetect
+
+					}
+					if (card.cardOK)
+					{
+						//setpageSD();								// i odswiez liste
+					}
           break;
 	#endif
       case 5:
