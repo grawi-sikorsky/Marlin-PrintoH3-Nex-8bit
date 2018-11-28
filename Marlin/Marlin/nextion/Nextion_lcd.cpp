@@ -1683,6 +1683,11 @@
 			nex_filament_runout_sensor_flag = eeprom_read_byte((uint8_t*)EEPROM_NEX_FILAMENT_SENSOR);
 		#endif
 
+		#if ENABLED(SDSUPPORT) && PIN_EXISTS(SD_DETECT)
+			SET_INPUT_PULLUP(SD_DETECT_PIN);
+			lcd_sd_status = 2; // UNKNOWN
+		#endif
+
     if (!NextionON) {
 	  SERIAL_ECHOPGM("Nextion not connected!");
       return;
@@ -1863,6 +1868,7 @@
 	void nex_check_sdcard_present()
 	{
 	#if ENABLED(SDSUPPORT) && PIN_EXISTS(SD_DETECT)
+		/*
 		const bool sd_status = IS_SD_INSERTED;
 		if (sd_status != lcd_sd_status && lcd_detected()) {
 			if (sd_status) //if true or 1 - card in
@@ -1873,6 +1879,27 @@
 		else //if false or 0 - no card
 			{
 				card.release();
+				if (lcd_sd_status != 2) LCD_MESSAGEPGM(MSG_SD_REMOVED);
+			}
+			lcd_sd_status = sd_status;
+		}*/
+		const bool sd_status = IS_SD_INSERTED;
+		if (sd_status != lcd_sd_status && lcd_detected())  // sprawdz czy nastapila zmiana? SD DET ->
+		{ // TAK
+			if (sd_status) //if true or 1 - card in
+			{
+				card.initsd();
+				setpageSD();					// ustaw strone i przekaz flage do strony status
+				SDstatus = SD_INSERT;
+				SD.setValue(SDstatus, "printer");
+				if (lcd_sd_status != 2) LCD_MESSAGEPGM(MSG_SD_INSERTED);
+			}
+			else //if false or 0 - no card
+			{
+				card.release();
+				setpageSD();					// ustaw strone i przekaz flage do strony status
+				SDstatus = SD_NO_INSERT;
+				SD.setValue(SDstatus, "printer");
 				if (lcd_sd_status != 2) LCD_MESSAGEPGM(MSG_SD_REMOVED);
 			}
 			lcd_sd_status = sd_status;
@@ -2032,14 +2059,44 @@
 						nex_check_sdcard_present();
 						setpageSD();
 					}
-					if (!IS_SD_INSERTED) {
-						nex_check_sdcard_present(); // stale sprawdzaj czy karta jest zamontowana, jesli nie to sprawdz sddetect
 
-					}
-					if (card.cardOK)
+					nex_check_sdcard_present();
+
+
+					/*
+					if (!card.cardOK)					// brak karty?
 					{
-						//setpageSD();								// i odswiez liste
+						card.initsd();					// init
+						if (card.cardOK)				// jest karta?
+						{
+							setpageSD();					// ustaw strone i przekaz flage do strony status
+							SDstatus = SD_INSERT;
+							SD.setValue(SDstatus, "printer");
+						}
+						else										// brak kraty..
+						{
+							card.release();
+							SDstatus = SD_NO_INSERT;
+							SD.setValue(SDstatus, "printer");
+						}
 					}
+					else											// jest karta?
+					{
+						if (SDstatus != SD_INSERT || SDstatus != SD_PRINTING)
+						{
+							SDstatus = SD_INSERT;		// przekaz flage do strony status
+							SD.setValue(SDstatus, "printer");
+						}
+
+						// sprawdz czy nie zostala wyjeta?
+						if (IS_SD_INSERTED)
+						{
+							SERIAL_ECHOPGM("wyjeta");
+							card.release();
+							if (lcd_sd_status != 2) LCD_MESSAGEPGM(MSG_SD_REMOVED);
+						}
+					}*/
+
           break;
 	#endif
       case 5:
