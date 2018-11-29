@@ -19,7 +19,7 @@
 #include "../Marlin.h"
 #include "../temperature.h"
 #include "../cardreader.h"
-#include <MemoryFree.h>
+//#include <MemoryFree.h>
 
 #if ENABLED(NEXTION_DISPLAY)
 	#include "../stepper.h"
@@ -73,7 +73,6 @@
 	#if ENABLED(BABYSTEPPING)
 			int _babystep_z_shift = 0;
 			long babysteps_done = 0;
-			//void nextion_babystep_z(bool dir);
 	#endif
 
 
@@ -96,7 +95,7 @@
 
   /**
    *******************************************************************
-   * Nextion component all page
+   * NEX lista stron uzytych
    *******************************************************************
    */
 
@@ -131,54 +130,53 @@
 
   /**
    *******************************************************************
-   * Nextion component for page:start
+   * NEX komponenty strona: start
    *******************************************************************
    */
-  NexObject startimer     = NexObject(0,  1,  "tm0");
+  NexObject startimer     = NexObject(0,  1,  "tm0"); // out?
 	// 
 	// == 10
 
   /**
    *******************************************************************
-   * Nextion component for page:menu
+   * NEX komponenty strona: menu
    *******************************************************************
    */
-  NexObject Version     = NexObject(1, 6,  "t0");
+  NexObject Version     = NexObject(1, 6,  "t0"); // out? nieuzywane
 	// 
 	// == 11
 
   /**
    *******************************************************************
-   * Nextion component for page:printer
+   * NEX komponenty strona: status/printer
    *******************************************************************
    */
-  NexObject LcdX					= NexObject(2,  4,  "vx");
-  NexObject LcdY					= NexObject(2,  5,  "vy");
-  NexObject LcdZ					= NexObject(2,  6,  "vz");
-  NexObject Hotend00			= NexObject(2,  7,  "he00");
-  NexObject Hotend01			= NexObject(2,  8,  "he01");
-  NexObject Bed0					= NexObject(2, 9,  "bed0");
-	NexObject Bed1					= NexObject(2, 10, "bed1");
-  NexObject SD						= NexObject(2, 11,  "sd");
-  NexObject PrinterFanspeed    = NexObject(2, 12,  "fs");
-  NexObject VSpeed				= NexObject(2, 13,  "vs");
-  NexObject Language			= NexObject(2, 14,  "lang");
-  NexObject NStop					= NexObject(2, 18,  "p1");
-  NexObject NPlay					= NexObject(2, 19,  "p2");
-  NexObject LcdStatus			= NexObject(2, 20,  "t0");
-  NexObject LcdTime				= NexObject(2, 21,  "t2");
-  NexObject progressbar		= NexObject(2, 22,  "j0");
-  NexObject Wavetemp			= NexObject(2, 23,  "s0");
-	NexObject percentdone		= NexObject(2, 49,	"t4");
-	
+  NexObject LcdX						= NexObject(2,  4,  "vx");
+  NexObject LcdY						= NexObject(2,  5,  "vy");
+  NexObject LcdZ						= NexObject(2,  6,  "vz");
+  NexObject Hotend00				= NexObject(2,  7,  "he00");
+  NexObject Hotend01				= NexObject(2,  8,  "he01");
+  NexObject Bed0						= NexObject(2, 9,  "bed0");
+	NexObject Bed1						= NexObject(2, 10, "bed1");
+  NexObject SD							= NexObject(2, 11,  "sd");
+  NexObject PrinterFanspeed = NexObject(2, 12,  "fs");
+  NexObject VSpeed					= NexObject(2, 13,  "vs");
+  NexObject Language				= NexObject(2, 14,  "lang");
+  NexObject NStop						= NexObject(2, 18,  "p1");
+  NexObject NPlay						= NexObject(2, 19,  "p2");
+  NexObject LcdStatus				= NexObject(2, 20,  "t0");
+  NexObject LcdTime					= NexObject(2, 21,  "t2");
+  NexObject progressbar			= NexObject(2, 22,  "j0");
+  NexObject Wavetemp				= NexObject(2, 23,  "s0");
+	NexObject percentdone			= NexObject(2, 49,	"t4");
 	//
-	// == 24
-	// == 35
+	// == 18
+	// == 29
 
 
   /**
    *******************************************************************
-   * Nextion component for page:SDCard
+   * NEX komponenty strona: SDCard
    *******************************************************************
    */
   NexObject sdlist      = NexObject(3,   1, "h0");
@@ -198,8 +196,8 @@
   NexObject sdfolder    = NexObject(3,	 9, "t6");
   NexObject ScrollUp    = NexObject(3,  10, "p7");
   NexObject ScrollDown  = NexObject(3,  11, "p8");
-  NexObject sd_mount    = NexObject(3,  12, "p12");
-  NexObject sd_dismount = NexObject(3,  13, "p13");
+  NexObject sd_mount    = NexObject(3,  12, "p12"); // out?
+  NexObject sd_dismount = NexObject(3,  13, "p13");	// out?
 #if ENABLED(NEXTION_SD_LONG_NAMES)
 	NexObject file0				= NexObject(3, 21, "nam1");
 	NexObject file1				= NexObject(3, 22, "nam2");
@@ -209,13 +207,13 @@
 	NexObject file5				= NexObject(3, 26, "nam6");
 #endif
 	// 
-	// == 19+6
-	// == 60
+	// == 25
+	// == 54
 
 
   /**
    *******************************************************************
-   * Nextion component for page:Move
+   * NEX komponenty strona: MOVE
    *******************************************************************
    */
   NexObject XYHome      = NexObject(5,   2, "p4");
@@ -232,37 +230,44 @@
   NexObject Extrude     = NexObject(5,  19, "p12");	
   NexObject Retract     = NexObject(5,  20, "p14");
 	// 
-	// == 18
-	// == 78
+	// == 13
+	// == 67
 
+	/**
+	*******************************************************************
+	* NEX komponenty strona: SPEED
+	*******************************************************************
+	*/
 	NexObject speedsetbtn	= NexObject(6, 9, "m0");
 	NexObject SpeedNex		= NexObject(6, 7, "vspeed");
-	
+	// 
+	// == 2
+	// == 69
 
-		
   /**
    *******************************************************************
-   * Nextion component for page:GCode
+   * NEX komponenty strona: GCode
    *******************************************************************
    */
   NexObject Tgcode      = NexObject(7,   1, "tgcode");
   NexObject Send        = NexObject(7,  25, "bsend");
 	// 
-	// == 81
+	// == 2
+	// == 71
 
   /**
    *******************************************************************
-   * Nextion component for page:Info
+   * NEX komponenty strona: Info
    *******************************************************************
    */
   //NexObject InfoText    = NexObject(10, 2,  "t0");
   //NexObject ScrollText  = NexObject(10, 3,  "g0");
 	// 
-	// == 83
+	//
 
   /**
    *******************************************************************
-   * Nextion component for page:Yesno
+   * NEX komponenty strona: Yesno
    *******************************************************************
    */
   NexObject Vyes        = NexObject(11, 2,  "yn0");
@@ -274,21 +279,11 @@
   NexObject No          = NexObject(11, 9,  "p2");
 	// 
 	// == 7
-	// == 90
+	// == 78
 
   /**
    *******************************************************************
-   * Nextion component for page:Filament
-   *******************************************************************
-   */
-  //NexObject FilLoad     = NexObject(12,  3, "p2");
-  //NexObject FilUnload   = NexObject(12,  4, "p3");
-  //NexObject FilExtr     = NexObject(12,  5, "p4");
-  //NexObject Filgcode    = NexObject(12, 10, "vacmd");
-
-  /**
-   *******************************************************************
-   * Nextion component for page:Select
+   * NEX komponenty strona:: Select
    *******************************************************************
    */
   NexObject LcdRiga1    = NexObject(13,  2, "t0");
@@ -302,12 +297,12 @@
   NexObject LcdMax      = NexObject(13, 8, "max");
   NexObject LcdPos      = NexObject(13, 9, "pos");
 	// 
-	// == 11
-	// == 101
+	// == 10
+	// == 88
 
   /**
    *******************************************************************
-   * Nextion component for page:Probe
+   * NEX komponenty strona: Probe
    *******************************************************************
    */
   NexObject ProbeUp     = NexObject(14, 1,  "p0");
@@ -316,15 +311,15 @@
   //NexObject ProbeMsg    = NexObject(14, 4,  "t0");
   NexObject ProbeZ      = NexObject(14, 5,  "t1");
 	// 
-	// == 105
+	// == 4
+	// == 92
 
 
 	/**
 	*******************************************************************
-	* Nextion component for page:heatup // dodane
+	* NEX komponenty strona: HEATUP 15
 	*******************************************************************
 	*/
-
 	NexObject heatupenter		= NexObject(15, 7, "m3");
 	NexObject temphe				= NexObject(15, 8, "temphe");
 	NexObject tempbe				= NexObject(15, 9, "tempbe");
@@ -333,33 +328,23 @@
 	NexObject chillenter		= NexObject(15, 14, "m6");
 	// 
 	// == 6
-	// == 111
+	// == 98
 
 	/**
 	*******************************************************************
-	* Nextion component for page:maintain/osbluga
-	*******************************************************************
-	*/
-	//NexObject homeaxisbtn		= NexObject(16, 3, "m0");
-	//NexObject bedlevelbtn		= NexObject(16, 4, "m1");
-	// 
-	// == 3
-	// == 114
-
-	/**
-	*******************************************************************
-	* Nextion component for page:FAN SCREEN !
+	* NEX komponenty strona:: FAN SPEED 18
 	*******************************************************************
 	*/
 	NexObject FanSpeedNex			= NexObject(18, 7, "vfan");
 	NexObject FanSetBtn				= NexObject(18, 9, "m1");
 	NexObject FanPageIDfrom		= NexObject(18, 10, "fanpagefrom");
 	// 
-	// == 116
+	// == 3
+	// == 101
 
 	/**
 	*******************************************************************
-	* Nextion component for page:STAT SCREEN 19!
+	* NEX komponenty strona:: STAT SCREEN 19
 	*******************************************************************
 	*/
 	#if ENABLED(NEX_STAT_PAGE)
@@ -379,21 +364,21 @@
 	#endif
 	// 
 	// == 12
-	// == 128
+	// == 113
 
 	/**
 	*******************************************************************
-	* Nextion component for page:SERVICE PAGE 22 !
+	* NEX komponenty strona:: SERVICE PAGE 22
 	*******************************************************************
 	*/
 	//NexObject SvJerk				= NexObject(22, 4, "m2"); //wejscie w jerk -> przekazuje zmienne float na nuber nextion (brak dziesietnych)
 	NexObject SvSteps				= NexObject(22, 5, "m3");	//wejscie w steps -> przekazuje zmienne float na nuber nextion (brak dziesietnych)
 	// 
-	// == 130
+	// == 114
 
 	/**
 	*******************************************************************
-	* Nextion component for page:ACCEL SCREEN 23!
+	* NEX komponenty strona:: ACCEL SCREEN 23
 	*******************************************************************
 	*/
 #if ENABLED(NEX_ACC_PAGE)
@@ -411,41 +396,40 @@
 #endif
 	// 
 	// == 11
-	// == 141
+	// == 125
 
 	/**
 	*******************************************************************
-	* Nextion component for page:JERK SCREEN 25!
-	*******************************************************************
-	*/
-	//NexObject Jsend			= NexObject(23, 33, "p12");
-
-	/**
-	*******************************************************************
-	* Nextion component for page:BABYSTEP SCREEN 28!
+	* NEX komponenty strona:: BABYSTEP SCREEN 28
 	*******************************************************************
 	*/
 	NexObject ZbabyUp			= NexObject(28, 1, "m0");
 	NexObject ZbabyDown		= NexObject(28, 2, "m1");
 	NexObject ZbabyBack_Save = NexObject(28, 3, "m2");
 	// 
-	// == 143 == 1859 bajtów! (1.8kb) == 19,68%+ !!!!!!!!!!!!!!!!!!!
+	// == 3
+	// == 128
 
 	/**
 	*******************************************************************
-	* Nextion component for page:KILL SCREEN 30!
+	* NEX komponenty strona: KILL SCREEN 30
 	*******************************************************************
 	*/
 	NexObject Kmsg				= NexObject(30, 2, "tkmsg");
+	// == 129
 
 	/**
 	*******************************************************************
-	* Nextion component for page:KILL SCREEN 31!
+	* NEX komponenty strona:: FLOWPAGE 31
 	*******************************************************************
 	*/
 	NexObject vFlowNex					= NexObject(31, 7, "vflow");
 	NexObject SetFlowBtn				= NexObject(31, 9, "m0");
 	NexObject FlowPageFrom			= NexObject(31, 10, "flowfrom");
+	// 
+	// == 3
+	// == 132
+	// 132*13 = 1716 bajtów
 
   NexObject *nex_listen_list[] =
   {
@@ -599,19 +583,30 @@
 		quickstop_stepper();				// calkowicie czyscimy planner blokujac ewentualne kolejne ruchy!wazne
 }
 
-  void menu_action_back() { Pprinter.show(); }
+  //void menu_action_back() { Pprinter.show(); }
   void menu_action_function(screenFunc_t func) { (*func)(); }
 
-  void setpagePrinter() {
+	// Ustawia strone statusu przypisujac zerowe wartosci do zmiennych tj. glowica, stol, fan, stan SD
+	// wywo³ywana raz w lcdinit()
+  void setpagePrinter() 
+	{
     char temp[8] = { 0 };
 
     #if HOTENDS > 0
       Hotend00.setValue(0, "printer");
+			Hotend01.setValue(0, "printer");
     #endif
 
     #if HAS_TEMP_BED
       Bed0.setValue(0,"printer");
+			Bed1.setValue(0,"printer");
     #endif
+
+		#if FAN_COUNT > 0
+			PrinterFanspeed.setValue(0, "printer");
+		#endif
+
+		VSpeed.setValue(100, "printer");
 
     #if ENABLED(SDSUPPORT)
       if (!card.cardOK) card.initsd();
@@ -623,12 +618,6 @@
       else SDstatus = SD_NO_INSERT;
 
       SD.setValue(SDstatus, "printer");
-    #endif
-
-    VSpeed.setValue(100, "printer");
-
-    #if FAN_COUNT > 0
-      //Fan.setValue(1, "printer");
     #endif
 
     #define LANGUAGE_STRING(M) STRINGIFY(M)
@@ -719,6 +708,11 @@
 				++_lcdLineNr; \
     }while(0)
 
+
+
+// ========================
+// SDSUPPORT
+// ========================
   #if ENABLED(SDSUPPORT)
 
 	#if ENABLED(NEX_UPLOAD)
@@ -732,6 +726,7 @@
 	#endif
 
 	#if ENABLED(NEXTION_SD_LONG_NAMES)
+		//Drukuje linijke na stronie SDCARD
 		//1 iterator
 		//2 folder
 		//3 nazwa 8.3
@@ -771,7 +766,7 @@
 	}
 	#endif
 
-
+		//Ustawia liste plikow na stronie SDCARD
     static void setrowsdcard(uint32_t number = 0) {
       uint16_t fileCnt = card.getnrfilenames(); // nalezaloby przeniesc funkcje get_num_files z mk4duo / jakis tweak
       uint32_t i = 0;
@@ -816,38 +811,47 @@
       sendCommand("ref 0");
     }
 
-    static void menu_action_sdfile(const char* filename) {
-
+		//
+		// Funkcja z obsluga klikniecia w linijke z nazwa pliku
+		// Zapisuje do EEPROM sciezke pliku oraz babystep (VLCS)
+    static void menu_action_sdfile(const char* filename) 
+		{
 			#if ENABLED(PLOSS_SUPPORT) // jezeli VLCS wlaczony
-			for (int i = 0; i < 8; i++) {
-				eeprom_write_byte((uint8_t*)EEPROM_SD_FILENAME + i, filename[i]);
-			}
-			uint8_t depth = (uint8_t)card.getWorkDirDepth();
-			eeprom_write_byte((uint8_t*)EEPROM_SD_FILE_DIR_DEPTH, depth);
-
-			for (uint8_t i = 0; i < depth; i++) {
-				for (int j = 0; j < 8; j++) {
-					eeprom_write_byte((uint8_t*)EEPROM_SD_DIRS + j + 8 * i, dir_names[i][j]);
+				for (int i = 0; i < 8; i++) {
+					eeprom_write_byte((uint8_t*)EEPROM_SD_FILENAME + i, filename[i]);
 				}
-			}
-			_babystep_z_shift = 0; // dodane - zeruje babystep po uruchomieniu wydruku
-			eeprom_update_dword((uint32_t*)(EEPROM_PANIC_BABYSTEP_Z), _babystep_z_shift);	// zeruj babystepping w eeprom
+
+				uint8_t depth = (uint8_t)card.getWorkDirDepth();
+				eeprom_write_byte((uint8_t*)EEPROM_SD_FILE_DIR_DEPTH, depth);
+
+				for (uint8_t i = 0; i < depth; i++) {
+					for (int j = 0; j < 8; j++) {
+						eeprom_write_byte((uint8_t*)EEPROM_SD_DIRS + j + 8 * i, dir_names[i][j]);
+					}
+				}
+				_babystep_z_shift = 0;																												// zeruj babystep po uruchomieniu wydruku
+				eeprom_update_dword((uint32_t*)(EEPROM_PANIC_BABYSTEP_Z), _babystep_z_shift);	// zeruj babystepping w eeprom
 			#endif // jezeli VLCS wlaczone
 
       card.openAndPrintFile(filename);
       Pprinter.show();
     }
 
+		//
+		// Funkcja z obsluga klikniecia w linijke z nazwa FOLDERU
+		//
     static void menu_action_sddirectory(const char* filename) {
 			#if ENABLED(PLOSS_SUPPORT)
-			uint8_t depth = (uint8_t)card.getWorkDirDepth(); // dodane	
-			strcpy(dir_names[depth], filename);				// dodane
-			#endif	
+				uint8_t depth = (uint8_t)card.getWorkDirDepth();	// dodane	
+				strcpy(dir_names[depth], filename);								// dodane
+			#endif	//OCB?
 
       card.chdir(filename);
       setpageSD();
     }
 
+		// Ustawia strone z karta SD
+		// obsluga slidera
     void setpageSD() {
       uint16_t fileCnt = card.getnrfilenames();
 
@@ -867,6 +871,8 @@
       setrowsdcard();
     }
 
+		// Obsluga przycisku MOUNT / DISMOUNT
+		// Moze byc niepotrzebna po ustawieniu auto SD_DETECT
     void sdmountdismountPopCallback(void *ptr) {
       if (ptr == &sd_mount) {
         card.initsd();
@@ -884,15 +890,16 @@
       setpageSD();
     }
 
+		// Obsluga slidera / suwaka
     void sdlistPopCallback(void *ptr) {
       UNUSED(ptr);
       uint16_t number = slidermaxval - sdlist.getValue();
       setrowsdcard(number);
     }
 
+		// NEXTION: Obsluga klikniecia linijek tekstu z nazwa pliku do druku
     void sdfilePopCallback(void *ptr) {
       ZERO(bufferson);
-
 			#if ENABLED(NEXTION_SD_LONG_NAMES)
 				if (ptr == &sdrow0)
 					file0.getText(bufferson, sizeof(bufferson));
@@ -906,8 +913,6 @@
 					file4.getText(bufferson, sizeof(bufferson));
 				else if (ptr == &sdrow5)
 					file5.getText(bufferson, sizeof(bufferson));
-
-				buzzer.tone(100, 2300);
 			#else
 				if (ptr == &sdrow0)
 					sdrow0.getText(bufferson, sizeof(bufferson));
@@ -921,16 +926,15 @@
 					sdrow4.getText(bufferson, sizeof(bufferson));
 				else if (ptr == &sdrow5)
 					sdrow5.getText(bufferson, sizeof(bufferson));
-
-				buzzer.tone(100, 2300);
 			#endif
-				
+
+			buzzer.tone(100, 2300);
       menu_action_sdfile(bufferson);
     }
 
+		// NEXTION: Obsluga klikniecia linijek tekstu z nazwa FOLDERU
     void sdfolderPopCallback(void *ptr) {
       ZERO(bufferson);
-
 			#if ENABLED(NEXTION_SD_LONG_NAMES)
 				if (ptr == &sdrow0)
 					file0.getText(bufferson, sizeof(bufferson));
@@ -958,20 +962,21 @@
 				else if (ptr == &sdrow5)
 					sdrow5.getText(bufferson, sizeof(bufferson));
 			#endif
-				
       menu_action_sddirectory(bufferson);
     }
 
+		// NEXTION: Obsluga klikniecia przycisku Folder Up
     void sdfolderUpPopCallback(void *ptr) {
       UNUSED(ptr);
       card.updir();
       setpageSD();
     }
 
+		// NEXTION: Obsluga klikniecia linijek przycisku PAUSE / PLAY
     void PlayPausePopCallback(void *ptr) {
       UNUSED(ptr);
       if (card.cardOK && card.isFileOpen()) {
-        if (IS_SD_PRINTING) {//pause
+        if (IS_SD_PRINTING) {														//pause
           card.pauseSDPrint();
           print_job_timer.pause();
           #if ENABLED(PARK_HEAD_ON_PAUSE)
@@ -979,7 +984,7 @@
           #endif
 					lcd_setstatusPGM(PSTR(MSG_PRINT_PAUSED));
         }
-        else { //resume
+        else {																					//resume
 					#if ENABLED(PARK_HEAD_ON_PAUSE)
 						enqueue_and_echo_commands_P(PSTR("M24"));
 					#else
@@ -990,9 +995,15 @@
         }
       }
     }
+  #endif 
+// ========================
+// END OF SDSUPPORT
+// ========================
 
-  #endif
 
+// ========================
+// FILAMENT CHANGE M600
+// ========================
   #if ENABLED(ADVANCED_PAUSE_FEATURE)
 
     static AdvancedPauseMenuResponse advanced_pause_mode = ADVANCED_PAUSE_RESPONSE_WAIT_FOR;
@@ -1154,7 +1165,14 @@
     }
 
   #endif // ADVANCED_PAUSE_FEATURE
+// =============================
+// END OF FILAMENT CHANGE M600
+// =============================
 
+
+// ======================
+// VLCS LCD SUPPORT
+// ======================
 #ifdef PLOSS_SUPPORT
 		// ODPOWIEDZI
 		void lcd_ploss_menu_response_yes() {
@@ -1211,10 +1229,7 @@
 			STATIC_ITEM("Bazowanie osi");
 			END_SCREEN();
 		}
-#endif
 
-		// PLOSS
-#ifdef PLOSS_SUPPORT
 		void lcd_ploss_recovery_menu(const PlossMenuMessage message) {
 			switch (message) {
 			case PLOSS_LCD_MANUAL_RECOVERY:
@@ -1240,6 +1255,9 @@
 			}
 		}
 #endif //PLOSS
+// ======================
+// VLCS LCD SUPPORT   ===
+// ======================
 
 
   #if ENABLED(RFID_MODULE)
@@ -1279,6 +1297,9 @@
     }
   #endif
 
+// =======================
+// BED LEVELING SUPPORT ==
+// =======================
 #if ENABLED(NEXTION_BED_LEVEL)
     void ProbelPopCallBack(void *ptr) {
 
@@ -1319,34 +1340,10 @@
 				Pprinter.show();
 			}
 		}
-		/*
-    float lcd_probe_pt(const float &lx, const float &ly) {
-
-      #if HAS_LEVELING
-				mbl.reset();// After calibration bed-level data is no longer valid
-      #endif
-
-      mbl.manual_goto_xy(lx, ly);
-
-      Pprobe.show();
-
-			host_keepalive();
-
-			wait_for_user = true;
-
-      while (wait_for_user == true) idle();
-			host_keepalive();
-
-      Pprinter.show();
-      return current_position[Z_AXIS];
-    }
-
-    #if HAS_LEVELING
-      //void Nextion_ProbeOn()  { Pprobe.show(); }
-      //void Nextion_ProbeOff() { Pprinter.show(); }
-    #endif
-		*/
 #endif
+// ==============================
+// END OF BED LEVELING SUPPORT ==
+// ==============================
 
 
   void sethotPopCallback(void *ptr) {
@@ -1561,40 +1558,13 @@
 		}
   }
 
-  #if HAS_CASE_LIGHT
-    void setlightPopCallback(void *ptr) {
-      UNUSED(ptr);
-      caselight.status = !caselight.status;
-      caselight.update();
-    }
-  #endif
-
   void setmovePopCallback(void *ptr) {
     UNUSED(ptr);
-    #if EXTRUDERS > 1
-      const uint8_t temp_extruder = tools.active_extruder;
-      char temp[5] = { 0 };
-
-      ZERO(bufferson);
-      itoa(ext.getValue(), temp, 2);
-      strcat(bufferson, "T");
-      strcat(bufferson, temp);
-      commands.enqueue_and_echo(bufferson);
-    #endif
-
     ZERO(bufferson);
     movecmd.getText(bufferson, sizeof(bufferson));
 		enqueue_and_echo_commands_P(PSTR("G91"));
 		enqueue_and_echo_command(bufferson);
 		enqueue_and_echo_commands_P(PSTR("G90"));
-
-    #if EXTRUDERS > 1
-      ZERO(bufferson);
-      itoa(temp_extruder, temp, 2);
-      strcat(bufferson, "T");
-      strcat(bufferson, temp);
-      commands.enqueue_and_echo(bufferson);
-    #endif
   }
 
   void motoroffPopCallback(void *ptr) {
@@ -1602,6 +1572,7 @@
 		enqueue_and_echo_commands_P(PSTR("M84"));
   }
 
+	// NEXTION: Obsluga klikniecia przycisku SEND na SELECT PAGE
   void sendPopCallback(void *ptr) {
     UNUSED(ptr);
     lcd_clicked = true;
@@ -1615,9 +1586,8 @@
 		}
   }
 
+	// NEXTION: Obsluga klikniecia YES oraz NO
   void YesNoPopCallback(void *ptr) {
-
-
     if (ptr == &Yes) {
       switch(Vyes.getValue()) {
         #if ENABLED(SDSUPPORT)
@@ -1638,7 +1608,6 @@
             break;
         #endif
         case 4: // Unconditional stop
-          //printer.setWaitForUser(false);
           Pprinter.show();
           break;
 				case 5: // ustaw czujnik filamentu
@@ -1672,6 +1641,9 @@
     }
   }
 
+// =======================
+// ==	LCD INIT					==
+// =======================
   void lcd_init() {
     for (uint8_t i = 0; i < 10; i++) {
       ZERO(bufferson);
@@ -1679,6 +1651,7 @@
       if (NextionON) break;
       delay(20);
     }
+
 		#if ENABLED(FSENSOR_ONOFF)
 			nex_filament_runout_sensor_flag = eeprom_read_byte((uint8_t*)EEPROM_NEX_FILAMENT_SENSOR);
 		#endif
@@ -1695,37 +1668,36 @@
     else {
 		SERIAL_ECHO_START();
 	  SERIAL_ECHOPGM("Nextion");
-      // Get Model
 
-      if (strstr(bufferson, "3224")) {       // Model 2.4" or 2.8" Normal or Enhanced
-		SERIAL_ECHOPGM(" 2.4");
+    if (strstr(bufferson, "3224")) {       // Model 2.4" or 2.8" Normal or Enhanced
+			SERIAL_ECHOPGM(" 2.4");
         #if ENABLED(NEXTION_GFX)
           gfx.set_position(1, 24, 250, 155);
         #endif
       }
-      else if (strstr(bufferson, "4024")) {  // Model 3.2" Normal or Enhanced
-		SERIAL_ECHOPGM(" 3.2");
-        #if ENABLED(NEXTION_GFX)
+    else if (strstr(bufferson, "4024")) {  // Model 3.2" Normal or Enhanced
+			SERIAL_ECHOPGM(" 3.2");
+       #if ENABLED(NEXTION_GFX)
           gfx.set_position(1, 24, 250, 155);
-        #endif
+       #endif
       }
-			else if (strstr(bufferson, "4832")) {  // Model 3.2" Normal or Enhanced
-				SERIAL_ECHOPGM(" 3.5");
-				#if ENABLED(NEXTION_GFX)
+		else if (strstr(bufferson, "4832")) {  // Model 3.2" Normal or Enhanced
+			SERIAL_ECHOPGM(" 3.5");
+			#if ENABLED(NEXTION_GFX)
 				gfx.set_position(1, 24, 250, 155);
-				#endif
+			#endif
 			}
-      else if (strstr(bufferson, "4827")) {  // Model 4.3" Normal or Enhanced
-		SERIAL_ECHOPGM(" 4.3");
-        #if ENABLED(NEXTION_GFX)
+    else if (strstr(bufferson, "4827")) {  // Model 4.3" Normal or Enhanced
+			SERIAL_ECHOPGM(" 4.3");
+      #if ENABLED(NEXTION_GFX)
           gfx.set_position(1, 24, 250, 155);
-        #endif
+      #endif
       }
-      else if (strstr(bufferson, "8048")) {  // Model 7" Normal or Enhanced
-		SERIAL_ECHOPGM(" 7");
-        #if ENABLED(NEXTION_GFX)
+    else if (strstr(bufferson, "8048")) {  // Model 7" Normal or Enhanced
+			SERIAL_ECHOPGM(" 7");
+      #if ENABLED(NEXTION_GFX)
           gfx.set_position(274, 213, 250, 155);
-        #endif
+      #endif
       }
 	  SERIAL_CHAR('"'); SERIAL_ECHOLNPGM(" connected!");
 
@@ -1739,6 +1711,10 @@
         gfx.color_set(NX_HIGH, 63488);
       #endif
 
+			//
+			// NEX USTAWIENIE PRZYCISKOW
+			//
+			// SDSUPPORT
       #if ENABLED(SDSUPPORT)
         sd_mount.attachPop(sdmountdismountPopCallback, &sd_mount);
         sd_dismount.attachPop(sdmountdismountPopCallback, &sd_dismount);
@@ -1748,15 +1724,19 @@
         NPlay.attachPop(PlayPausePopCallback);
       #endif
 
+			// BED LEVEL
       #if ENABLED(NEXTION_BED_LEVEL)
         ProbeUp.attachPush(ProbelPopCallBack, &ProbeUp);
         ProbeSend.attachPop(ProbelPopCallBack, &ProbeSend);
         ProbeDown.attachPush(ProbelPopCallBack, &ProbeDown);
       #endif
 
+			// STATS
 			#if ENABLED(NEX_STAT_PAGE)
 				statin.attachPop(setsetupstatPopCallback); //dodane info o wejsciu w statystyki
 			#endif
+
+			// ACCELERATION
 			#if ENABLED(NEX_ACC_PAGE)
 				accelin.attachPop(setaccelpagePopCallback); //setaccelpagePopCallback
 				Asend.attachPop(getaccelPagePopCallback);
@@ -1766,23 +1746,26 @@
 
 			SvSteps.attachPop(setstepspagePopCallback);
 
+			// TEMPERATURA
 			heatupenter.attachPop(sethotPopCallback, &heatupenter); // obsluga przycisku rozgrzej oba
 			hotendenter.attachPop(sethotendPopCallback, &hotendenter); //obsluga przycisku rozgrzej hotend
 			heatbedenter.attachPop(setheatbedPopCallback, &heatbedenter); //obsluga przycisku rozgrzej bed
 			chillenter.attachPop(sethotPopCallback, &chillenter); //obs³uga przycisku chlodzenie
 
-			ZbabyUp.attachPush(setBabystepUpPopCallback);	// obsluga przycisku babystep up
-			ZbabyDown.attachPush(setBabystepDownPopCallback); // obsluga przycisku babystep down
-			ZbabyBack_Save.attachPop(setBabystepEEPROMPopCallback);
-			
 			FanSetBtn.attachPop(setfanandgoPopCallback); //obsluga przycisku fan set
 
 			speedsetbtn.attachPop(setspeedPopCallback); //obsluga przycisku speed set
 
 			SetFlowBtn.attachPop(setflowPopCallback); //obsluga przycisku set flow
 
+			// BABYSTEP
+			ZbabyUp.attachPush(setBabystepUpPopCallback);	// obsluga przycisku babystep up
+			ZbabyDown.attachPush(setBabystepDownPopCallback); // obsluga przycisku babystep down
+			ZbabyBack_Save.attachPop(setBabystepEEPROMPopCallback);
+			
+			// MOVE PAGE
       XYHome.attachPop(setmovePopCallback);
-			XYUp.attachPush(setmovePopCallback); // dodane
+			XYUp.attachPush(setmovePopCallback);
       XYRight.attachPush(setmovePopCallback);
       XYDown.attachPush(setmovePopCallback);
       XYLeft.attachPush(setmovePopCallback);
@@ -1792,9 +1775,15 @@
       Extrude.attachPush(setmovePopCallback);
       Retract.attachPush(setmovePopCallback);
       MotorOff.attachPop(motoroffPopCallback);
+
+			// GCODE
       Send.attachPop(setgcodePopCallback);
+
+			// YESNO
       Yes.attachPop(YesNoPopCallback, &Yes);
       No.attachPop(YesNoPopCallback, &No);
+
+			// SELECT PAGE
       LcdSend.attachPop(sendPopCallback);
 
       setpagePrinter();
@@ -1805,11 +1794,14 @@
 			buzzer.tone(100, 3100);
     }
   }
+// =======================
+// == END OF	LCD INIT	==
+// =======================
 
   bool lcd_detected() { return NextionON; }
 
+	// Wysyla aktualne temperatury do NEX
   static void degtoLCD(const uint8_t h, float temp) {
-
     NOMORE(temp, 300);//999
 
     heater_list0[h]->setValue(temp,"printer");
@@ -1821,10 +1813,12 @@
     #endif
   }
 
+	// Wysyla docelowe temperatury do NEX
   static void targetdegtoLCD(const uint8_t h, const float temp) {
     heater_list1[h]->setValue(temp);
   }
 
+	// Wysyla koordynaty do do NEX / MOVE PAGE / STATUS / BEDLEVEL
   static void coordtoLCD() {
     char* valuetemp;
     ZERO(bufferson);
@@ -1865,6 +1859,7 @@
     }
   }
 
+
 	void nex_check_sdcard_present()
 	{
 	#if ENABLED(SDSUPPORT) && PIN_EXISTS(SD_DETECT)
@@ -1883,30 +1878,12 @@
 			}
 			lcd_sd_status = sd_status;
 		}*/
-		const bool sd_status = IS_SD_INSERTED;
-		if (sd_status != lcd_sd_status && lcd_detected())  // sprawdz czy nastapila zmiana? SD DET ->
-		{ // TAK
-			if (sd_status) //if true or 1 - card in
-			{
-				card.initsd();
-				setpageSD();					// ustaw strone i przekaz flage do strony status
-				SDstatus = SD_INSERT;
-				SD.setValue(SDstatus, "printer");
-				if (lcd_sd_status != 2) LCD_MESSAGEPGM(MSG_SD_INSERTED);
-			}
-			else //if false or 0 - no card
-			{
-				card.release();
-				setpageSD();					// ustaw strone i przekaz flage do strony status
-				SDstatus = SD_NO_INSERT;
-				SD.setValue(SDstatus, "printer");
-				if (lcd_sd_status != 2) LCD_MESSAGEPGM(MSG_SD_REMOVED);
-			}
-			lcd_sd_status = sd_status;
-		}
 	#endif
 	}
 
+// =======================
+// == LCD UPDATE				==
+// =======================
   void lcd_update() {
     if (!NextionON) return;
     nexLoop(nex_listen_list); // odswieza sie z delayem 5 ms
@@ -1922,6 +1899,9 @@
 		nex_check_sdcard_present();
   }
 
+// ===========================
+// == LCD PERIODICAL UPDATE	==
+// ===========================
   void nextion_draw_update() {
 
     static uint8_t  PreviousPage = 0,
@@ -1950,7 +1930,7 @@
             #endif
           #endif
 				}
-				//fan
+				//fanek
          if (PreviousfanSpeed != fanSpeeds[0]) {
 					PrinterFanspeed.setValue(((float)(fanSpeeds[0]) / 255) * 100,"printer");
           PreviousfanSpeed = fanSpeeds[0];
@@ -2056,11 +2036,31 @@
 	#if ENABLED(SDSUPPORT)
       case 3:
 					if (PreviousPage != 3) {
-						nex_check_sdcard_present();
+						//nex_check_sdcard_present();
 						setpageSD();
 					}
 
-					nex_check_sdcard_present();
+					bool sd_status = IS_SD_INSERTED;																// sprawdz stan pinu SD_DETECT
+					if (sd_status != lcd_sd_status && lcd_detected())								// sprawdz czy nastapila zmiana? SD DET ->
+					{																																// TAK:
+						if (sd_status)																									// jeœli SD_DETECT == true:
+						{
+							card.initsd();																								// inicjalizacja karty
+							setpageSD();																									// ustaw strone i przekaz flage do strony status
+							SDstatus = SD_INSERT;
+							SD.setValue(SDstatus, "printer");
+							if (lcd_sd_status != 2) LCD_MESSAGEPGM(MSG_SD_INSERTED);			// MSG
+						}
+						else																														// jeœli SD_DETECT == false:
+						{
+							card.release();																								// odmontuj kartê SD
+							setpageSD();																									// ustaw strone i przekaz flage do strony status
+							SDstatus = SD_NO_INSERT;
+							SD.setValue(SDstatus, "printer");
+							if (lcd_sd_status != 2) LCD_MESSAGEPGM(MSG_SD_REMOVED);				// MSG
+						}
+						lcd_sd_status = sd_status;
+					} // CALY IF SPRAWDZA STAN SD_DETECT I JEGO ZMIANE: SD jest->init / SD niet->release
 
 
 					/*
