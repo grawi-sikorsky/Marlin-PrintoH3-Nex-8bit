@@ -1990,6 +1990,7 @@
 					strcat(bufferson, itostr3(progress_printing));
 					strcat(bufferson, " %");
 					percentdone.setText(bufferson, "printer");
+					progressbar.setValue(progress_printing, "printer"); // dodatkowo odswiez progressbar ale trzaea jeszcze usunac progress po zatrzymaniu
 				}
 
 				#if ENABLED(SDSUPPORT)
