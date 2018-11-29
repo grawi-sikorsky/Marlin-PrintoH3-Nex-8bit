@@ -186,25 +186,23 @@
   NexObject sdrow3      = NexObject(3,   5, "t3");
   NexObject sdrow4      = NexObject(3,   6, "t4");
   NexObject sdrow5      = NexObject(3,   7, "t5");
-  NexObject Folder0     = NexObject(3,  21, "p0");
-  NexObject Folder1     = NexObject(3,  22, "p1");
-  NexObject Folder2     = NexObject(3,  23, "p2");
-  NexObject Folder3     = NexObject(3,  24, "p3");
-  NexObject Folder4     = NexObject(3,  25, "p4");
-  NexObject Folder5     = NexObject(3,  26, "p5");
-  NexObject Folderup    = NexObject(3,  27, "p6");
+  NexObject Folder0     = NexObject(3,  19, "p0");
+  NexObject Folder1     = NexObject(3,  20, "p1");
+  NexObject Folder2     = NexObject(3,  21, "p2");
+  NexObject Folder3     = NexObject(3,  22, "p3");
+  NexObject Folder4     = NexObject(3,  23, "p4");
+  NexObject Folder5     = NexObject(3,  24, "p5");
+  NexObject Folderup    = NexObject(3,  25, "p6");
   NexObject sdfolder    = NexObject(3,	 9, "t6");
   NexObject ScrollUp    = NexObject(3,  10, "p7");
   NexObject ScrollDown  = NexObject(3,  11, "p8");
-  NexObject sd_mount    = NexObject(3,  12, "p12"); // out?
-  NexObject sd_dismount = NexObject(3,  13, "p13");	// out?
 #if ENABLED(NEXTION_SD_LONG_NAMES)
-	NexObject file0				= NexObject(3, 21, "nam1");
-	NexObject file1				= NexObject(3, 22, "nam2");
-	NexObject file2				= NexObject(3, 23, "nam3");
-	NexObject file3				= NexObject(3, 24, "nam4");
-	NexObject file4				= NexObject(3, 25, "nam5");
-	NexObject file5				= NexObject(3, 26, "nam6");
+	NexObject file0				= NexObject(3, 12, "n1");
+	NexObject file1				= NexObject(3, 13, "n2");
+	NexObject file2				= NexObject(3, 14, "n3");
+	NexObject file3				= NexObject(3, 15, "n4");
+	NexObject file4				= NexObject(3, 16, "n5");
+	NexObject file5				= NexObject(3, 17, "n6");
 #endif
 	// 
 	// == 25
@@ -438,7 +436,7 @@
 
     // Page 3 touch listen
     &sdlist, &ScrollUp, &ScrollDown, &sdrow0, &sdrow1, &sdrow2,
-    &sdrow3, &sdrow4, &sdrow5, &Folderup, &sd_mount, &sd_dismount,
+    &sdrow3, &sdrow4, &sdrow5, &Folderup,// &sd_mount, &sd_dismount,
 
     // Page 4 touch listen setup
 		#if ENABLED(NEX_STAT_PAGE)
@@ -860,34 +858,11 @@
       else
         slidermaxval  = fileCnt - 6;
 
-      uint16_t hig = 210 - slidermaxval * 10;
-      if (hig < 10) hig = 10;
-
-      sdlist.Set_cursor_height_hig(hig);
       sdlist.setMaxval(slidermaxval);
       sdlist.setValue(slidermaxval,"sdcard");
-      sendCommand("ref 0");
+      //sendCommand("ref 0"); ref 0 jest w setrowsdcard()
 
       setrowsdcard();
-    }
-
-		// Obsluga przycisku MOUNT / DISMOUNT
-		// Moze byc niepotrzebna po ustawieniu auto SD_DETECT
-    void sdmountdismountPopCallback(void *ptr) {
-      if (ptr == &sd_mount) {
-        card.initsd();
-        if (card.cardOK)
-          SDstatus = SD_INSERT;
-        else
-          SDstatus = SD_NO_INSERT;
-        SD.setValue(SDstatus, "printer");
-      }
-      else {
-        card.release();
-        SDstatus = SD_NO_INSERT;
-        SD.setValue(SDstatus, "printer");
-      }
-      setpageSD();
     }
 
 		// Obsluga slidera / suwaka
@@ -1716,8 +1691,6 @@
 			//
 			// SDSUPPORT
       #if ENABLED(SDSUPPORT)
-        sd_mount.attachPop(sdmountdismountPopCallback, &sd_mount);
-        sd_dismount.attachPop(sdmountdismountPopCallback, &sd_dismount);
         sdlist.attachPop(sdlistPopCallback);
         ScrollUp.attachPop(sdlistPopCallback);
         ScrollDown.attachPop(sdlistPopCallback);
@@ -1859,25 +1832,40 @@
     }
   }
 
-
+	// Sprawdza obecnosc karty SD i montuje/odmontowuje karte na ekranie
+	// IS_SD_INSERTED ma odwrocona logike:
+	// 1 - brak karty
+	// 0 - karta wlozona
 	void nex_check_sdcard_present()
 	{
 	#if ENABLED(SDSUPPORT) && PIN_EXISTS(SD_DETECT)
-		/*
+		// IS_SD_INSERTED ma odwrocona logike:
+		// 1 - brak karty
+		// 0 - karta wlozona
 		const bool sd_status = IS_SD_INSERTED;
-		if (sd_status != lcd_sd_status && lcd_detected()) {
-			if (sd_status) //if true or 1 - card in
+		if (sd_status != lcd_sd_status && lcd_detected())								// sprawdz czy nastapila zmiana? SD DET ->
+		{																																// TAK:
+			SERIAL_ECHOLNPGM("zmiana sd det:");
+			if (!sd_status)																									// jeœli SD_DETECT == false:
 			{
-				card.initsd();
-				if (lcd_sd_status != 2) LCD_MESSAGEPGM(MSG_SD_INSERTED);
+				SERIAL_ECHOLNPGM("sd_status:false");
+				card.initsd();																								// inicjalizacja karty
+				setpageSD();																									// ustaw strone i przekaz flage do strony status
+				SDstatus = SD_INSERT;
+				SD.setValue(SDstatus, "printer");
+				if (lcd_sd_status != 2) LCD_MESSAGEPGM(MSG_SD_INSERTED);			// MSG
 			}
-		else //if false or 0 - no card
+			else																														// jeœli SD_DETECT == true:
 			{
-				card.release();
-				if (lcd_sd_status != 2) LCD_MESSAGEPGM(MSG_SD_REMOVED);
+				SERIAL_ECHOLNPGM("sd_status:true");
+				card.release();																								// odmontuj kartê SD
+				setpageSD();																									// ustaw strone i przekaz flage do strony status
+				SDstatus = SD_NO_INSERT;
+				SD.setValue(SDstatus, "printer");
+				if (lcd_sd_status != 2) LCD_MESSAGEPGM(MSG_SD_REMOVED);				// MSG
 			}
 			lcd_sd_status = sd_status;
-		}*/
+		} // CALY IF SPRAWDZA STAN SD_DETECT I JEGO ZMIANE: SD jest->init / SD niet->release
 	#endif
 	}
 
@@ -1896,7 +1884,6 @@
 			Pprinter.show();
 			screen_timeout_millis = 0;
 		}
-		nex_check_sdcard_present();
   }
 
 // ===========================
@@ -2036,67 +2023,9 @@
 	#if ENABLED(SDSUPPORT)
       case 3:
 					if (PreviousPage != 3) {
-						//nex_check_sdcard_present();
 						setpageSD();
 					}
-
-					bool sd_status = IS_SD_INSERTED;																// sprawdz stan pinu SD_DETECT
-					if (sd_status != lcd_sd_status && lcd_detected())								// sprawdz czy nastapila zmiana? SD DET ->
-					{																																// TAK:
-						if (sd_status)																									// jeœli SD_DETECT == true:
-						{
-							card.initsd();																								// inicjalizacja karty
-							setpageSD();																									// ustaw strone i przekaz flage do strony status
-							SDstatus = SD_INSERT;
-							SD.setValue(SDstatus, "printer");
-							if (lcd_sd_status != 2) LCD_MESSAGEPGM(MSG_SD_INSERTED);			// MSG
-						}
-						else																														// jeœli SD_DETECT == false:
-						{
-							card.release();																								// odmontuj kartê SD
-							setpageSD();																									// ustaw strone i przekaz flage do strony status
-							SDstatus = SD_NO_INSERT;
-							SD.setValue(SDstatus, "printer");
-							if (lcd_sd_status != 2) LCD_MESSAGEPGM(MSG_SD_REMOVED);				// MSG
-						}
-						lcd_sd_status = sd_status;
-					} // CALY IF SPRAWDZA STAN SD_DETECT I JEGO ZMIANE: SD jest->init / SD niet->release
-
-
-					/*
-					if (!card.cardOK)					// brak karty?
-					{
-						card.initsd();					// init
-						if (card.cardOK)				// jest karta?
-						{
-							setpageSD();					// ustaw strone i przekaz flage do strony status
-							SDstatus = SD_INSERT;
-							SD.setValue(SDstatus, "printer");
-						}
-						else										// brak kraty..
-						{
-							card.release();
-							SDstatus = SD_NO_INSERT;
-							SD.setValue(SDstatus, "printer");
-						}
-					}
-					else											// jest karta?
-					{
-						if (SDstatus != SD_INSERT || SDstatus != SD_PRINTING)
-						{
-							SDstatus = SD_INSERT;		// przekaz flage do strony status
-							SD.setValue(SDstatus, "printer");
-						}
-
-						// sprawdz czy nie zostala wyjeta?
-						if (IS_SD_INSERTED)
-						{
-							SERIAL_ECHOPGM("wyjeta");
-							card.release();
-							if (lcd_sd_status != 2) LCD_MESSAGEPGM(MSG_SD_REMOVED);
-						}
-					}*/
-
+					nex_check_sdcard_present(); // sprawdz obecnosc karty sd, mount/unmount
           break;
 	#endif
       case 5:
