@@ -13233,13 +13233,28 @@ void ploss_recover(uint8_t automatic) {
 	//enqueue_and_echo_command(cmd); //2 zamiast enqueue command są dwie opcje ponizej: do sprawdzenia:
 	//thermalManager.setTargetHotend(thermalManager.target_temperature[0], 0);
 	//thermalManager.setTargetHotend(eeprom_read_word((uint16_t*)EEPROM_PANIC_TARGET_HOTEND), 0);
-	
+
+	// Aplikujemy Babystepping
+	//_babystep_z_shift = eeprom_read_dword((uint32_t*)EEPROM_PANIC_BABYSTEP_Z);
+	//thermalManager.babystep_axis(Z_AXIS, _babystep_z_shift); //dodane
+
+	SERIAL_ECHOPGM("before:");
+	SERIAL_ECHOLN(_babystep_z_shift);
+	SERIAL_ECHOLN(current_position[Z_AXIS]);
 	// Bazujemy cala drukarke
 	home_all_axes(); // zamiast: enqueue_and_echo_commands_P(PSTR("G28")); 
+
+	SERIAL_ECHOPGM("afterhome:");
+	SERIAL_ECHOLN(_babystep_z_shift);
+	SERIAL_ECHOLN(current_position[Z_AXIS]);
 
 	// Aplikujemy Babystepping
 	_babystep_z_shift = eeprom_read_dword((uint32_t*)EEPROM_PANIC_BABYSTEP_Z);
 	thermalManager.babystep_axis(Z_AXIS, _babystep_z_shift); //dodane
+
+	SERIAL_ECHOPGM("babyshift:");
+	SERIAL_ECHOLN(_babystep_z_shift);
+	SERIAL_ECHOLN(current_position[Z_AXIS]);
 
 	// Ustaw temperatury i czekaj na osiagniecie temp. mozliwe ze da sie usunac enqueue command
 	sprintf_P(cmd, PSTR("M109 S%d"), thermalManager.target_temperature[0]);
@@ -13326,14 +13341,13 @@ void restore_print_from_eeprom() {
 	}
 	filename[8] = '\0';
 	
-	strcat_P(filename, PSTR("gco")); // usunieta kropka sprzed gco
+	strcat_P(filename, PSTR(".gco")); //usunieta kropka sprzed gco //kropka powrocila, bo nagle jej sie zachcialo byc..
 	sprintf_P(cmd_buff, PSTR("M23 %s"), filename);
 	for (c = &cmd_buff[4]; *c; c++)
 		*c = tolower(*c);
 
 	//enqueue_and_echo_command(cmd_buff); //5
 	card.openFile(filename, true); // zamiast enqueue M23
-
 
 	/******************************************************/
 	/*** 2. Ekstruder tryb relative									  *****/
@@ -13389,9 +13403,9 @@ void restore_print_from_eeprom() {
 	/******************************************************/
 	current_position[E_AXIS] = eeprom_read_float((float*)EEPROM_PANIC_CURRENT_EPOS); // do uzycia zmienna z poczatku funkcji
 	stepper.synchronize();
-	//sprintf_P(cmd_buff, PSTR("G92 E"));
-	//dtostrf(current_position[E_AXIS], 6, 3, cmd_buff + strlen(cmd_buff));
-	//enqueue_and_echo_command(cmd_buff); //13 (9+4PGM)
+	sprintf_P(cmd_buff, PSTR("G92 E"));
+	dtostrf(current_position[E_AXIS], 6, 3, cmd_buff + strlen(cmd_buff));
+	enqueue_and_echo_command(cmd_buff); //13 (9+4PGM)
 
 	// Ustaw obroty wentylatora na te sprzed zaniku
 	fanSpeeds[0] = _fan;
@@ -13407,7 +13421,22 @@ void restore_print_from_eeprom() {
 
 	// Rozpocznik wydruk
 	//enqueue_and_echo_commands_P(PSTR("M24")); //15 (10+5PGM)
-	card.startFileprint();
+
+	/*
+	#if ENABLED(PARK_HEAD_ON_PAUSE)
+		enqueue_and_echo_commands_P(PSTR("M24"));
+	#else
+		card.startFileprint();
+		print_job_timer.start();
+	#endif
+	*/
+	
+	#if ENABLED(PARK_HEAD_ON_PAUSE)
+		resume_print();
+	#endif
+		card.startFileprint();
+		print_job_timer.start();
+
 
 	enqueue_and_echo_commands_P(PSTR("M117 Drukowanie.."));//7 (6+1PGM)
 }

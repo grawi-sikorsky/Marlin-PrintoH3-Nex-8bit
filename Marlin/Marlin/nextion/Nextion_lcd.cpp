@@ -72,7 +72,6 @@
   #endif
 	#if ENABLED(BABYSTEPPING)
 			int _babystep_z_shift = 0;
-			long babysteps_done = 0;
 	#endif
 
 
@@ -100,7 +99,7 @@
    */
 
   //NexObject Pstart        = NexObject(0,  0,  "start");
-  //NexObject Pmenu         = NexObject(1,  0,  "menu");
+  NexObject Pmenu         = NexObject(1,  0,  "menu");
   NexObject Pprinter      = NexObject(2,  0,  "printer");
   //NexObject Psdcard       = NexObject(3,  0,  "sdcard");
   NexObject Psetup        = NexObject(4,  0,  "setup");
@@ -561,6 +560,8 @@
 		clear_command_queue();									// czysc kolejke komend
 		stepper.quick_stop_panic();							// pomocne z panic'a, trzeba to zaserwowac aby mozna bylo ponownie wykonac jakakolwiek komende
 		thermalManager.disable_all_heaters();		// wylacz grzalki
+		percentdone.setText("0", "printer");		// zeruj procenty
+		progressbar.setValue(0, "printer");			// zeruj progress bar
 
 		#if ENABLED(PLOSS_SUPPORT)
 			_babystep_z_shift = 0;								// dodane - zeruje babystep po zatrzymaniu wydruku
@@ -1765,6 +1766,8 @@
 			buzzer.tone(100, 2300); // dodane - wejsciowy brzeczyk
 			buzzer.tone(100, 2600);
 			buzzer.tone(100, 3100);
+
+			Pmenu.show();
     }
   }
 // =======================
@@ -1990,7 +1993,7 @@
 					strcat(bufferson, itostr3(progress_printing));
 					strcat(bufferson, " %");
 					percentdone.setText(bufferson, "printer");
-					progressbar.setValue(progress_printing, "printer"); // dodatkowo odswiez progressbar ale trzaea jeszcze usunac progress po zatrzymaniu
+					progressbar.setValue(progress_printing, "printer"); // dodatkowo odswiez progressbar
 				}
 
 				#if ENABLED(SDSUPPORT)
@@ -2114,21 +2117,17 @@
 	// dodana obsluga babystep
 	#if ENABLED(BABYSTEPPING)
 		void nextion_babystep_z(bool dir) {
-
-			#if ENABLED(PLOSS_SUPPORT)
-				_babystep_z_shift += babysteps_done; // ploss
-			#endif
 				const int16_t babystep_increment = 8;
 
 				if (dir == true)
 				{
 					thermalManager.babystep_axis(Z_AXIS, babystep_increment);
-					babysteps_done += babystep_increment;
+					_babystep_z_shift += babystep_increment;
 				}
 				else if (dir == false)
 				{
 					thermalManager.babystep_axis(Z_AXIS, -babystep_increment);
-					babysteps_done -= babystep_increment;
+					_babystep_z_shift -= babystep_increment;
 				}
 		}
 	#endif
