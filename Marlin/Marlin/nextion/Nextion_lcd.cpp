@@ -1401,7 +1401,7 @@
 				#if ENABLED(PLOSS_SUPPORT)
 							Svlcs.setText_PGM(PSTR(MSG_INFO_YES), "statscreen");
 				#else
-							Svlcs.setText_PGM(MSG_INFO_NO, "statscreen");
+							Svlcs.setText_PGM(PSTR(MSG_INFO_NO), "statscreen");
 				#endif
 
 				#if ENABLED(FILAMENT_RUNOUT_SENSOR)
@@ -1414,7 +1414,7 @@
 								Sfilsensor.setText_PGM(PSTR(MSG_INFO_NO), "statscreen");
 							}
 				#else
-							Sfilsensor.setText_PGM(MSG_INFO_NO, "statscreen");
+							Sfilsensor.setText_PGM(PSTR(MSG_INFO_NO), "statscreen");
 				#endif			
 				// END OF PRINTER INFO
 

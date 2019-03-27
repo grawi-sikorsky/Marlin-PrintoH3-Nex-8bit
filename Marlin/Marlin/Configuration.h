@@ -520,7 +520,7 @@
  * Override with M203
  *                                      X, Y, Z, E0 [, E1[, E2[, E3[, E4]]]]
  */
-#define DEFAULT_MAX_FEEDRATE          { 300, 300, 50, 160 }
+#define DEFAULT_MAX_FEEDRATE          { 300, 300, 50, 80 }
 
 /**
  * Default Max Acceleration (change/s) change = mm/s
@@ -1645,8 +1645,8 @@
 
 //#define PRINTOH3_SPEAKER_SOUNDS //sd in out beeper sounds and more..
 
-#define PLOSS_SUPPORT
-#define PLOSS_MANUAL_RECOVERY
+//#define PLOSS_SUPPORT
+//#define PLOSS_MANUAL_RECOVERY
 //#define DEBUG_VLCS
 
   #define EEPROM_PANIC_POWER_FAIL		4088								// 1 - POWER LOSS INDICATOR
