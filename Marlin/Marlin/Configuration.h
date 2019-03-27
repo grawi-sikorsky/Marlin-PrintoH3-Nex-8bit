@@ -121,9 +121,36 @@
 #define MOTHERBOARD BOARD_PRINTOH3_MKS
 #endif
 
+// ============================================
+// WYBOR DRUKARKI NASTEPUJE TUTAJ W TORONTO!
+// ============================================
+
+#define PRINTO_H3
+//#define PRINTO_H3_PLUS
+//#define PRINTO_H3_TOWER
+//#define PRINTO_H3_TOWERPLUS
+
+// ============================================
+// WYBOR DRUKARKI NASTEPUJE TUTAJ W TORONTO!
+// ============================================
+
 // Optional custom name for your RepStrap or other custom machine
 // Displayed in the LCD "Ready" message
-#define CUSTOM_MACHINE_NAME "Printo H3"
+
+#ifdef PRINTO_H3
+	#define CUSTOM_MACHINE_NAME "Printo H3"
+#endif
+#ifdef PRINTO_H3_PLUS
+	#define CUSTOM_MACHINE_NAME "Printo H3+"
+#endif
+#ifdef PRINTO_H3_TOWER
+	#define CUSTOM_MACHINE_NAME "Printo H3 Tower"
+#endif
+#ifdef PRINTO_H3_TOWERPLUS
+	#define CUSTOM_MACHINE_NAME "Printo H3+ Tower"
+#endif
+
+
 
 // Define this to set a unique identifier for this printer, (Used by some programs to differentiate between machines)
 // You can use an online service to generate a random UUID. (eg http://www.uuidgenerator.net/version4)
@@ -765,7 +792,14 @@
 #define Z_MIN_POS 0
 #define X_MAX_POS 205
 #define Y_MAX_POS 210
+
+#if defined(PRINTO_H3) || defined(PRINTO_H3_PLUS)
 #define Z_MAX_POS 206
+#endif
+#if defined(PRINTO_H3_TOWER) || defined(PRINTO_H3_TOWERPLUS)
+#define Z_MAX_POS 406
+#endif
+
 
 // If enabled, axes won't move below MIN_POS in response to movement commands.
 #define MIN_SOFTWARE_ENDSTOPS
@@ -1645,8 +1679,15 @@
 
 //#define PRINTOH3_SPEAKER_SOUNDS //sd in out beeper sounds and more..
 
-//#define PLOSS_SUPPORT
-//#define PLOSS_MANUAL_RECOVERY
+#if defined(PRINTO_H3_PLUS) || defined(PRINTO_H3_TOWERPLUS)
+	#define PLOSS_SUPPORT
+	#define PLOSS_MANUAL_RECOVERY
+#endif
+#if defined(PRINTO_H3) || defined(PRINTO_H3_TOWER)
+	//#define PLOSS_SUPPORT
+	//#define PLOSS_MANUAL_RECOVERY
+#endif
+
 //#define DEBUG_VLCS
 
   #define EEPROM_PANIC_POWER_FAIL		4088								// 1 - POWER LOSS INDICATOR
@@ -1698,9 +1739,13 @@
 	#define NEXTION_BED_LEVEL
 	#define LCD_Z_STEP 0.04
 	#define PROBE_MANUALLY
+
 // FSENSOR ONOFF
 	#define FSENSOR_ONOFF
+
 //G28 after print stop
 	#define STOP_PRINT_G28
+
+
 
 #endif // CONFIGURATION_H

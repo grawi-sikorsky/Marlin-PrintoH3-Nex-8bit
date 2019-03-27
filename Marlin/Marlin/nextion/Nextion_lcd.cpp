@@ -576,10 +576,14 @@
 
 		//G28 on stop print
 		#if ENABLED(STOP_PRINT_G28)
+		stepper.synchronize();
 		home_all_axes();						// bazujemy osie
 		#endif
 		print_job_timer.stop();			// wstrzymujemy timer
-		quickstop_stepper();				// calkowicie czyscimy planner blokujac ewentualne kolejne ruchy!wazne
+
+		//quickstop_stepper();				// calkowicie czyscimy planner blokujac ewentualne kolejne ruchy!wazne
+
+		stepper.quick_stop();
 }
 
   //void menu_action_back() { Pprinter.show(); }
