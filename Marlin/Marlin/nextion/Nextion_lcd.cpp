@@ -557,8 +557,8 @@
   void lcd_sdcard_stop() {
 		move_away_flag = false;									// flaga pause_print na false, na wypadek gdyby drukarka byla w stanie pauzy @_@
 	  card.stopSDPrint();											// wstrzymaj wydruk z kartysd
-		clear_command_queue();									// czysc kolejke komend
-		stepper.quick_stop_panic();							// pomocne z panic'a, trzeba to zaserwowac aby mozna bylo ponownie wykonac jakakolwiek komende
+		//clear_command_queue();									// czysc kolejke komend
+		//stepper.quick_stop_panic();							// pomocne z panic'a, trzeba to zaserwowac aby mozna bylo ponownie wykonac jakakolwiek komende
 		thermalManager.disable_all_heaters();		// wylacz grzalki
 		percentdone.setText("0", "printer");		// zeruj procenty
 		progressbar.setValue(0, "printer");			// zeruj progress bar
@@ -573,17 +573,14 @@
 
 		wait_for_heatup = false;												// flaga false
 		lcd_setstatusPGM(PSTR(MSG_PRINT_ABORTED), -1);	// status info
+		print_job_timer.stop();			// wstrzymujemy timer
 
 		//G28 on stop print
 		#if ENABLED(STOP_PRINT_G28)
-		stepper.synchronize();
-		home_all_axes();						// bazujemy osie
+				//home_all_axes();						// bazujemy osie
 		#endif
-		print_job_timer.stop();			// wstrzymujemy timer
-
-		//quickstop_stepper();				// calkowicie czyscimy planner blokujac ewentualne kolejne ruchy!wazne
-
-		stepper.quick_stop();
+				enqueue_and_echo_commands_P(PSTR("G28"));
+				//quickstop_stepper();
 }
 
   //void menu_action_back() { Pprinter.show(); }
@@ -1632,7 +1629,7 @@
       delay(20);
     }
 
-		#if ENABLED(FSENSOR_ONOFF)
+		#if ENABLED(FSENSOR_STATE)
 			nex_filament_runout_sensor_flag = eeprom_read_byte((uint8_t*)EEPROM_NEX_FILAMENT_SENSOR);
 		#endif
 
@@ -1782,7 +1779,7 @@
 
 	// Wysyla aktualne temperatury do NEX
   static void degtoLCD(const uint8_t h, float temp) {
-    NOMORE(temp, 300);//999
+    NOMORE(temp, 350);//999
 
     heater_list0[h]->setValue(temp,"printer");
 
@@ -2033,7 +2030,7 @@
 					if (PreviousPage != 3) {
 						setpageSD();
 					}
-					nex_check_sdcard_present(); // sprawdz obecnosc karty sd, mount/unmount
+					nex_check_sdcard_present(); // sprawdz obecnosc karty sd, mount/unmount // potencjalnie tutaj jest bug z odswiezajacym sie ekranem SD 
           break;
 	#endif
       case 5:

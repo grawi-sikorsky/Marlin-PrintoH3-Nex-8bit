@@ -333,7 +333,7 @@
 // When temperature exceeds max temp, your heater will be switched off.
 // This feature exists to protect your hotend from overheating accidentally, but *NOT* from thermistor short/failure!
 // You should use MINTEMP for thermistor short/failure protection.
-#define HEATER_0_MAXTEMP 320
+#define HEATER_0_MAXTEMP 345
 #define HEATER_1_MAXTEMP 275
 #define HEATER_2_MAXTEMP 275
 #define HEATER_3_MAXTEMP 275
@@ -1741,8 +1741,8 @@
 	#define PROBE_MANUALLY
 
 // FSENSOR ONOFF
-	#define FSENSOR_ONOFF
-
+	#define FSENSOR_STATE
+	#define FSENSOR_USER_STATE
 //G28 after print stop
 	#define STOP_PRINT_G28
 

@@ -9112,6 +9112,12 @@ void quickstop_stepper() {
   SYNC_PLAN_POSITION_KINEMATIC();
 }
 
+void quickstop_stepper_nexg28stop() {
+	stepper.quick_stop();
+	set_current_from_steppers_for_axis(ALL_AXES);
+	SYNC_PLAN_POSITION_KINEMATIC();
+}
+
 #if HAS_LEVELING
   /**
    * M420: Enable/Disable Bed Leveling and/or set the Z fade height.
@@ -13175,7 +13181,7 @@ void ploss() {
 		current_position[E_AXIS] - 3, //Retrakcja
 		200, active_extruder);
 	
-	stepper.synchronize();
+	//stepper.synchronize();
 	disable_e_steppers();
 	
 	planner.buffer_line(
@@ -13395,17 +13401,21 @@ void restore_print_from_eeprom() {
 	/******************************************************/
 	/*** 4. Ekstruder tryb absolute //12 (8+4PGM)		  *****/
 	/******************************************************/
-	//enqueue_and_echo_commands_P(PSTR("M82"));
-	axis_relative_modes[E_AXIS] = false;
+	enqueue_and_echo_commands_P(PSTR("M82")); // zmiana z powrotem na gcode?
+	//axis_relative_modes[E_AXIS] = false;
 
 	/******************************************************/
 	/*** 5. Ustaw poz ekstrudera na ta sprzed zaniku  *****/
 	/******************************************************/
+
+
+	sprintf_P(cmd_buff, PSTR("G92 E"));
+	//dtostrf(current_position[E_AXIS], 6, 3, cmd_buff + strlen(cmd_buff));
+	dtostrf(eeprom_read_float((float*)EEPROM_PANIC_CURRENT_EPOS), 6, 3, cmd_buff + strlen(cmd_buff));
+	enqueue_and_echo_command(cmd_buff); //13 (9+4PGM)  // tu jest chyba babol, current_position E moze byc juz inny niz z eeprom
+
 	current_position[E_AXIS] = eeprom_read_float((float*)EEPROM_PANIC_CURRENT_EPOS); // do uzycia zmienna z poczatku funkcji
 	stepper.synchronize();
-	sprintf_P(cmd_buff, PSTR("G92 E"));
-	dtostrf(current_position[E_AXIS], 6, 3, cmd_buff + strlen(cmd_buff));
-	enqueue_and_echo_command(cmd_buff); //13 (9+4PGM)
 
 	// Ustaw obroty wentylatora na te sprzed zaniku
 	fanSpeeds[0] = _fan;

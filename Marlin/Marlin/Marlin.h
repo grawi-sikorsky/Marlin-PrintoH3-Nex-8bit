@@ -191,6 +191,7 @@ void ok_to_send();
 void kill(const char*);
 
 void quickstop_stepper();
+void quickstop_stepper_nexg28stop();
 
 #if ENABLED(FILAMENT_RUNOUT_SENSOR)
   void handle_filament_runout();
