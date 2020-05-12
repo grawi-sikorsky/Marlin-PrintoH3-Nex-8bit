@@ -65,7 +65,7 @@ volatile char Endstops::endstop_hit_bits; // use X_MIN, Y_MIN, Z_MIN and Z_MIN_P
  */
 
 void Endstops::init() {
-
+	SET_INPUT_PULLUP(FIL_RUNOUT_PIN);
   #if HAS_X_MIN
     #if ENABLED(ENDSTOPPULLUP_XMIN)
       SET_INPUT_PULLUP(X_MIN_PIN);

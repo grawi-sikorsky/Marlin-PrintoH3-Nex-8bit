@@ -138,15 +138,19 @@
 // Displayed in the LCD "Ready" message
 
 #ifdef PRINTO_H3
+	#define MACHINE_NAME "Printo H3"
 	#define CUSTOM_MACHINE_NAME "Printo H3"
 #endif
 #ifdef PRINTO_H3_PLUS
+	#define MACHINE_NAME "Printo H3+"
 	#define CUSTOM_MACHINE_NAME "Printo H3+"
 #endif
 #ifdef PRINTO_H3_TOWER
+	#define MACHINE_NAME "Printo H3 Tower"
 	#define CUSTOM_MACHINE_NAME "Printo H3 Tower"
 #endif
 #ifdef PRINTO_H3_TOWERPLUS
+	#define MACHINE_NAME "Printo H3+ Tower"
 	#define CUSTOM_MACHINE_NAME "Printo H3+ Tower"
 #endif
 

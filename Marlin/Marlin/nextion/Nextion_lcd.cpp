@@ -132,7 +132,7 @@
    * NEX komponenty strona: start
    *******************************************************************
    */
-  NexObject startimer     = NexObject(0,  1,  "tm0"); // out?
+  NexObject startimer     = NexObject(0, 3, "tm1"); // out?
 	// 
 	// == 10
 
@@ -181,6 +181,7 @@
   NexObject sdlist      = NexObject(3,   1, "h0");
   NexObject sdrow0      = NexObject(3,   2, "t0");
   NexObject sdrow1      = NexObject(3,   3, "t1");
+
   NexObject sdrow2      = NexObject(3,   4, "t2");
   NexObject sdrow3      = NexObject(3,   5, "t3");
   NexObject sdrow4      = NexObject(3,   6, "t4");
