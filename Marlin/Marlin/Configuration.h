@@ -129,6 +129,8 @@
 //#define PRINTO_H3_PLUS
 //#define PRINTO_H3_TOWER
 //#define PRINTO_H3_TOWERPLUS
+//#define PRINTO_H3_BIGGIE
+//#define PRINTO_H3_MIDI
 
 // ============================================
 // WYBOR DRUKARKI NASTEPUJE TUTAJ W TORONTO!
@@ -152,6 +154,14 @@
 #ifdef PRINTO_H3_TOWERPLUS
 	#define MACHINE_NAME "Printo H3+ Tower"
 	#define CUSTOM_MACHINE_NAME "Printo H3+ Tower"
+#endif
+#ifdef PRINTO_H3_BIGGIE
+	#define MACHINE_NAME "Printo H3 Biggie"
+	#define CUSTOM_MACHINE_NAME "Printo H3 Biggie"
+#endif
+#ifdef PRINTO_H3_MIDI
+#define MACHINE_NAME "Printo H3 Midi"
+#define CUSTOM_MACHINE_NAME "Printo H3 Midi"
 #endif
 
 
@@ -569,7 +579,7 @@
  *   M204 R    Retract Acceleration
  *   M204 T    Travel Acceleration
  */
-#define DEFAULT_ACCELERATION          1800    // X, Y, Z and E acceleration for printing moves
+#define DEFAULT_ACCELERATION          1400    // X, Y, Z and E acceleration for printing moves
 #define DEFAULT_RETRACT_ACCELERATION  3000    // E acceleration for retracts
 #define DEFAULT_TRAVEL_ACCELERATION   2400    // X, Y, Z acceleration for travel (non printing) moves
 
@@ -581,8 +591,8 @@
  * When changing speed and direction, if the difference is less than the
  * value set here, it may happen instantaneously.
  */
-#define DEFAULT_XJERK                 20.0
-#define DEFAULT_YJERK                 20.0
+#define DEFAULT_XJERK                 16.0
+#define DEFAULT_YJERK                 16.0
 #define DEFAULT_ZJERK                  0.6
 #define DEFAULT_EJERK                  5.0
 
@@ -794,14 +804,29 @@
 #define X_MIN_POS 0
 #define Y_MIN_POS 0
 #define Z_MIN_POS 0
-#define X_MAX_POS 205
-#define Y_MAX_POS 210
 
 #if defined(PRINTO_H3) || defined(PRINTO_H3_PLUS)
+#define X_MAX_POS 205
+#define Y_MAX_POS 210
 #define Z_MAX_POS 206
 #endif
+
 #if defined(PRINTO_H3_TOWER) || defined(PRINTO_H3_TOWERPLUS)
+#define X_MAX_POS 205
+#define Y_MAX_POS 210
 #define Z_MAX_POS 406
+#endif
+
+#if defined(PRINTO_H3_BIGGIE)
+#define X_MAX_POS 305
+#define Y_MAX_POS 310
+#define Z_MAX_POS 556
+#endif
+
+#if defined(PRINTO_H3_MIDI)
+#define X_MAX_POS 305
+#define Y_MAX_POS 310
+#define Z_MAX_POS 206
 #endif
 
 
@@ -1683,7 +1708,7 @@
 
 //#define PRINTOH3_SPEAKER_SOUNDS //sd in out beeper sounds and more..
 
-#if defined(PRINTO_H3_PLUS) || defined(PRINTO_H3_TOWERPLUS)
+#if defined(PRINTO_H3_PLUS) || defined(PRINTO_H3_TOWERPLUS) || defined(PRINTO_H3_BIGGIE)
 	#define PLOSS_SUPPORT
 	#define PLOSS_MANUAL_RECOVERY
 #endif
