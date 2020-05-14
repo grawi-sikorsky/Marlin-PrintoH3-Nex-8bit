@@ -48,7 +48,7 @@
   char        lcd_status_message[24]    = WELCOME_MSG;
   const float manual_feedrate_mm_m[]    = MANUAL_FEEDRATE;
 	millis_t		screen_timeout_millis;
-	char	filename_printing[27];
+	//char	filename_printing[27];
 
   extern uint8_t progress_printing; // dodane nex
 	extern bool nex_filament_runout_sensor_flag;
@@ -2016,7 +2016,8 @@
 						if(SDstatus == SD_PRINTING || SDstatus == SD_PAUSE)
 						{
 							// cos gdy drukuje
-							sdfolder.setText_PGM(PSTR(MSG_SD_PRINTING));
+							//sdfolder.setText_PGM(PSTR(MSG_SD_PRINTING));
+							setpageSD();
 						}
 						else
 						{

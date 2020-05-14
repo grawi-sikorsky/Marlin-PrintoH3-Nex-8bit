@@ -363,7 +363,7 @@
 #define DEFAULT_STEPPER_DEACTIVE_TIME 120
 #define DISABLE_INACTIVE_X true
 #define DISABLE_INACTIVE_Y true
-#define DISABLE_INACTIVE_Z true  // set to false if the nozzle will fall down on your printed part when print has finished.
+#define DISABLE_INACTIVE_Z false  // set to false if the nozzle will fall down on your printed part when print has finished.
 #define DISABLE_INACTIVE_E true
 
 #define DEFAULT_MINIMUMFEEDRATE       0.0     // minimum feedrate
@@ -729,7 +729,7 @@
 
 // The ASCII buffer for serial input
 #define MAX_CMD_SIZE 64 // trzeba uwazac, nie kojarze dluzszej komendy niz 49 znakow ale moze jakas wystepuje: M205 S0.00 T0.00 B20000 X20.00 Y20.00 Z0.60 E5.00
-#define BUFSIZE 10  // dodane: z 4 zamienione na 8, problem z panic // 16?
+#define BUFSIZE 12  // dodane: z 4 zamienione na 8, problem z panic // 16?
 
 // Transfer Buffer Size
 // To save 386 bytes of PROGMEM (and TX_BUFFER_SIZE+3 bytes of RAM) set to 0.
@@ -738,7 +738,7 @@
 // For debug-echo: 128 bytes for the optimal speed.
 // Other output doesn't need to be that speedy.
 // :[0, 2, 4, 8, 16, 32, 64, 128, 256]
-#define TX_BUFFER_SIZE 8
+#define TX_BUFFER_SIZE 128
 
 // Enable an emergency-command parser to intercept certain commands as they
 // enter the serial receive buffer, so they cannot be blocked.
