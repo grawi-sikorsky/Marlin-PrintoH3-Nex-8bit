@@ -164,10 +164,11 @@
   NexObject NStop						= NexObject(2, 18,  "p1");
   NexObject NPlay						= NexObject(2, 19,  "p2");
   NexObject LcdStatus				= NexObject(2, 20,  "t0");
-  NexObject LcdTime					= NexObject(2, 21,  "t2");
+  NexObject LcdTimeElapsed	= NexObject(2, 21,  "t_e");
+	NexObject LcdTimeRemain		= NexObject(2, 54,  "t_r");
   NexObject progressbar			= NexObject(2, 22,  "j0");
   NexObject Wavetemp				= NexObject(2, 23,  "s0");
-	NexObject percentdone			= NexObject(2, 49,	"t4");
+	NexObject percentdone			= NexObject(2, 43,	"t4");
 	//
 	// == 18
 	// == 29
@@ -178,31 +179,30 @@
    * NEX komponenty strona: SDCard
    *******************************************************************
    */
-  NexObject sdlist      = NexObject(3,   1, "h0");
+  NexObject sdscrollbar = NexObject(3,   1, "h0");
   NexObject sdrow0      = NexObject(3,   2, "t0");
   NexObject sdrow1      = NexObject(3,   3, "t1");
-
   NexObject sdrow2      = NexObject(3,   4, "t2");
   NexObject sdrow3      = NexObject(3,   5, "t3");
   NexObject sdrow4      = NexObject(3,   6, "t4");
   NexObject sdrow5      = NexObject(3,   7, "t5");
-  NexObject Folder0     = NexObject(3,  19, "p0");
-  NexObject Folder1     = NexObject(3,  20, "p1");
-  NexObject Folder2     = NexObject(3,  21, "p2");
-  NexObject Folder3     = NexObject(3,  22, "p3");
-  NexObject Folder4     = NexObject(3,  23, "p4");
-  NexObject Folder5     = NexObject(3,  24, "p5");
-  NexObject Folderup    = NexObject(3,  25, "p6");
-  NexObject sdfolder    = NexObject(3,	 9, "t6");
-  NexObject ScrollUp    = NexObject(3,  10, "p7");
-  NexObject ScrollDown  = NexObject(3,  11, "p8");
+  NexObject Folder0     = NexObject(3,  18, "p0");
+  NexObject Folder1     = NexObject(3,  19, "p1");
+  NexObject Folder2     = NexObject(3,  20, "p2");
+  NexObject Folder3     = NexObject(3,  21, "p3");
+  NexObject Folder4     = NexObject(3,  22, "p4");
+  NexObject Folder5     = NexObject(3,  23, "p5");
+  NexObject Folderup    = NexObject(3,  24, "p6");
+  NexObject sdfolder    = NexObject(3,	 8, "t6");
+  NexObject ScrollUp    = NexObject(3,  9, "p7");
+  NexObject ScrollDown  = NexObject(3,  10, "p8");
 #if ENABLED(NEXTION_SD_LONG_NAMES)
-	NexObject file0				= NexObject(3, 12, "n1");
-	NexObject file1				= NexObject(3, 13, "n2");
-	NexObject file2				= NexObject(3, 14, "n3");
-	NexObject file3				= NexObject(3, 15, "n4");
-	NexObject file4				= NexObject(3, 16, "n5");
-	NexObject file5				= NexObject(3, 17, "n6");
+	NexObject file0				= NexObject(3, 11, "n1");
+	NexObject file1				= NexObject(3, 12, "n2");
+	NexObject file2				= NexObject(3, 13, "n3");
+	NexObject file3				= NexObject(3, 14, "n4");
+	NexObject file4				= NexObject(3, 15, "n5");
+	NexObject file5				= NexObject(3, 16, "n6");
 #endif
 	// 
 	// == 25
@@ -389,8 +389,8 @@
 	NexObject Amaxz			= NexObject(23, 27, "a5");
 	NexObject Amaxe			= NexObject(23, 28, "a6");
 	NexObject Asend			= NexObject(23, 33, "p12"); 
-	NexObject Asave			= NexObject(23, 30, "p10");	// setaccelsavebtnPopCallback -> wywo³uje settings.save();
-	NexObject Aload			= NexObject(23, 31, "p11"); // setaccelloadbtnPopCallback	-> wywo³uje settings.load();
+	NexObject Asave			= NexObject(23, 30, "p10");	// setaccelsavebtnPopCallback -> wywoï¿½uje settings.save();
+	NexObject Aload			= NexObject(23, 31, "p11"); // setaccelloadbtnPopCallback	-> wywoï¿½uje settings.load();
 #endif
 	// 
 	// == 11
@@ -427,7 +427,7 @@
 	// 
 	// == 3
 	// == 132
-	// 132*13 = 1716 bajtów
+	// 132*13 = 1716 bajtï¿½w
 
   NexObject *nex_listen_list[] =
   {
@@ -435,7 +435,7 @@
     &NPlay,
 
     // Page 3 touch listen
-    &sdlist, &ScrollUp, &ScrollDown, &sdrow0, &sdrow1, &sdrow2,
+    &sdscrollbar, &ScrollUp, &ScrollDown, &sdrow0, &sdrow1, &sdrow2,
     &sdrow3, &sdrow4, &sdrow5, &Folderup,// &sd_mount, &sd_dismount,
 
     // Page 4 touch listen setup
@@ -588,7 +588,7 @@
   void menu_action_function(screenFunc_t func) { (*func)(); }
 
 	// Ustawia strone statusu przypisujac zerowe wartosci do zmiennych tj. glowica, stol, fan, stan SD
-	// wywo³ywana raz w lcdinit()
+	// wywoï¿½ywana raz w lcdinit()
   void setpagePrinter() 
 	{
     char temp[8] = { 0 };
@@ -861,8 +861,8 @@
       else
         slidermaxval  = fileCnt - 6;
 
-      sdlist.setMaxval(slidermaxval);
-      sdlist.setValue(slidermaxval,"sdcard");
+      sdscrollbar.setMaxval(slidermaxval);
+      sdscrollbar.setValue(slidermaxval,"sdcard");
       //sendCommand("ref 0"); ref 0 jest w setrowsdcard()
 
       setrowsdcard();
@@ -871,7 +871,7 @@
 		// Obsluga slidera / suwaka
     void sdlistPopCallback(void *ptr) {
       UNUSED(ptr);
-      uint16_t number = slidermaxval - sdlist.getValue();
+      uint16_t number = slidermaxval - sdscrollbar.getValue();
       setrowsdcard(number);
     }
 
@@ -1694,7 +1694,7 @@
 			//
 			// SDSUPPORT
       #if ENABLED(SDSUPPORT)
-        sdlist.attachPop(sdlistPopCallback);
+        sdscrollbar.attachPop(sdlistPopCallback);
         ScrollUp.attachPop(sdlistPopCallback);
         ScrollDown.attachPop(sdlistPopCallback);
         NPlay.attachPop(PlayPausePopCallback);
@@ -1726,7 +1726,7 @@
 			heatupenter.attachPop(sethotPopCallback, &heatupenter); // obsluga przycisku rozgrzej oba
 			hotendenter.attachPop(sethotendPopCallback, &hotendenter); //obsluga przycisku rozgrzej hotend
 			heatbedenter.attachPop(setheatbedPopCallback, &heatbedenter); //obsluga przycisku rozgrzej bed
-			chillenter.attachPop(sethotPopCallback, &chillenter); //obs³uga przycisku chlodzenie
+			chillenter.attachPop(sethotPopCallback, &chillenter); //obsï¿½uga przycisku chlodzenie
 
 			FanSetBtn.attachPop(setfanandgoPopCallback); //obsluga przycisku fan set
 
@@ -1851,7 +1851,7 @@
 		if (sd_status != lcd_sd_status && lcd_detected())								// sprawdz czy nastapila zmiana? SD DET ->
 		{																																// TAK:
 			SERIAL_ECHOLNPGM("zmiana sd det:");
-			if (!sd_status)																									// jeœli SD_DETECT == false:
+			if (!sd_status)																									// jeï¿½li SD_DETECT == false:
 			{
 				SERIAL_ECHOLNPGM("sd_status:false");
 				card.initsd();																								// inicjalizacja karty
@@ -1860,10 +1860,10 @@
 				SD.setValue(SDstatus, "printer");
 				if (lcd_sd_status != 2) LCD_MESSAGEPGM(MSG_SD_INSERTED);			// MSG
 			}
-			else																														// jeœli SD_DETECT == true:
+			else																														// jeï¿½li SD_DETECT == true:
 			{
 				SERIAL_ECHOLNPGM("sd_status:true");
-				card.release();																								// odmontuj kartê SD
+				card.release();																								// odmontuj kartï¿½ SD
 				setpageSD();																									// ustaw strone i przekaz flage do strony status
 				SDstatus = SD_NO_INSERT;
 				SD.setValue(SDstatus, "printer");
@@ -1980,7 +1980,7 @@
 					else
 						strcat(bufferson, " E");
 					strcat(bufferson, buffer1);
-					LcdTime.setText(bufferson,"printer");
+					LcdTimeElapsed.setText(bufferson,"printer");
 					PreviouspercentDone = progress_printing;
 
 					// procenty t4
