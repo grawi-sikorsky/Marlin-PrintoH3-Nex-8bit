@@ -131,7 +131,7 @@
 //#define PRINTO_H3_TOWERPLUS
 #define PRINTO_H3_BIGGIE
 //#define PRINTO_H3_MIDI
-
+//lcd 3.0
 // ============================================
 // WYBOR DRUKARKI NASTEPUJE TUTAJ W TORONTO!
 // ============================================
