@@ -387,4 +387,5 @@
 	#define BTN_ENC 35
 	#define SD_DETECT_PIN 49
 	#define KILL_PIN 25
+	#define FAN_PIN 9
 #endif
