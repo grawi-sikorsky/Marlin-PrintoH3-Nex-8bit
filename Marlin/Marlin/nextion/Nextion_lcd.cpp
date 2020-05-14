@@ -48,6 +48,7 @@
   char        lcd_status_message[24]    = WELCOME_MSG;
   const float manual_feedrate_mm_m[]    = MANUAL_FEEDRATE;
 	millis_t		screen_timeout_millis;
+	char	filename_printing[27];
 
   extern uint8_t progress_printing; // dodane nex
 	extern bool nex_filament_runout_sensor_flag;
@@ -835,7 +836,8 @@
 			#endif // jezeli VLCS wlaczone
 
       card.openAndPrintFile(filename);
-			NexFilename.setText(card.longFilename);
+
+			strncpy(filename_printing, card.longFilename, 27);
       Pprinter.show();
     }
 
@@ -1746,7 +1748,7 @@
 			buzzer.tone(100, 2600);
 			buzzer.tone(100, 3100);
 
-			Pmenu.show();
+			Pprinter.show();
     }
   }
 // =======================
@@ -1973,7 +1975,10 @@
 					strcat(bufferson, " %");
 					percentdone.setText(bufferson, "stat");
 					progressbar.setValue(progress_printing, "stat"); // dodatkowo odswiez progressbar
-					NexFilename.setText(card.longFilename);
+					if(SDstatus == SD_PRINTING || SDstatus == SD_PAUSE)
+					{
+						NexFilename.setText(filename_printing);
+					}
 				}
 
 				#if ENABLED(SDSUPPORT)
@@ -2011,7 +2016,7 @@
 						if(SDstatus == SD_PRINTING || SDstatus == SD_PAUSE)
 						{
 							// cos gdy drukuje
-							sdfolder.setText(PSTR(MSG_SD_PRINTING));
+							sdfolder.setText_PGM(PSTR(MSG_SD_PRINTING));
 						}
 						else
 						{
