@@ -318,12 +318,12 @@
 	* NEX komponenty strona: HEATUP 15
 	*******************************************************************
 	*/
-	NexObject heatupenter		= NexObject(15, 7, "m3");
-	NexObject temphe				= NexObject(15, 8, "temphe");
-	NexObject tempbe				= NexObject(15, 9, "tempbe");
-	NexObject heatbedenter	= NexObject(15, 12, "m4");
-	NexObject hotendenter		= NexObject(15, 13, "m5");
-	NexObject chillenter		= NexObject(15, 14, "m6");
+	NexObject heatupenter		= NexObject(15, 6, "m3");
+	NexObject temphe				= NexObject(15, 7, "temphe");
+	NexObject tempbe				= NexObject(15, 8, "tempbe");
+	//NexObject heatbedenter	= NexObject(15, 12, "m4");
+	//NexObject hotendenter		= NexObject(15, 13, "m5");
+	NexObject chillenter		= NexObject(15, 12, "m5");
 	// 
 	// == 6
 	// == 98
@@ -472,7 +472,7 @@
     &ProbeUp, &ProbeDown, &ProbeSend,
 
 		// Page 15 tacz listen
-		&heatupenter, &heatbedenter, &hotendenter, &chillenter,
+		&heatupenter, &chillenter,
 
 		// Page 18 tacz listen
 		&FanSetBtn,
@@ -1337,22 +1337,6 @@
 		buzzer.tone(100,2300);
   }
 
-	void sethotendPopCallback(void *ptr) {
-		UNUSED(ptr);
-		uint16_t	temp_hotend = temphe.getValue();
-		thermalManager.setTargetHotend(temp_hotend, 0);
-		Pprinter.show();
-		buzzer.tone(100, 2300);
-	}
-
-	void setheatbedPopCallback(void *ptr) {
-		UNUSED(ptr);
-		uint16_t temp_bed = tempbe.getValue();    //dodane
-		thermalManager.setTargetBed(temp_bed);
-		Pprinter.show();
-		buzzer.tone(100, 2300);
-	}
-
 	void setfanandgoPopCallback(void *ptr) {
 		uint8_t fanpagefrom, vfanbuff;
 		UNUSED(ptr);
@@ -1368,6 +1352,7 @@
 		{
 			Pheatup.show();
 		}
+		buzzer.tone(100, 2300);
 	}
 	#if ENABLED(NEX_STAT_PAGE)
 		void setsetupstatPopCallback(void *ptr)
@@ -1724,8 +1709,6 @@
 
 			// TEMPERATURA
 			heatupenter.attachPop(sethotPopCallback, &heatupenter); // obsluga przycisku rozgrzej oba
-			hotendenter.attachPop(sethotendPopCallback, &hotendenter); //obsluga przycisku rozgrzej hotend
-			heatbedenter.attachPop(setheatbedPopCallback, &heatbedenter); //obsluga przycisku rozgrzej bed
 			chillenter.attachPop(sethotPopCallback, &chillenter); //obs�uga przycisku chlodzenie
 
 			FanSetBtn.attachPop(setfanandgoPopCallback); //obsluga przycisku fan set
@@ -2024,8 +2007,9 @@
             restart.job_phase = RESTART_MAYBE; // Waiting for a response
             lcd_yesno(3, MSG_RESTART_PRINT, "", MSG_USERWAIT);
           }
-        #endif 
+				#endif
         break;
+				
 	#if ENABLED(SDSUPPORT)
       case 3:
 					if (PreviousPage != 3) {
