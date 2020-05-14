@@ -100,7 +100,7 @@
 
   //NexObject Pstart        = NexObject(0,  0,  "start");
   NexObject Pmenu         = NexObject(1,  0,  "menu");
-  NexObject Pprinter      = NexObject(2,  0,  "printer");
+  NexObject Pprinter      = NexObject(2,  0,  "stat");
   //NexObject Psdcard       = NexObject(3,  0,  "sdcard");
   NexObject Psetup        = NexObject(4,  0,  "setup");
 	//NexObject Pmove         = NexObject(5,  0,  "move");// lipa
@@ -123,7 +123,7 @@
 	//NexObject Pservice			= NexObject(22, 0, "servicepage");
 	//NexObject Paccel				= NexObject(23, 0, "accelpage");
 	//NexObject Pjerk					= NexObject(25, 0, "jerkpage");
-	NexObject Pkill					= NexObject(30, 0, "killpage");
+	NexObject Pkill					= NexObject(30, 0, "kill");
 	// 
 	// == 9 
 
@@ -169,6 +169,7 @@
   NexObject progressbar			= NexObject(2, 22,  "j0");
   NexObject Wavetemp				= NexObject(2, 23,  "s0");
 	NexObject percentdone			= NexObject(2, 43,	"t4");
+	NexObject NexFilename			= NexObject(2, 55,	"t2");
 	//
 	// == 18
 	// == 29
@@ -335,7 +336,6 @@
 	*/
 	NexObject FanSpeedNex			= NexObject(18, 7, "vfan");
 	NexObject FanSetBtn				= NexObject(18, 9, "m1");
-	NexObject FanPageIDfrom		= NexObject(18, 10, "fanpagefrom");
 	// 
 	// == 3
 	// == 101
@@ -561,8 +561,8 @@
 		//clear_command_queue();									// czysc kolejke komend
 		//stepper.quick_stop_panic();							// pomocne z panic'a, trzeba to zaserwowac aby mozna bylo ponownie wykonac jakakolwiek komende
 		thermalManager.disable_all_heaters();		// wylacz grzalki
-		percentdone.setText("0", "printer");		// zeruj procenty
-		progressbar.setValue(0, "printer");			// zeruj progress bar
+		percentdone.setText("0", "stat");		// zeruj procenty
+		progressbar.setValue(0, "stat");			// zeruj progress bar
 
 		#if ENABLED(PLOSS_SUPPORT)
 			_babystep_z_shift = 0;								// dodane - zeruje babystep po zatrzymaniu wydruku
@@ -594,20 +594,20 @@
     char temp[8] = { 0 };
 
     #if HOTENDS > 0
-      Hotend00.setValue(0, "printer");
-			Hotend01.setValue(0, "printer");
+      Hotend00.setValue(0, "stat");
+			Hotend01.setValue(0, "stat");
     #endif
 
     #if HAS_TEMP_BED
-      Bed0.setValue(0,"printer");
-			Bed1.setValue(0,"printer");
+      Bed0.setValue(0,"stat");
+			Bed1.setValue(0,"stat");
     #endif
 
 		#if FAN_COUNT > 0
-			PrinterFanspeed.setValue(0, "printer");
+			PrinterFanspeed.setValue(0, "stat");
 		#endif
 
-		VSpeed.setValue(100, "printer");
+		VSpeed.setValue(100, "stat");
 
     #if ENABLED(SDSUPPORT)
       if (!card.cardOK) card.initsd();
@@ -618,12 +618,12 @@
       }
       else SDstatus = SD_NO_INSERT;
 
-      SD.setValue(SDstatus, "printer");
+      SD.setValue(SDstatus, "stat");
     #endif
 
     #define LANGUAGE_STRING(M) STRINGIFY(M)
     #define NEXTION_LANGUAGE LANGUAGE_STRING(LCD_LANGUAGE)
-    Language.setText(NEXTION_LANGUAGE, "printer");
+    Language.setText(NEXTION_LANGUAGE, "stat");
   }
 
   void start_menu(const bool encoder=false, const bool push=false) 
@@ -835,6 +835,7 @@
 			#endif // jezeli VLCS wlaczone
 
       card.openAndPrintFile(filename);
+			NexFilename.setText(card.longFilename);
       Pprinter.show();
     }
 
@@ -1342,16 +1343,9 @@
 		UNUSED(ptr);
 		ZERO(bufferson);
 		vfanbuff = FanSpeedNex.getValue("fanspeedpage");
-		fanpagefrom = FanPageIDfrom.getValue("fanspeedpage");
 		fanSpeeds[0] = vfanbuff;
-		if (fanpagefrom == 0) // wejscie z status
-		{
-			Pprinter.show();
-		}
-		else if (fanpagefrom == 1) // wejscie z heatup
-		{
-			Pheatup.show();
-		}
+
+		Pprinter.show();
 		buzzer.tone(100, 2300);
 	}
 	#if ENABLED(NEX_STAT_PAGE)
@@ -1765,7 +1759,7 @@
   static void degtoLCD(const uint8_t h, float temp) {
     NOMORE(temp, 350);//999
 
-    heater_list0[h]->setValue(temp,"printer");
+    heater_list0[h]->setValue(temp,"stat");
 
     #if ENABLED(NEXTION_GFX)
       if (!(print_job_counter.isRunning() || IS_SD_PRINTING) && !Wavetemp.getObjVis() && show_Wave) {
@@ -1784,9 +1778,9 @@
     char* valuetemp;
     ZERO(bufferson);
     if (PageID == 2) {
-      LcdX.setText(ftostr41sign(LOGICAL_X_POSITION(current_position[X_AXIS])),"printer");
-      LcdY.setText(ftostr41sign(LOGICAL_Y_POSITION(current_position[Y_AXIS])),"printer");
-      LcdZ.setText(ftostr41sign(FIXFLOAT(LOGICAL_Z_POSITION(current_position[Z_AXIS]))),"printer");
+      LcdX.setText(ftostr41sign(LOGICAL_X_POSITION(current_position[X_AXIS])),"stat");
+      LcdY.setText(ftostr41sign(LOGICAL_Y_POSITION(current_position[Y_AXIS])),"stat");
+      LcdZ.setText(ftostr41sign(FIXFLOAT(LOGICAL_Z_POSITION(current_position[Z_AXIS]))),"stat");
     }
     else if (PageID == 5) {
       if (axis_homed[X_AXIS]) {
@@ -1840,7 +1834,7 @@
 				card.initsd();																								// inicjalizacja karty
 				setpageSD();																									// ustaw strone i przekaz flage do strony status
 				SDstatus = SD_INSERT;
-				SD.setValue(SDstatus, "printer");
+				SD.setValue(SDstatus, "stat");
 				if (lcd_sd_status != 2) LCD_MESSAGEPGM(MSG_SD_INSERTED);			// MSG
 			}
 			else																														// je�li SD_DETECT == true:
@@ -1849,7 +1843,7 @@
 				card.release();																								// odmontuj kart� SD
 				setpageSD();																									// ustaw strone i przekaz flage do strony status
 				SDstatus = SD_NO_INSERT;
-				SD.setValue(SDstatus, "printer");
+				SD.setValue(SDstatus, "stat");
 				if (lcd_sd_status != 2) LCD_MESSAGEPGM(MSG_SD_REMOVED);				// MSG
 			}
 			lcd_sd_status = sd_status;
@@ -1907,12 +1901,12 @@
 				}
 				//fanek
          if (PreviousfanSpeed != fanSpeeds[0]) {
-					PrinterFanspeed.setValue(((float)(fanSpeeds[0]) / 255) * 100,"printer");
+					PrinterFanspeed.setValue(((float)(fanSpeeds[0]) / 255) * 100,"stat");
           PreviousfanSpeed = fanSpeeds[0];
          }
 				//feedrate
         if (Previousfeedrate != feedrate_percentage) {
-          VSpeed.setValue(feedrate_percentage,"printer");
+          VSpeed.setValue(feedrate_percentage,"stat");
           Previousfeedrate = feedrate_percentage;
         }
 				//flow
@@ -1947,7 +1941,7 @@
 				
 				if (PreviouspercentDone != progress_printing) {
 					// Progress bar solid part
-					progressbar.setValue(progress_printing,"printer");
+					progressbar.setValue(progress_printing,"stat");
 					// Estimate End Time
 					ZERO(bufferson);
 					char buffer1[10];
@@ -1963,42 +1957,43 @@
 					else
 						strcat(bufferson, " E");
 					strcat(bufferson, buffer1);
-					LcdTimeElapsed.setText(bufferson,"printer");
+					LcdTimeElapsed.setText(bufferson,"stat");
 					PreviouspercentDone = progress_printing;
 
 					// procenty t4
 					ZERO(bufferson);
 					strcat(bufferson, itostr3(progress_printing));
 					strcat(bufferson, " %");
-					percentdone.setText(bufferson, "printer");
+					percentdone.setText(bufferson, "stat");
 				}
 				else
 				{
 					ZERO(bufferson);
 					strcat(bufferson, itostr3(progress_printing));
 					strcat(bufferson, " %");
-					percentdone.setText(bufferson, "printer");
-					progressbar.setValue(progress_printing, "printer"); // dodatkowo odswiez progressbar
+					percentdone.setText(bufferson, "stat");
+					progressbar.setValue(progress_printing, "stat"); // dodatkowo odswiez progressbar
+					NexFilename.setText(card.longFilename);
 				}
 
 				#if ENABLED(SDSUPPORT)
 				if (card.isFileOpen()) {
 					if (IS_SD_PRINTING && SDstatus != SD_PRINTING) {
 						SDstatus = SD_PRINTING;
-						SD.setValue(SDstatus,"printer");
+						SD.setValue(SDstatus,"stat");
 					}
 					else if (!IS_SD_PRINTING && SDstatus != SD_PAUSE) {
 						SDstatus = SD_PAUSE;
-						SD.setValue(SDstatus,"printer");
+						SD.setValue(SDstatus,"stat");
 					}
 				}
 				else if (card.cardOK && SDstatus != SD_INSERT) {
 					SDstatus = SD_INSERT;
-					SD.setValue(SDstatus,"printer");
+					SD.setValue(SDstatus,"stat");
 				}
 				else if (card.cardOK && SDstatus != SD_NO_INSERT) {
 					SDstatus = SD_NO_INSERT;
-					SD.setValue(SDstatus,"printer");
+					SD.setValue(SDstatus,"stat");
 				}
 				#endif // HAS_SD_SUPPORT
 
@@ -2012,8 +2007,16 @@
 				
 	#if ENABLED(SDSUPPORT)
       case 3:
-					if (PreviousPage != 3) {
-						setpageSD();
+					if (PreviousPage != 3){
+						if(SDstatus == SD_PRINTING || SDstatus == SD_PAUSE)
+						{
+							// cos gdy drukuje
+							sdfolder.setText(PSTR(MSG_SD_PRINTING));
+						}
+						else
+						{
+							setpageSD();
+						}
 					}
 					nex_check_sdcard_present(); // sprawdz obecnosc karty sd, mount/unmount // potencjalnie tutaj jest bug z odswiezajacym sie ekranem SD 
           break;
@@ -2022,7 +2025,7 @@
         coordtoLCD();
         break;
       case 6:
-        //Previousfeedrate = feedrate_percentage = (int)VSpeed.getValue("printer");
+        //Previousfeedrate = feedrate_percentage = (int)VSpeed.getValue("stat");
         break;
 			case 12:
 				// odswiez temp glowicy na ekranie filament [przyciski]
@@ -2097,7 +2100,7 @@
 	void lcd_nextion_kill_msg(const char* lcd_msg)
 	{
 		Pkill.show();
-		Kmsg.setText_PGM(lcd_msg,"killpage");
+		Kmsg.setText_PGM(lcd_msg,"kill");
 	}
 
 	// dodana obsluga babystep

@@ -900,25 +900,25 @@
 
 //dodane Printo H3
 #define MSG_PID_AUTOTUNE_START				_UxGT("PID rozpoczeto")
-#define MSG_PID_AUTOTUNE_DONE				_UxGT("PID ukonczono")
-#define MSG_PID_AUTOTUNE_FAIL				_UxGT("PID blad kalibracji")
+#define MSG_PID_AUTOTUNE_DONE				  _UxGT("PID ukonczono")
+#define MSG_PID_AUTOTUNE_FAIL				  _UxGT("PID blad kalibracji")
 #define MSG_PID_AUTOTUNE_OVERSHOT			_UxGT("PID blad: overshot")
 
-#define MSG_PRINT_RECOVERING				_UxGT("Przywracanie wydruku")
-#define MSG_INFO_VLCS_FAILED_PRINTS			_UxGT("Utraty zasilania")
-#define MSG_INFO_PRINTO3D					_UxGT("Wsparcie")
+#define MSG_PRINT_RECOVERING				  _UxGT("Przywracanie wydruku")
+#define MSG_INFO_VLCS_FAILED_PRINTS		_UxGT("Utraty zasilania")
+#define MSG_INFO_PRINTO3D					    _UxGT("Wsparcie")
 
 #define MSG_FILAMENT_CHANGE_NOZZLE			_UxGT(" Dysza:")
 #define	MSG_FILAMENT_CHANGE_MINTEMP			_UxGT("Min. Temp. to: ")
-#define	MSG_BACK							_UxGT("Wstecz")
+#define	MSG_BACK							          _UxGT("Wstecz")
 #define	MSG_FILAMENT_CHANGE_HEATING_1		_UxGT("Rozgrzewanie dyszy")
 #define	MSG_FILAMENT_CHANGE_HEATING_2		_UxGT("Prosze czekac")
 #define	MSG_FILAMENT_CHANGE_HEAT_1			_UxGT("Wcisnij przycisk")
 #define	MSG_FILAMENT_CHANGE_HEAT_2			_UxGT("aby rozgrzac dysze")
 
 // printo3d info menu
-#define	MSG_INFO_P3D_1						_UxGT("W razie problemów")
-#define	MSG_INFO_P3D_2						_UxGT("skontaktuj siê")
+#define	MSG_INFO_P3D_1						_UxGT("W razie problemï¿½w")
+#define	MSG_INFO_P3D_2						_UxGT("skontaktuj siï¿½")
 #define	MSG_INFO_P3D_3						_UxGT("z nami: ")
 #define	MSG_INFO_P3D_MAIL					_UxGT("support@printo3d.pl")
 #define	MSG_INFO_P3D_PHONE					_UxGT("+48 792 880 682")
@@ -936,7 +936,7 @@
 #define MSG_PREHEAT_3_SETTINGS				_UxGT("Ustaw. rozg. PET-G")
 #define MSG_ADVANCED						_UxGT("Zaawansowane")
 #define MSG_MOVING                          _UxGT("Zaczekaj...")
-
+#define MSG_SD_PRINTING                     _UxGT("Trwa wydruk - karta nieaktywna")
 
 
 #endif // LANGUAGE_EN_H
