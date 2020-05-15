@@ -926,6 +926,7 @@
 #define	MSG_INFO_FILAMENT_SENSOR_SUPPORT	_UxGT("Filament Sensor")
 #define	MSG_INFO_YES											_UxGT("TAK")
 #define	MSG_INFO_NO												_UxGT("NIE")
+
 //#define									_UxGT("O nas")
 //#define									_UxGT("O nas")
 
