@@ -371,17 +371,17 @@
 	*******************************************************************
 	*/
 #if ENABLED(NEX_ACC_PAGE)
-	NexObject accelin		= NexObject(5, 4, "m5");	// setaccelpagePopCallback -> przekazuje zmienne float do strony z akceleracja
-	NexObject Awork			= NexObject(23, 22, "a0");
-	NexObject Aretr			= NexObject(23, 23, "a1");
-	NexObject Atravel		= NexObject(23, 24, "a2");
-	NexObject Amaxx			= NexObject(23, 25, "a3");
-	NexObject Amaxy			= NexObject(23, 26, "a4");
-	NexObject Amaxz			= NexObject(23, 27, "a5");
-	NexObject Amaxe			= NexObject(23, 28, "a6");
-	NexObject Asend			= NexObject(23, 33, "p12"); 
-	NexObject Asave			= NexObject(23, 30, "p10");	// setaccelsavebtnPopCallback -> wywo�uje settings.save();
-	NexObject Aload			= NexObject(23, 31, "p11"); // setaccelloadbtnPopCallback	-> wywo�uje settings.load();
+	NexObject accelin		= NexObject(5, 3, "m5");	// setaccelpagePopCallback -> przekazuje zmienne float do strony z akceleracja
+	NexObject Awork			= NexObject(18, 22, "a0");
+	NexObject Aretr			= NexObject(18, 23, "a1");
+	NexObject Atravel		= NexObject(18, 24, "a2");
+	NexObject Amaxx			= NexObject(18, 25, "a3");
+	NexObject Amaxy			= NexObject(18, 26, "a4");
+	NexObject Amaxz			= NexObject(18, 27, "a5");
+	NexObject Amaxe			= NexObject(18, 28, "a6");
+	NexObject Asend			= NexObject(18, 33, "p12"); 
+	NexObject Asave			= NexObject(18, 30, "p10");	// setaccelsavebtnPopCallback -> wywo�uje settings.save();
+	NexObject Aload			= NexObject(18, 31, "p11"); // setaccelloadbtnPopCallback	-> wywo�uje settings.load();
 #endif
 	// 
 	// == 11
