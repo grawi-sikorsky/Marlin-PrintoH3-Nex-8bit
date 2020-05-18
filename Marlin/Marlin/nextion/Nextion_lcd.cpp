@@ -132,7 +132,7 @@
 	//NexObject Ptsettings		= NexObject(20, 0,  "tempsettings");
 	//NexObject Pinfobedlevel = NexObject(21, 0, "infobedlevel");
 	//NexObject Pservice			= NexObject(22, 0, "servicepage");
-	//NexObject Paccel				= NexObject(23, 0, "accelpage");
+	NexObject Paccel				= NexObject(18, 0, "accelpage");
 	//NexObject Pjerk					= NexObject(25, 0, "jerkpage");
 	NexObject Pkill					= NexObject(30, 0, "kill");
 	// 
@@ -1397,6 +1397,7 @@
 	void setaccelpagePopCallback(void *ptr)
 	{
 			UNUSED(ptr);
+			buzzer.tone(100,2300);
 			Awork.setValue(planner.acceleration, "accelpage"); //va0
 			Aretr.setValue(planner.retract_acceleration, "accelpage");	//va1
 			Atravel.setValue(planner.travel_acceleration, "accelpage");
