@@ -1465,6 +1465,7 @@
 
 		feedrate_percentage = vspeedbuff;
 		Pprinter.show();
+		buzzer.tone(100, 2300);
 	}
 	void setflowPopCallback(void *ptr)
 	{
@@ -1484,6 +1485,7 @@
 		{
 			Poptions.show();
 		}
+		buzzer.tone(100, 2300);
 	}
 
   void setgcodePopCallback(void *ptr) {
@@ -1500,12 +1502,12 @@
 		else if (strcmp(bufferson, "M78 S78") == 0)
 		{
 			enqueue_and_echo_command(bufferson);
-			buzzer.tone(100, 2300);
 		}
 		else
 		{ 
 			enqueue_and_echo_command(bufferson);
 		}
+		buzzer.tone(100, 2300);
   }
 
   void setmovePopCallback(void *ptr) {
