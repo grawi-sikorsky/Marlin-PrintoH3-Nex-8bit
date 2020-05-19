@@ -934,6 +934,7 @@
 					sdrow5.getText(bufferson, sizeof(bufferson));
 			#endif
       menu_action_sddirectory(bufferson);
+			buzzer.tone(100, 2300);
     }
 
 		// NEXTION: Obsluga klikniecia przycisku Folder Up
@@ -1006,6 +1007,7 @@
 			#endif
 			Pselect.show();
 			enqueue_and_echo_commands_P(PSTR("M600 B0"));
+			buzzer.tone(100, 2300);
 		}
 
     static void lcd_advanced_pause_resume_print() {
@@ -1215,6 +1217,7 @@
 			case PLOSS_LCD_MENU_NO_RESUME:
 				ploss_recovery_menu_no_resume();
 				enqueue_and_echo_commands_P(PSTR("G28"));
+				buzzer.tone(100, 2300);
 				break;
 			case PLOSS_LCD_MENU_LAST_CONFIRM:
 				lcd_ploss_menu_response = PLOSS_LCD_RESPONSE_WAIT_FOR_LAST_CONFIRMATION;
@@ -1410,6 +1413,7 @@
 	}
 	void getaccelPagePopCallback(void *ptr)
 	{
+		buzzer.tone(100,2300);
 		planner.acceleration = Awork.getValue("accelpage");
 		planner.retract_acceleration = Aretr.getValue("accelpage");
 		planner.travel_acceleration = Atravel.getValue("accelpage");
@@ -2107,11 +2111,12 @@
 
 	void lcd_nextion_kill_msg(const char* lcd_msg)
 	{
-		Pkill.show();
-		Kmsg.setText_PGM(lcd_msg,"kill");
 		buzzer.tone(120, 700); // dodane beeper too cold
 		buzzer.tone(120, 000);
 		buzzer.tone(120, 700);
+		Pkill.show();
+		Kmsg.setText_PGM(lcd_msg,"kill");
+
 	}
 
 	// dodana obsluga babystep
