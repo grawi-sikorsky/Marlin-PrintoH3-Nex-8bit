@@ -941,6 +941,7 @@
       UNUSED(ptr);
       card.updir();
       setpageSD();
+			buzzer.tone(100, 2300);
     }
 
 		// NEXTION: Obsluga klikniecia linijek przycisku PAUSE / PLAY
@@ -964,6 +965,7 @@
 					#endif
 					lcd_setstatusPGM(PSTR(MSG_RESUME_PRINT));
         }
+				buzzer.tone(100, 2300);
       }
     }
   #endif 
@@ -1438,11 +1440,13 @@
 	{
 		settings.save();
 		SERIAL_ECHOPGM("zapisane");
+		buzzer.tone(100, 2300);
 	}
 	void setaccelloadbtnPopCallback(void *ptr)
 	{
 		settings.load();
 		SERIAL_ECHOPGM("zaladowane");
+		buzzer.tone(100, 2300);
 	}
 
 	void setBabystepUpPopCallback(void *ptr)
@@ -1570,9 +1574,11 @@
         default: break;
       }
     }
-    else {
+    else if(ptr == &No){
       switch(Vyes.getValue()) {
         #if ENABLED(SDSUPPORT)
+					case 1:// Stop Print
+						Pprinter.show(); break;
           case 2:
             Psetup.show(); break;
         #endif
@@ -1591,6 +1597,7 @@
           Pprinter.show(); break;
       }
     }
+		buzzer.tone(100, 2300);
   }
 
 // =======================
@@ -2102,6 +2109,9 @@
 	{
 		Pkill.show();
 		Kmsg.setText_PGM(lcd_msg,"kill");
+		buzzer.tone(120, 700); // dodane beeper too cold
+		buzzer.tone(120, 000);
+		buzzer.tone(120, 700);
 	}
 
 	// dodana obsluga babystep
