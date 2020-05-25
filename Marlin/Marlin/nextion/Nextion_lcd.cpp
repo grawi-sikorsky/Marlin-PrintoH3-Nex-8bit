@@ -143,12 +143,12 @@
    * NEX komponenty strona: start
    *******************************************************************
    */
-  NexObject NexVersion     = NexObject(0, 7,  "t1"); // out? nieuzywane
+  //NexObject NexVersion     = NexObject(0, 7,  "t1"); // out? nieuzywane
 
 
   /**
    *******************************************************************
-   * NEX komponenty strona: status/printer
+   * NEX komponenty strona: status/printer 1
    *******************************************************************
    */
   NexObject LcdX						= NexObject(1,  4,  "vx");
@@ -178,7 +178,7 @@
 
   /**
    *******************************************************************
-   * NEX komponenty strona: SDCard
+   * NEX komponenty strona: SDCard 2
    *******************************************************************
    */
   NexObject sdscrollbar = NexObject(2,   1, "h0");
@@ -210,10 +210,25 @@
 	// == 25
 	// == 54
 
+	/**
+	*******************************************************************
+	* NEX komponenty strona: HEATUP 3
+	*******************************************************************
+	*/
+	NexObject heatupenter		= NexObject(3, 6, "m3");
+	NexObject temphe				= NexObject(3, 7, "temphe");
+	NexObject tempbe				= NexObject(3, 8, "tempbe");
+	//NexObject heatbedenter	= NexObject(3, 12, "m4");
+	//NexObject hotendenter		= NexObject(3, 13, "m5");
+	NexObject chillenter		= NexObject(3, 12, "m5");
+	// 
+	// == 6
+	// == 98
+
 
   /**
    *******************************************************************
-   * NEX komponenty strona: MOVE
+   * NEX komponenty strona: MOVE 6
    *******************************************************************
    */
   NexObject XYHome      = NexObject(6,   2, "p4");
@@ -235,45 +250,61 @@
 
 	/**
 	*******************************************************************
-	* NEX komponenty strona: SPEED
+	* NEX komponenty strona: SPEED 7
 	*******************************************************************
 	*/
 	NexObject speedsetbtn	= NexObject(7, 9, "m0");
 	NexObject SpeedNex		= NexObject(7, 7, "vspeed");
 	// 
 	// == 2
-	// == 69
+
+	/**
+	*******************************************************************
+	* NEX komponenty strona:: FAN SPEED 8
+	*******************************************************************
+	*/
+	NexObject FanSpeedNex			= NexObject(8, 7, "vfan");
+	NexObject FanSetBtn				= NexObject(8, 9, "m1");
+	// 
+	// == 3
 
   /**
    *******************************************************************
-   * NEX komponenty strona: GCode
+   * NEX komponenty strona: GCode 10
    *******************************************************************
    */
   NexObject Tgcode      = NexObject(10,   1, "tgcode");
   NexObject Send        = NexObject(10,  25, "bsend");
 	// 
 	// == 2
-	// == 71
 
   /**
    *******************************************************************
-   * NEX komponenty strona: Yesno
+   * NEX komponenty strona: Probe BEDLEVEL 12
    *******************************************************************
    */
-  NexObject Vyes        = NexObject(15, 2,  "yn0");
-  NexObject Riga0       = NexObject(15, 4,  "tl0");
-  NexObject Riga1       = NexObject(15, 5,  "tl1");
-  NexObject Riga2       = NexObject(15, 6,  "tl2");
-  NexObject Riga3       = NexObject(15, 7,  "tl3");
-  NexObject Yes         = NexObject(15, 8,  "p1");
-  NexObject No          = NexObject(15, 9,  "p2");
+  NexObject ProbeUp     = NexObject(12, 1,  "p0");
+  NexObject ProbeSend   = NexObject(12, 2,  "p1");
+  NexObject ProbeDown   = NexObject(12, 3,  "p2");
+  //NexObject ProbeMsg    = NexObject(14, 4,  "t0");
+  NexObject ProbeZ      = NexObject(12, 5,  "t1");
 	// 
-	// == 7
-	// == 78
+	// == 4
+
+	/**
+	*******************************************************************
+	* NEX komponenty strona:: BABYSTEP SCREEN 13
+	*******************************************************************
+	*/
+	NexObject ZbabyUp			= NexObject(13, 1, "m0");
+	NexObject ZbabyDown		= NexObject(13, 2, "m1");
+	NexObject ZbabyBack_Save = NexObject(13, 3, "m2");
+	// 
+	// == 3
 
   /**
    *******************************************************************
-   * NEX komponenty strona:: Select
+   * NEX komponenty strona:: Select 14
    *******************************************************************
    */
   NexObject LcdRiga1    = NexObject(14,  2, "t0");
@@ -288,52 +319,26 @@
   NexObject LcdPos      = NexObject(14, 8, "pos");
 	// 
 	// == 10
-	// == 88
 
   /**
    *******************************************************************
-   * NEX komponenty strona: Probe BEDLEVEL
+   * NEX komponenty strona: Yesno 15
    *******************************************************************
    */
-  NexObject ProbeUp     = NexObject(12, 1,  "p0");
-  NexObject ProbeSend   = NexObject(12, 2,  "p1");
-  NexObject ProbeDown   = NexObject(12, 3,  "p2");
-  //NexObject ProbeMsg    = NexObject(14, 4,  "t0");
-  NexObject ProbeZ      = NexObject(12, 5,  "t1");
+  NexObject Vyes        = NexObject(15, 2,  "yn0");
+  NexObject Riga0       = NexObject(15, 4,  "tl0");
+  NexObject Riga1       = NexObject(15, 5,  "tl1");
+  NexObject Riga2       = NexObject(15, 6,  "tl2");
+  NexObject Riga3       = NexObject(15, 7,  "tl3");
+  NexObject Yes         = NexObject(15, 8,  "p1");
+  NexObject No          = NexObject(15, 9,  "p2");
 	// 
-	// == 4
-	// == 92
+	// == 7
 
 
 	/**
 	*******************************************************************
-	* NEX komponenty strona: HEATUP 15
-	*******************************************************************
-	*/
-	NexObject heatupenter		= NexObject(3, 6, "m3");
-	NexObject temphe				= NexObject(3, 7, "temphe");
-	NexObject tempbe				= NexObject(3, 8, "tempbe");
-	//NexObject heatbedenter	= NexObject(3, 12, "m4");
-	//NexObject hotendenter		= NexObject(3, 13, "m5");
-	NexObject chillenter		= NexObject(3, 12, "m5");
-	// 
-	// == 6
-	// == 98
-
-	/**
-	*******************************************************************
-	* NEX komponenty strona:: FAN SPEED 18
-	*******************************************************************
-	*/
-	NexObject FanSpeedNex			= NexObject(8, 7, "vfan");
-	NexObject FanSetBtn				= NexObject(8, 9, "m1");
-	// 
-	// == 3
-	// == 101
-
-	/**
-	*******************************************************************
-	* NEX komponenty strona:: STAT SCREEN 19
+	* NEX komponenty strona:: STAT SCREEN 16
 	*******************************************************************
 	*/
 	#if ENABLED(NEX_STAT_PAGE)
@@ -353,21 +358,19 @@
 	#endif
 	// 
 	// == 12
-	// == 113
 
 	/**
 	*******************************************************************
-	* NEX komponenty strona:: SERVICE PAGE 22
+	* NEX komponenty strona:: SERVICE PAGE 17
 	*******************************************************************
 	*/
 	//NexObject SvJerk				= NexObject(17, 4, "m2"); //wejscie w jerk -> przekazuje zmienne float na nuber nextion (brak dziesietnych)
 	NexObject SvSteps				= NexObject(17, 5, "m3");	//wejscie w steps -> przekazuje zmienne float na nuber nextion (brak dziesietnych)
 	// 
-	// == 114
 
 	/**
 	*******************************************************************
-	* NEX komponenty strona:: ACCEL SCREEN 23
+	* NEX komponenty strona:: ACCEL SCREEN 18
 	*******************************************************************
 	*/
 #if ENABLED(NEX_ACC_PAGE)
@@ -385,19 +388,17 @@
 #endif
 	// 
 	// == 11
-	// == 125
 
 	/**
 	*******************************************************************
-	* NEX komponenty strona:: BABYSTEP SCREEN 28
+	* NEX komponenty strona:: FLOWPAGE 21
 	*******************************************************************
 	*/
-	NexObject ZbabyUp			= NexObject(13, 1, "m0");
-	NexObject ZbabyDown		= NexObject(13, 2, "m1");
-	NexObject ZbabyBack_Save = NexObject(13, 3, "m2");
+	NexObject vFlowNex					= NexObject(21, 7, "vflow");
+	NexObject SetFlowBtn				= NexObject(21, 9, "m0");
+	NexObject FlowPageFrom			= NexObject(21, 10, "flowfrom");
 	// 
 	// == 3
-	// == 128
 
 	/**
 	*******************************************************************
@@ -407,17 +408,7 @@
 	NexObject Kmsg				= NexObject(30, 2, "tkmsg");
 	// == 129
 
-	/**
-	*******************************************************************
-	* NEX komponenty strona:: FLOWPAGE 31
-	*******************************************************************
-	*/
-	NexObject vFlowNex					= NexObject(21, 7, "vflow");
-	NexObject SetFlowBtn				= NexObject(21, 9, "m0");
-	NexObject FlowPageFrom			= NexObject(21, 10, "flowfrom");
-	// 
-	// == 3
-	// == 132
+
 	// 132*13 = 1716 bajt�w
 
   NexObject *nex_listen_list[] =
@@ -1859,6 +1850,30 @@
 	#endif
 	}
 
+	void nex_update_sd_status()
+	{
+		#if ENABLED(SDSUPPORT)
+			if (card.isFileOpen()) {
+				if (IS_SD_PRINTING && SDstatus != SD_PRINTING) {
+					SDstatus = SD_PRINTING;
+					SD.setValue(SDstatus,"stat");
+				}
+				else if (!IS_SD_PRINTING && SDstatus != SD_PAUSE) {
+					SDstatus = SD_PAUSE;
+					SD.setValue(SDstatus,"stat");
+				}
+			}
+			else if (card.cardOK && SDstatus != SD_INSERT) {
+				SDstatus = SD_INSERT;
+				SD.setValue(SDstatus,"stat");
+			}
+			else if (card.cardOK && SDstatus != SD_NO_INSERT) {
+				SDstatus = SD_NO_INSERT;
+				SD.setValue(SDstatus,"stat");
+			}
+		#endif // HAS_SD_SUPPORT
+	}
+
 // =======================
 // == LCD UPDATE				==
 // =======================
@@ -1987,26 +2002,7 @@
 					}
 				}
 
-				#if ENABLED(SDSUPPORT)
-				if (card.isFileOpen()) {
-					if (IS_SD_PRINTING && SDstatus != SD_PRINTING) {
-						SDstatus = SD_PRINTING;
-						SD.setValue(SDstatus,"stat");
-					}
-					else if (!IS_SD_PRINTING && SDstatus != SD_PAUSE) {
-						SDstatus = SD_PAUSE;
-						SD.setValue(SDstatus,"stat");
-					}
-				}
-				else if (card.cardOK && SDstatus != SD_INSERT) {
-					SDstatus = SD_INSERT;
-					SD.setValue(SDstatus,"stat");
-				}
-				else if (card.cardOK && SDstatus != SD_NO_INSERT) {
-					SDstatus = SD_NO_INSERT;
-					SD.setValue(SDstatus,"stat");
-				}
-				#endif // HAS_SD_SUPPORT
+				nex_update_sd_status();
 
 				#if HAS_SD_RESTART
           if (restart.count && restart.job_phase == RESTART_IDLE) {
@@ -2016,7 +2012,7 @@
 				#endif
         break;
 				
-	#if ENABLED(SDSUPPORT)
+			#if ENABLED(SDSUPPORT)
       case SDPage: // sd card page
 					if (PreviousPage != SDPage){
 						if(SDstatus == SD_PRINTING || SDstatus == SD_PAUSE)
@@ -2032,7 +2028,16 @@
 					}
 					nex_check_sdcard_present(); // sprawdz obecnosc karty sd, mount/unmount // potencjalnie tutaj jest bug z odswiezajacym sie ekranem SD 
           break;
-	#endif
+			#endif
+			case HeatingPage:
+				nex_update_sd_status();
+				break;
+			case MaintainPage:
+				nex_update_sd_status();
+				break;
+			case SetupPage:
+				nex_update_sd_status();
+				break;
       case MovePage: // move page
         coordtoLCD();
         break;
