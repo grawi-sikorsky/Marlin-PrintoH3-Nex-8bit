@@ -53,6 +53,8 @@ extern float feedrate_mm_s;
   //void lcd_scrollinfo(const char* titolo, const char* message);
   void lcd_yesno(const uint8_t val, const char* msg1="", const char* msg2="", const char* msg3="");
 	void check_periodical_actions();
+  void nex_check_sdcard_present();
+  void nex_update_sd_status();
 
 	void nextion_babystep_z(bool dir);
 	void lcd_nextion_kill_msg(const char* lcd_msg);

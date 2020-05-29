@@ -48,7 +48,9 @@
   char        lcd_status_message[24]    = WELCOME_MSG;
   const float manual_feedrate_mm_m[]    = MANUAL_FEEDRATE;
 	millis_t		screen_timeout_millis;
-	char	filename_printing[27];
+	int		nex_file_number[6];
+	int 	nex_file_row_clicked;
+	char	filename_printing[40];
 
   extern uint8_t progress_printing; // dodane nex
 	extern bool nex_filament_runout_sensor_flag;
@@ -564,7 +566,12 @@
 		#endif
 				enqueue_and_echo_commands_P(PSTR("G28"));
 				//quickstop_stepper();
-}
+
+		thermalManager.disable_all_heaters();		// wylacz grzalki raz jeszcze bo z reguly wskakuje jeszcze glowica
+		nex_update_sd_status();
+		Pprinter.show(); // ma odswiezyc zakladki na ektranie statusu po zakonczeniu/zatrzymaniu druku
+		sendCommand("ref 0");
+	}
 
   //void menu_action_back() { Pprinter.show(); }
   void menu_action_function(screenFunc_t func) { (*func)(); }
@@ -777,21 +784,25 @@
 
 						#if ENABLED(NEXTION_SD_LONG_NAMES)
 							printrowsd(row, card.filenameIsDir, card.filename, card.longFilename);
+							nex_file_number[row] = i;
 						#else
 							printrowsd(row, card.filenameIsDir, card.filename);
+							nex_file_number[row] = i;
 						#endif
 
           } else {
 						#if ENABLED(NEXTION_SD_LONG_NAMES)
 							printrowsd(row, false, "", "");
+							nex_file_number[row] = NULL; // nie mozna wyzerowac (bo bedzie w wolnych polach wszezie plik nr: 0 czyli jakiś) może tu być potencjalny bug.
 						#else
 							printrowsd(row, false, "");
+							nex_file_number[row] = NULL; // nie mozna wyzerowac (bo bedzie w wolnych polach wszezie plik nr: 0 czyli jakiś) może tu być potencjalny bug.
 						#endif
 						
           }
         }
       }
-      sendCommand("ref 0");
+      //sendCommand("ref 0");
     }
 
 		//
@@ -818,8 +829,11 @@
 
       card.openAndPrintFile(filename);
 
-			strncpy(filename_printing, card.longFilename, 27);
+			card.getfilename(nex_file_number[nex_file_row_clicked]);
+			strncpy(filename_printing, card.longFilename, 40); // card.longFilename
+
       Pprinter.show();
+			sendCommand("ref 0");
     }
 
 		//
@@ -845,9 +859,15 @@
       else
         slidermaxval  = fileCnt - 6;
 
+			
+			uint16_t hig = 210 - slidermaxval * 10;
+      if (hig < 10) hig = 10;
+		
+      sdscrollbar.Set_cursor_height_hig(hig);	
+
       sdscrollbar.setMaxval(slidermaxval);
       sdscrollbar.setValue(slidermaxval,"sdcard");
-      //sendCommand("ref 0"); ref 0 jest w setrowsdcard()
+      //sendCommand("ref 0"); //ref 0 jest w setrowsdcard()
 
       setrowsdcard();
     }
@@ -863,18 +883,24 @@
     void sdfilePopCallback(void *ptr) {
       ZERO(bufferson);
 			#if ENABLED(NEXTION_SD_LONG_NAMES)
-				if (ptr == &sdrow0)
+				if (ptr == &sdrow0){
 					file0.getText(bufferson, sizeof(bufferson));
-				else if (ptr == &sdrow1)
+					nex_file_row_clicked = 0;}
+				else if (ptr == &sdrow1){
 					file1.getText(bufferson, sizeof(bufferson));
-				else if (ptr == &sdrow2)
+					nex_file_row_clicked = 1;}
+				else if (ptr == &sdrow2){
 					file2.getText(bufferson, sizeof(bufferson));
-				else if (ptr == &sdrow3)
+					nex_file_row_clicked = 2;}
+				else if (ptr == &sdrow3){
 					file3.getText(bufferson, sizeof(bufferson));
-				else if (ptr == &sdrow4)
+					nex_file_row_clicked = 3;}
+				else if (ptr == &sdrow4){
 					file4.getText(bufferson, sizeof(bufferson));
-				else if (ptr == &sdrow5)
+					nex_file_row_clicked = 4;}
+				else if (ptr == &sdrow5){
 					file5.getText(bufferson, sizeof(bufferson));
+					nex_file_row_clicked = 5;}
 			#else
 				if (ptr == &sdrow0)
 					sdrow0.getText(bufferson, sizeof(bufferson));
