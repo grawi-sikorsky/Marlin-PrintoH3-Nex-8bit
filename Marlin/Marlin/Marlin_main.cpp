@@ -3969,7 +3969,11 @@ inline void gcode_G28(const bool always_home_all) {
 #endif
 
   report_current_position();
+
+  #ifdef PROBE_MANUALLY // dla nex standard
   set_bed_leveling_enabled(true); // dodane aby ustawic macierz
+  #endif
+
   #if ENABLED(DEBUG_LEVELING_FEATURE)
     if (DEBUGGING(LEVELING)) SERIAL_ECHOLNPGM("<<< gcode_G28");
   #endif
@@ -4448,6 +4452,7 @@ void home_all_axes() { gcode_G28(true); }
             #endif
             set_bed_leveling_enabled(abl_should_enable);
           }
+          
           return;
         } // parser.seen('W')
 
