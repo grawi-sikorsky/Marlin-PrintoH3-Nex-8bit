@@ -570,7 +570,6 @@
 		thermalManager.disable_all_heaters();		// wylacz grzalki raz jeszcze bo z reguly wskakuje jeszcze glowica
 		nex_update_sd_status();
 		Pprinter.show(); // ma odswiezyc zakladki na ektranie statusu po zakonczeniu/zatrzymaniu druku
-		sendCommand("ref 0");
 	}
 
   //void menu_action_back() { Pprinter.show(); }
