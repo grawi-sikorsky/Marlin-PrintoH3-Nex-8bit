@@ -1896,7 +1896,7 @@
 				SDstatus = SD_INSERT;
 				SD.setValue(SDstatus,"stat");
 			}
-			else if (card.cardOK && SDstatus != SD_NO_INSERT) {
+			else if (!card.cardOK && SDstatus != SD_NO_INSERT) {
 				SDstatus = SD_NO_INSERT;
 				SD.setValue(SDstatus,"stat");
 			}
@@ -2030,7 +2030,7 @@
 						NexFilename.setText(filename_printing);
 					}
 				}
-
+				nex_check_sdcard_present();
 				nex_update_sd_status();
 
 				#if HAS_SD_RESTART
