@@ -160,8 +160,8 @@
 	#define CUSTOM_MACHINE_NAME "Printo H3 Biggie"
 #endif
 #ifdef PRINTO_H3_MIDI
-#define MACHINE_NAME "Printo H3 Midi"
-#define CUSTOM_MACHINE_NAME "Printo H3 Midi"
+  #define MACHINE_NAME "Printo H3 Midi"
+  #define CUSTOM_MACHINE_NAME "Printo H3 Midi"
 #endif
 
 
