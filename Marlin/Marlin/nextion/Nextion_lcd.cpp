@@ -2026,7 +2026,7 @@
 						NexFilename.setText(filename_printing);
 					}
 				}
-
+				nex_check_sdcard_present();
 				nex_update_sd_status();
 
 				#if HAS_SD_RESTART
