@@ -2025,6 +2025,11 @@
 					{
 						NexFilename.setText(filename_printing);
 					}
+					else
+					{
+						NexFilename.setText("");
+					}
+					
 				}
 				nex_check_sdcard_present();
 				nex_update_sd_status();

@@ -414,7 +414,7 @@ uint8_t Temperature::soft_pwm_amount[HOTENDS],
       }
       if (cycles > ncycles) {
         SERIAL_PROTOCOLLNPGM(MSG_PID_AUTOTUNE_FINISHED);
-				LCD_MESSAGEPGM(MSG_PID_AUTOTUNE_DONE);
+				LCD_MESSAGEPGM(MSG_PID_AUTOTUNE_DONE); // dodane
 
         #if HAS_PID_FOR_BOTH
           const char* estring = hotend < 0 ? "bed" : "";

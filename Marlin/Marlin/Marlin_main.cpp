@@ -1224,7 +1224,7 @@ inline void get_serial_commands() {
     if (commands_in_queue == 0) stop_buffering = false;
 
     uint16_t sd_count = 0;
-	uint16_t sd_count_value = 0; // dodane
+	  uint16_t sd_count_value = 0; // dodane
 
 
     bool card_eof = card.eof();
@@ -1256,7 +1256,7 @@ inline void get_serial_commands() {
           SERIAL_ECHOLNPGM(MSG_SD_ERR_READ);
         }
         if (sd_char == '#') 
-			stop_buffering = true;
+			  stop_buffering = true;
 
         sd_comment_mode = false; // for new command
 
@@ -4044,7 +4044,7 @@ void home_all_axes() { gcode_G28(true); }
 		nex_return_after_leveling(true); //dodane, powrot do status
     home_all_axes();
     set_bed_leveling_enabled(true);
-	enqueue_and_echo_commands_P(PSTR("M500"));  // dodane aby zapisywało poziomowanie podczas trwania funkcji
+	  enqueue_and_echo_commands_P(PSTR("M500"));  // dodane aby zapisywało poziomowanie podczas trwania funkcji
     #if ENABLED(MESH_G28_REST_ORIGIN)
       current_position[Z_AXIS] = LOGICAL_Z_POSITION(Z_MIN_POS);
       set_destination_to_current();
@@ -9426,7 +9426,6 @@ inline void gcode_M812() {
 	}
 }
 #endif
-
 
 
 #if ENABLED(ABORT_ON_ENDSTOP_HIT_FEATURE_ENABLED)
