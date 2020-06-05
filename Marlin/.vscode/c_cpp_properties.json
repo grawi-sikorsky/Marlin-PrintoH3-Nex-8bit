@@ -6,6 +6,7 @@
         {
             "name": "Win32",
             "includePath": [
+                "d:/[] Google Drive/[] Drukarki 3D/Arduino sdk/[]GIT/Marlin-PrintoH3-Nex-8bit/Marlin/.piolibdeps/megaatmega2560/Time_ID44",
                 "d:/[] Google Drive/[] Drukarki 3D/Arduino sdk/[]GIT/Marlin-PrintoH3-Nex-8bit/Marlin/.piolibdeps/megaatmega2560/U8glib_ID7/src",
                 "C:/Users/Job/.platformio/packages/framework-arduino-avr/libraries/Wire/src",
                 "C:/Users/Job/.platformio/lib/Sleep_n0m1_ID412",
@@ -25,6 +26,7 @@
             "browse": {
                 "limitSymbolsToIncludedHeaders": true,
                 "path": [
+                    "d:/[] Google Drive/[] Drukarki 3D/Arduino sdk/[]GIT/Marlin-PrintoH3-Nex-8bit/Marlin/.piolibdeps/megaatmega2560/Time_ID44",
                     "d:/[] Google Drive/[] Drukarki 3D/Arduino sdk/[]GIT/Marlin-PrintoH3-Nex-8bit/Marlin/.piolibdeps/megaatmega2560/U8glib_ID7/src",
                     "C:/Users/Job/.platformio/packages/framework-arduino-avr/libraries/Wire/src",
                     "C:/Users/Job/.platformio/lib/Sleep_n0m1_ID412",

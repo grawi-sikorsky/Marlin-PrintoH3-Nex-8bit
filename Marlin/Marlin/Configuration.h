@@ -125,11 +125,11 @@
 // WYBOR DRUKARKI NASTEPUJE TUTAJ W TORONTO!
 // ============================================
 
-#define PRINTO_H3
+//#define PRINTO_H3
 //#define PRINTO_H3_PLUS
 //#define PRINTO_H3_TOWER
 //#define PRINTO_H3_TOWERPLUS
-//#define PRINTO_H3_BIGGIE
+#define PRINTO_H3_BIGGIE
 //#define PRINTO_H3_MIDI
 //lcd 3.0
 // ============================================
@@ -820,7 +820,7 @@
 #if defined(PRINTO_H3_BIGGIE)
 #define X_MAX_POS 305
 #define Y_MAX_POS 310
-#define Z_MAX_POS 556
+#define Z_MAX_POS 520
 #endif
 
 #if defined(PRINTO_H3_MIDI)
