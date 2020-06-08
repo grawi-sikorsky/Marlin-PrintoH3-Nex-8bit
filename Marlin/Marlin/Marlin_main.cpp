@@ -1226,7 +1226,6 @@ inline void get_serial_commands() {
     uint16_t sd_count = 0;
 	  uint16_t sd_count_value = 0; // dodane
 
-
     bool card_eof = card.eof();
     while (commands_in_queue < BUFSIZE && !card_eof && !stop_buffering) {
       const int16_t n = card.get();

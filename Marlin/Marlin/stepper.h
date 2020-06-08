@@ -186,8 +186,8 @@ class Stepper {
     // Block until all buffered steps are executed
     //
     static void synchronize();
-	static void panic_reset_timer(); //dodane panic
-	static void quick_stop_panic(); // dodane panic
+    static void panic_reset_timer(); //dodane panic
+    static void quick_stop_panic(); // dodane panic
     //
     // Set the current position in steps
     //
