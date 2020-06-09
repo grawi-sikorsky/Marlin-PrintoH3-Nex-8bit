@@ -13238,15 +13238,11 @@ void ploss_recover(uint8_t automatic) {
 	//thermalManager.setTargetHotend(thermalManager.target_temperature[0], 0);
 	//thermalManager.setTargetHotend(eeprom_read_word((uint16_t*)EEPROM_PANIC_TARGET_HOTEND), 0);
 
-	// Aplikujemy Babystepping
-	//_babystep_z_shift = eeprom_read_dword((uint32_t*)EEPROM_PANIC_BABYSTEP_Z);
-	//thermalManager.babystep_axis(Z_AXIS, _babystep_z_shift); //dodane
-
 	SERIAL_ECHOPGM("before:");
 	SERIAL_ECHOLN(_babystep_z_shift);
 	SERIAL_ECHOLN(current_position[Z_AXIS]);
-	// Bazujemy cala drukarke
-	home_all_axes(); // zamiast: enqueue_and_echo_commands_P(PSTR("G28")); 
+
+	home_all_axes();  // Bazujemy cala drukarke
 
 	SERIAL_ECHOPGM("afterhome:");
 	SERIAL_ECHOLN(_babystep_z_shift);
@@ -13350,13 +13346,13 @@ void restore_print_from_eeprom() {
 	for (c = &cmd_buff[4]; *c; c++)
 		*c = tolower(*c);
 
-	//enqueue_and_echo_command(cmd_buff); //5
+	//enqueue_and_echo_command(cmd_buff);
 	card.openFile(filename, true); // zamiast enqueue M23
 
 	/******************************************************/
 	/*** 2. Ekstruder tryb relative									  *****/
 	/******************************************************/
-	//enqueue_and_echo_commands_P(PSTR("M83")); //6 (5+1PGM)
+	//enqueue_and_echo_commands_P(PSTR("M83"));
 	axis_relative_modes[E_AXIS] = true;
 
 
